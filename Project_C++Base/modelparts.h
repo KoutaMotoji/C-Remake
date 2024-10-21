@@ -29,6 +29,7 @@ public:
 	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };		//モデル位置変更
 	D3DXVECTOR3& GetRot() { return m_rot; };			//モデル回転取得
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };		//モデル回転変更
+	void AddRot(D3DXVECTOR3 rot) { m_rot += rot; };
 	D3DXVECTOR3& GetSize() { return m_size; };			//モデル拡縮取得
 	void SetSize(D3DXVECTOR3 size) { m_size = size; };	//モデル拡縮変更
 	void SetDefault() { m_defaultPos = m_pos; m_defaultRot = m_rot; };	//位置・回転初期値設定

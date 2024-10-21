@@ -57,6 +57,7 @@ public:
 	bool GetJoyStickRepeat(JOYKEY joykey, JOYSTICK joystick);	//スティックのリピート情報
 
 	D3DXVECTOR2 GetJoyStickVecL();
+	D3DXVECTOR2 GetJoyStickVecR();
 
 private:
 

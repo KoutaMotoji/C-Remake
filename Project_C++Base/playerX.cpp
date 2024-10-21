@@ -12,7 +12,7 @@
 #include "collision.h"
 
 
-const float CPlayerX::MOVE_SPEED = 0.85f;
+const float CPlayerX::MOVE_SPEED = 0.55f;
 const int CPlayerX::MAX_LIFE = 1000;
 const int CPlayerX::MAX_STAMINA = 500;
 
@@ -21,7 +21,7 @@ const int CPlayerX::MAX_STAMINA = 500;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CPlayerX::CPlayerX():MAX_JUMPCNT(2),fGravity(1.55f),m_nJumpCnt(2), m_bDashed(false),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false),m_bAttack(false),m_bAttackDis(false),m_nAttackFrame(0)
+CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false),m_bAttack(false), m_SecZrot(0.8f)
 {
 	for (int i = 0; i < MAX_MODELPARTS; i++)
 	{
@@ -42,10 +42,9 @@ CPlayerX::~CPlayerX()
 //==========================================================================================
 void CPlayerX::Init()
 {
-	StickVec = { 0.0f,0.0f };
 
 	MotionInit();
-
+	m_pReticle = CReticle::Create({ 0.0f,0.0f,150.0f });
 	CObject::SetType(TYPE_3D_PLAYER);
 }
 
@@ -66,32 +65,30 @@ void CPlayerX::Uninit()
 void CPlayerX::Update()
 {
 	D3DXVECTOR3 CameraPos;
-	if (CManager::GetInstance()->GetCamera()->GetPlayerPos() != nullptr)
-	{
-		CameraPos = CManager::GetInstance()->GetCamera()->GetPlayerPos();
-	}
-	else
-	{
-		assert(!(CameraPos = CManager::GetInstance()->GetCamera()->GetPlayerPos()));
-	}
+	//if (CManager::GetInstance()->GetCamera()->GetPlayerPos() != nullptr)
+	//{
+	//	CameraPos = CameraPosDigit();
+	//}
+	//else
+	//{
+	//	assert(!(CameraPos = CameraPosDigit()));
+	//}
+	ReticleController();
 	SetNextKey();
 	FloorCollision();
 	PMove(CameraPos.z);
-	if (!m_bAttack && !m_bAttackDis)
+	if (!m_bAttack)
 	{
-		if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_X) == true)
+		if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_X) == true||
+			CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_R) == true)
 		{
 			SetNextMotion(MOTION_ATTACK1);
 			m_bAttack = true;
 		}
 	}
-
-	if (AttackTimer())
+	if (!TestUseMeshCollision())
 	{
-		if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_X) == true)
-		{
-			NextAttack();
-		}
+		m_pReticle->AddPos(m_move);
 	}
 
 	m_pos += m_move;
@@ -100,9 +97,10 @@ void CPlayerX::Update()
 	m_move.y += (0.0f - m_move.y) * 0.15f;
 	m_move.z += (0.0f - m_move.z) * 0.15f;
 
-	CameraPos = m_pos;
+	CameraPos = CameraPosDigit();
 
 	CManager::GetInstance()->GetCamera()->SetPlayerPos(CameraPos);
+
 	//GoalCheck();
 }
 
@@ -165,7 +163,7 @@ CPlayerX* CPlayerX::Create(D3DXVECTOR3 pos)
 
 	player->m_pos = pos;
 	player->m_move = { 0.0f,0.0f,0.0f };
-	player->m_rot = { 0.0f,0.0f,0.0f };
+	player->m_rot = { 0.0f,D3DX_PI,0.0f };
 	player->m_size = {1.0f,1.0f,1.0f};
 	player->m_OldPos = pos;
 	return player;
@@ -190,32 +188,34 @@ bool CPlayerX::PMove(float fCamRotZ)
 	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true||CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DLEFT) == true)
 	{//Aキーが押された
 		//位置を更新
-		m_rot.y = (D3DX_PI * 0.5f);
-
-		m_move.x -= MOVE_SPEED;
+		if (m_rot.z <= m_SecZrot)
+		{
+			m_rot.z += (m_SecZrot / 10);
+		}
 	}
 	else if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_D) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DRIGHT) == true)
 	{//Aキーが押された
-		m_rot.y = -(D3DX_PI * 0.5f);
-
-		m_move.x += MOVE_SPEED;
-	}
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_SPACE) == true || CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A) == true)
-	{
-		if (m_nJumpCnt > 0)
+		if (m_rot.z >= -m_SecZrot)
 		{
-			m_nJumpCnt--;
-			if (m_nJumpCnt == 1)
-			{
-
-			}
-			m_bAttackDis = false;
-			m_move.y = 0.0f;
-			m_move.y += 40.0f;
-			m_bOldJump = false;
-			SetNextMotion(MOTION_JUMP);
+			m_rot.z -= (m_SecZrot / 10);
 		}
 	}
+	if(abs(m_move.x) < 1.0f)
+	{
+		if (m_rot.z >= 0)
+		{
+			m_rot.z -= (m_SecZrot / 10);
+		}
+		if (m_rot.z <= 0)
+		{
+			m_rot.z += (m_SecZrot / 10);
+		}
+	}
+	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2,0.0f};
+	//if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_SPACE) == true || CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_A) == true)
+	//{
+	//	m_move.y += 2.25f;
+	//}
 	return true;
 }
 
@@ -227,22 +227,27 @@ void CPlayerX::FloorCollision()
 {
 	
 
-	if (m_pos.y <= -100)
+	if (m_pos.y <= -500)
 	{
-		m_pos.y = m_OldPos.y;
-		/*m_nLife = 0;
-		DeadCheck();*/
+		m_pos.y -= m_move.y;
+		m_pReticle->AddPos(-m_move);
 	}
-	else if (m_pos.y > 1000)
+	else if (m_pos.y > 500)
 	{
-		m_pos.y = m_OldPos.y;
+		m_pos.y -= m_move.y;
+		m_pReticle->AddPos(-m_move);
 	}
-	if (!TestUseMeshCollision())
+	if (m_pos.x <= -500)
 	{
-	
-		m_move.y -= fGravity;
-		
+		m_pos.x -= m_move.x;
+		m_pReticle->AddPos(-m_move);
 	}
+	else if (m_pos.x > 500)
+	{
+		m_pos.x -= m_move.x;
+		m_pReticle->AddPos(-m_move);
+	}
+
 }
 
 //==========================================================================================
@@ -261,86 +266,6 @@ void CPlayerX::StaminaAdd(int value)
 	if (m_nStamina + value <= MAX_STAMINA)
 	{
 		m_nStamina += value;
-	}
-}
-
-//==========================================================================================
-//武器からの相対値を使った当たり判定の実装
-//==========================================================================================
-D3DXVECTOR3 CPlayerX::WeaponMtxFunc()
-{
-	/*
-	D3DXVECTOR3 CollisionPosCor = { 0.0f,0.0f,0.0f };	//補正用変数
-
-	LPDIRECT3DDEVICE9 pDevice;
-	//デバイスの取得
-	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-	D3DXMATRIX mtxWeaponCol = m_apModelParts[16]->GetWorldMatrix();
-	D3DXMATRIX mtxTrans;
-	m_WeaponCollisionPos = m_apModelParts[16]->GetPos();
-
-	//ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&m_mtxWeaponWorld);
-	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans,
-		m_WeaponCollisionPos.x,
-		m_WeaponCollisionPos.y,
-		m_WeaponCollisionPos.z);
-	D3DXMatrixMultiply(&m_mtxWeaponWorld,
-		&m_mtxWeaponWorld,
-		&mtxTrans);
-	//ワールド行列を親の行列に掛ける
-	D3DXMatrixMultiply(&m_mtxWeaponWorld,
-		&m_mtxWeaponWorld,
-		&mtxWeaponCol);
-
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD,
-		&m_mtxWeaponWorld);
-	//ワールドマトリックスから位置(平行移動)成分の抜き出し
-	D3DXVECTOR3 pos = { m_mtxWeaponWorld._41,
-						m_mtxWeaponWorld._42,
-						m_mtxWeaponWorld._43 };
-	if (CollisionPlayerToBlock())
-	{//ブロックに触れている時のみy座標の位置に補正をかける
-		CollisionPosCor.y = -m_move.y;
-	}
-	return (pos + m_move + CollisionPosCor);//取得した座標にmove値の補正を掛けて返す
-	*/
-	return { 0.0f,0.0f,0.0f };
-}
-
-//==========================================================================================
-//攻撃状態の移行(一段目から二段目、二段目から三段目に移行)
-//==========================================================================================
-bool CPlayerX::AttackTimer()
-{
-	const int ATTACK_DISCNT = 30;
-
-	if (m_bAttackDis)
-	{
-		m_move.y *= 0.01f;
-		m_nAttackFrame++;
-		if (m_nAttackFrame > ATTACK_DISCNT)
-		{
-			m_nAttackFrame = 0;
-			m_bAttackDis = false;
-		}
-		return m_nAttackFrame <= ATTACK_DISCNT;
-	}
-	return false;
-}
-
-//==========================================================================================
-//攻撃状態の移行(一段目から二段目、二段目から三段目に移行)
-//==========================================================================================
-void CPlayerX::NextAttack()
-{
-	if (m_nLastAttackNum < MOTION_ATTACK3)
-	{
-		m_bAttackDis = false;
-		SetNextMotion(m_nLastAttackNum + 1);
-		m_bAttack = true;
 	}
 }
 
@@ -514,22 +439,15 @@ void CPlayerX::SetNextKey()
 			m_CurKey = 0;
 			if (!m_aMotion[nNowMotion].bLoop)
 			{	
-				m_CurMotion = MOTION_DEFAULT;
-				/*
-				DoDashCheck();
-				if (nNowMotion >= MOTION_ATTACK1&&nNowMotion <= MOTION_ATTACK3)
+				if (m_CurMotion == MOTION_ATTACK1)
 				{
-					m_nLastAttackNum = nNowMotion;
-					m_move.y -= fGravity;
 					m_bAttack = false;
-					m_bAttackDis = true;
-					if (m_nJumpCnt != MAX_JUMPCNT)
-					{
-						m_CurMotion = MOTION_JUMP;
-					}
-					DoDashCheck();
 				}
-	*/
+				else
+				{
+					m_CurMotion = MOTION_DEFAULT;
+				}
+				
 			}
 		}
 	}
@@ -557,7 +475,7 @@ void CPlayerX::MotionDataLoad()
 	int nIndex = 0;
 	int nModelCnt = 0;
 
-	pFile = fopen("data\\TEXT\\motion.txt","r");
+	pFile = fopen("data\\TEXT\\motion_Player.txt","r");
 	
 	if (pFile != nullptr)
 	{
@@ -771,6 +689,7 @@ void CPlayerX::MotionDataLoad()
 	}
 }
 
+//==============================　　メッシュ当たり判定テスト用　　=============================================================================
 bool CPlayerX::TestUseMeshCollision()
 {
 	// 地形判定
@@ -804,7 +723,24 @@ bool CPlayerX::TestUseMeshCollision()
 	{
 		//取得したレイ射出地点
 		m_pos.y += fLandDistance;
+
 		return true;
 	}
 	return false;
+}
+
+void CPlayerX::ReticleController()
+{
+	D3DXVECTOR2 ReticleMove = CManager::GetInstance()->GetJoypad()->GetJoyStickVecR();
+
+	m_pReticle->AddPos({ ReticleMove.x * 5,ReticleMove.y * 5,0.0f });
+}
+
+
+D3DXVECTOR3 CPlayerX::CameraPosDigit()
+{
+	D3DXVECTOR3 CamPos = {0.0f,0.0f,0.0f};
+	CamPos.x = (m_pReticle->GetPos().x + m_pos.x) * 0.5f;
+	CamPos.y = (m_pReticle->GetPos().y + m_pos.y) * 0.5f;
+	return CamPos;
 }

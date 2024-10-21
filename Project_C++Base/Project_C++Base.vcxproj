@@ -170,6 +170,7 @@
     <ClInclude Include="playerX.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="reticle.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="test_meshCollision.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="playerX.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
+    <ClCompile Include="reticle.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="test_meshCollision.cpp" />

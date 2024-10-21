@@ -20,6 +20,10 @@ public:
 	void Update()override;		//çXêV
 	void Draw()override;		//ï`âÊ
 
+
+	D3DXVECTOR3 GetPos() { return m_pos; ; };
+	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
+	void AddPos(D3DXVECTOR3 value) { m_pos += value; };
 	D3DXVECTOR2 GetAnim() { return m_Anim; };
 	void SetAnim(D3DXVECTOR2 Anim) { m_Anim = Anim; };
 	void AddAnim(D3DXVECTOR2 Anim) { m_Anim += Anim; };

@@ -21,13 +21,13 @@ CCamera::~CCamera()
 //‰Šú‰»
 HRESULT CCamera::Init(void)
 {
-	m_posV = D3DXVECTOR3(0.0f, 100.0f, -500.0f);
+	m_posV = D3DXVECTOR3(0.0f, 100.0f, -300.0f);
 	m_posR = D3DXVECTOR3(0.0f,0.0f,0.0f);
 	m_posU = D3DXVECTOR3(0.0f,1.0f,0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_PlayerPos = { 0.0f,0.0f,0.0f };
-	m_camDistance = 700.0f;
-	m_fRotZ = 0.2f;
+	m_camDistance = 600.0f;
+	m_fRotZ = 0.0f;
 	return S_OK;
 }
 
@@ -43,23 +43,23 @@ void CCamera::Update(void)
 #if _DEBUG
 
 
-	if (CManager::GetInstance()->GetJoypad()->GetJoyStickR(CJoypad::JOYSTICK_DLEFT) == true)
-	{
-		m_fRotZ += 0.05f;
-		if (m_fRotZ > D3DX_PI)
-		{
-			m_fRotZ = -D3DX_PI;
-		}
-	}
+	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickR(CJoypad::JOYSTICK_DLEFT) == true)
+	//{
+	//	m_fRotZ += 0.05f;
+	//	if (m_fRotZ > D3DX_PI)
+	//	{
+	//		m_fRotZ = -D3DX_PI;
+	//	}
+	//}
 
-	if (CManager::GetInstance()->GetJoypad()->GetJoyStickR(CJoypad::JOYSTICK_DRIGHT) == true)
-	{
-		m_fRotZ -= 0.05f;
-		if (m_fRotZ < -1 * D3DX_PI)
-		{
-			m_fRotZ = D3DX_PI;
-		}
-	}
+	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickR(CJoypad::JOYSTICK_DRIGHT) == true)
+	//{
+	//	m_fRotZ -= 0.05f;
+	//	if (m_fRotZ < -1 * D3DX_PI)
+	//	{
+	//		m_fRotZ = D3DX_PI;
+	//	}
+	//}
 #endif // _DEBUG
 
 	float m_Dis = ( m_camDistance);

@@ -11,13 +11,15 @@
 #include "object.h"
 #include "modelparts.h"
 #include "test_meshCollision.h" 
+#include "reticle.h"
+
 #include "manager.h"
 
 
-#define MAX_MODELPARTS	(16)
+#define MAX_MODELPARTS	(20)
 
-#define MAX_PARTS	(16)
-#define MAX_KEYSET	(16)
+#define MAX_PARTS	(20)
+#define MAX_KEYSET	(20)
 #define MAX_MOTION	(7)
 
 class CPlayerX :public CObject
@@ -48,7 +50,6 @@ private:
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
 	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); };	//ダメージ加算、生存確認
-	void NextAttack();
 	void DoDashCheck() {
 		if (CManager::GetInstance()->GetJoypad()->GetJoyStickRepeat(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
 			CManager::GetInstance()->GetJoypad()->GetJoyStickRepeat(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
@@ -56,28 +57,17 @@ private:
 			SetNextMotion(MOTION_DASH);
 		}
 	};
-	bool AttackTimer();
 	//void GoalCheck();						//ゴールしているかチェック
 	void DeadCheck();
-	D3DXVECTOR3 WeaponMtxFunc();
 	static const float MOVE_SPEED;			//移動スピードの設定
 	float fGravity;							//重力
 	float m_fWeaponRadius;
-	const int MAX_JUMPCNT;					//ジャンプの最大回数
-	int m_nJumpCnt;							//現在のジャンプ残り数
-	bool m_bOldJump;
-	bool m_bDashed;							//突進中か否か
-	D3DXVECTOR2 StickVec;					//スティックの方向をベクトル(x.y)
 	int m_nLife;			//体力
 	int m_nStamina;			//スタミナ
 	static const int MAX_LIFE;
 	static const int MAX_STAMINA;
 	bool bStop;				//デバッグ用移動量無効
-	int m_nAttackCnt;						//攻撃段計測用
-	unsigned int m_nAttackFrame;	//攻撃モーション計測用、攻撃フレーム用
 	bool m_bAttack;			//攻撃中か否か
-	bool m_bAttackDis;		//攻撃移行猶予中か
-	int m_nLastAttackNum;
 
 
 	CModelParts* m_apModelParts[MAX_MODELPARTS];
@@ -89,6 +79,7 @@ private:
 	int m_KeySetNum;	//キーセット数
 	int m_MotionNum;	//モーション最大数
 	int m_NowFrame;		//現在のフレーム
+	float m_SecZrot;
 	struct Key
 	{
 		//位置
@@ -128,6 +119,9 @@ private:
 	LPD3DXMESH m_pMesh;
 
 	bool TestUseMeshCollision();
+	CReticle* m_pReticle;
+	void ReticleController();
+	D3DXVECTOR3 CameraPosDigit();
 };
 
 #endif

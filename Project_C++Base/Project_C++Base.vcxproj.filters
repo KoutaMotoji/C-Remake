@@ -141,6 +141,9 @@
     <ClCompile Include="test_meshCollision.cpp">
       <Filter>ソース ファイル\3D\Model</Filter>
     </ClCompile>
+    <ClCompile Include="reticle.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -226,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="test_meshCollision.h">
       <Filter>ヘッダー ファイル\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="reticle.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

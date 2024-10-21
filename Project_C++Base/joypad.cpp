@@ -253,6 +253,27 @@ D3DXVECTOR2 CJoypad::GetJoyStickVecL()
 
 }
 //==========================================================================================
+//右スティックの方向ベクトルを取得
+//==========================================================================================
+D3DXVECTOR2 CJoypad::GetJoyStickVecR()
+{
+	// 各スティックの入力値がデッドゾーン以下なら入力値を0にする
+	if ((m_joyKeyState.Gamepad.sThumbRX > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE ||
+		m_joyKeyState.Gamepad.sThumbRX < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) ||
+		(m_joyKeyState.Gamepad.sThumbRY > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE ||
+			m_joyKeyState.Gamepad.sThumbRY < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+	{//左スティック
+		float VecX = sinf(atan2f((float)m_joyKeyState.Gamepad.sThumbRX * 0.01f, (float)m_joyKeyState.Gamepad.sThumbRY * 0.01f));
+		float VecY = cosf(atan2f((float)m_joyKeyState.Gamepad.sThumbRX * 0.01f, (float)m_joyKeyState.Gamepad.sThumbRY * 0.01f));
+		return { VecX ,VecY };
+	}
+	else
+	{
+		return { 0.0f,0.0f };
+	}
+
+}
+//==========================================================================================
 //スティックのトリガー判定の取得
 //==========================================================================================
 bool CJoypad::GetJoyStickTrigger(JOYKEY joykey, JOYSTICK joystick)
