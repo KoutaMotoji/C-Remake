@@ -1,0 +1,810 @@
+//===============================================================================
+//
+//  C++使った2D(playerX.cpp)
+//								制作：元地弘汰
+// 
+//===============================================================================
+#include "playerX.h"
+
+#include "particle3D.h"
+
+#include "game.h"
+#include "collision.h"
+
+
+const float CPlayerX::MOVE_SPEED = 0.85f;
+const int CPlayerX::MAX_LIFE = 1000;
+const int CPlayerX::MAX_STAMINA = 500;
+
+
+
+//==========================================================================================
+//コンストラクタ
+//==========================================================================================
+CPlayerX::CPlayerX():MAX_JUMPCNT(2),fGravity(1.55f),m_nJumpCnt(2), m_bDashed(false),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false),m_bAttack(false),m_bAttackDis(false),m_nAttackFrame(0)
+{
+	for (int i = 0; i < MAX_MODELPARTS; i++)
+	{
+		m_apModelParts[i] = nullptr;
+	}
+}
+
+//==========================================================================================
+//デストラクタ
+//==========================================================================================
+CPlayerX::~CPlayerX()
+{
+	
+}
+
+//==========================================================================================
+//初期化処理
+//==========================================================================================
+void CPlayerX::Init()
+{
+	StickVec = { 0.0f,0.0f };
+
+	MotionInit();
+
+	CObject::SetType(TYPE_3D_PLAYER);
+}
+
+//==========================================================================================
+//終了処理
+//==========================================================================================
+void CPlayerX::Uninit()
+{
+	for (int i = 0; i < MAX_MODELPARTS; i++)
+	{
+		m_apModelParts[i]->Uninit();
+	}
+}
+
+//==========================================================================================
+//更新処理
+//==========================================================================================
+void CPlayerX::Update()
+{
+	D3DXVECTOR3 CameraPos;
+	if (CManager::GetInstance()->GetCamera()->GetPlayerPos() != nullptr)
+	{
+		CameraPos = CManager::GetInstance()->GetCamera()->GetPlayerPos();
+	}
+	else
+	{
+		assert(!(CameraPos = CManager::GetInstance()->GetCamera()->GetPlayerPos()));
+	}
+	SetNextKey();
+	FloorCollision();
+	PMove(CameraPos.z);
+	if (!m_bAttack && !m_bAttackDis)
+	{
+		if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_X) == true)
+		{
+			SetNextMotion(MOTION_ATTACK1);
+			m_bAttack = true;
+		}
+	}
+
+	if (AttackTimer())
+	{
+		if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_X) == true)
+		{
+			NextAttack();
+		}
+	}
+
+	m_pos += m_move;
+	//移動量を更新
+	m_move.x += (0.0f - m_move.x) * 0.15f;
+	m_move.y += (0.0f - m_move.y) * 0.15f;
+	m_move.z += (0.0f - m_move.z) * 0.15f;
+
+	CameraPos = m_pos;
+
+	CManager::GetInstance()->GetCamera()->SetPlayerPos(CameraPos);
+	//GoalCheck();
+}
+
+//==========================================================================================
+//描画処理
+//==========================================================================================
+void CPlayerX::Draw()
+{
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
+
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);
+
+	//大きさを反映
+	D3DXMatrixScaling(&mtxSize,
+		m_size.y,
+		m_size.x,
+		m_size.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxSize);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot,
+		m_rot.y,
+		m_rot.x,
+		m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxRot);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans,
+		m_pos.x,
+		m_pos.y,
+		m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxTrans);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD,
+		&m_mtxWorld);
+	for (int i = 0; i < MAX_MODELPARTS; i++)
+	{
+		m_apModelParts[i]->Draw();
+	}
+}
+
+//==========================================================================================
+//生成処理
+//==========================================================================================
+CPlayerX* CPlayerX::Create(D3DXVECTOR3 pos)
+{
+	CPlayerX* player = new CPlayerX;
+	player->Init();
+
+
+	player->m_pos = pos;
+	player->m_move = { 0.0f,0.0f,0.0f };
+	player->m_rot = { 0.0f,0.0f,0.0f };
+	player->m_size = {1.0f,1.0f,1.0f};
+	player->m_OldPos = pos;
+	return player;
+}
+
+//==========================================================================================
+//移動処理
+//==========================================================================================
+bool CPlayerX::PMove(float fCamRotZ)
+{
+
+	if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true||
+		CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
+	{
+		SetNextMotion(MOTION_DASH);
+	}
+	if (CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
+		CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
+	{
+		SetNextMotion(MOTION_DEFAULT);
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true||CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DLEFT) == true)
+	{//Aキーが押された
+		//位置を更新
+		m_rot.y = (D3DX_PI * 0.5f);
+
+		m_move.x -= MOVE_SPEED;
+	}
+	else if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_D) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DRIGHT) == true)
+	{//Aキーが押された
+		m_rot.y = -(D3DX_PI * 0.5f);
+
+		m_move.x += MOVE_SPEED;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_SPACE) == true || CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A) == true)
+	{
+		if (m_nJumpCnt > 0)
+		{
+			m_nJumpCnt--;
+			if (m_nJumpCnt == 1)
+			{
+
+			}
+			m_bAttackDis = false;
+			m_move.y = 0.0f;
+			m_move.y += 40.0f;
+			m_bOldJump = false;
+			SetNextMotion(MOTION_JUMP);
+		}
+	}
+	return true;
+}
+
+
+//==========================================================================================
+//床当たり判定
+//==========================================================================================
+void CPlayerX::FloorCollision()
+{
+	
+
+	if (m_pos.y <= -100)
+	{
+		m_pos.y = m_OldPos.y;
+		/*m_nLife = 0;
+		DeadCheck();*/
+	}
+	else if (m_pos.y > 1000)
+	{
+		m_pos.y = m_OldPos.y;
+	}
+	if (!TestUseMeshCollision())
+	{
+	
+		m_move.y -= fGravity;
+		
+	}
+}
+
+//==========================================================================================
+//突進攻撃の時に武器の方向を進行方向に変換
+//==========================================================================================
+void CPlayerX::SetWeaponRot(D3DXVECTOR2 rot)
+{
+	m_rot = { -(abs(atan2f(rot.x ,rot.y))), m_rot.y,0.0f };
+}
+
+//==========================================================================================
+//スタミナの増減関数
+//==========================================================================================
+void CPlayerX::StaminaAdd(int value)
+{
+	if (m_nStamina + value <= MAX_STAMINA)
+	{
+		m_nStamina += value;
+	}
+}
+
+//==========================================================================================
+//武器からの相対値を使った当たり判定の実装
+//==========================================================================================
+D3DXVECTOR3 CPlayerX::WeaponMtxFunc()
+{
+	/*
+	D3DXVECTOR3 CollisionPosCor = { 0.0f,0.0f,0.0f };	//補正用変数
+
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	D3DXMATRIX mtxWeaponCol = m_apModelParts[16]->GetWorldMatrix();
+	D3DXMATRIX mtxTrans;
+	m_WeaponCollisionPos = m_apModelParts[16]->GetPos();
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWeaponWorld);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans,
+		m_WeaponCollisionPos.x,
+		m_WeaponCollisionPos.y,
+		m_WeaponCollisionPos.z);
+	D3DXMatrixMultiply(&m_mtxWeaponWorld,
+		&m_mtxWeaponWorld,
+		&mtxTrans);
+	//ワールド行列を親の行列に掛ける
+	D3DXMatrixMultiply(&m_mtxWeaponWorld,
+		&m_mtxWeaponWorld,
+		&mtxWeaponCol);
+
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD,
+		&m_mtxWeaponWorld);
+	//ワールドマトリックスから位置(平行移動)成分の抜き出し
+	D3DXVECTOR3 pos = { m_mtxWeaponWorld._41,
+						m_mtxWeaponWorld._42,
+						m_mtxWeaponWorld._43 };
+	if (CollisionPlayerToBlock())
+	{//ブロックに触れている時のみy座標の位置に補正をかける
+		CollisionPosCor.y = -m_move.y;
+	}
+	return (pos + m_move + CollisionPosCor);//取得した座標にmove値の補正を掛けて返す
+	*/
+	return { 0.0f,0.0f,0.0f };
+}
+
+//==========================================================================================
+//攻撃状態の移行(一段目から二段目、二段目から三段目に移行)
+//==========================================================================================
+bool CPlayerX::AttackTimer()
+{
+	const int ATTACK_DISCNT = 30;
+
+	if (m_bAttackDis)
+	{
+		m_move.y *= 0.01f;
+		m_nAttackFrame++;
+		if (m_nAttackFrame > ATTACK_DISCNT)
+		{
+			m_nAttackFrame = 0;
+			m_bAttackDis = false;
+		}
+		return m_nAttackFrame <= ATTACK_DISCNT;
+	}
+	return false;
+}
+
+//==========================================================================================
+//攻撃状態の移行(一段目から二段目、二段目から三段目に移行)
+//==========================================================================================
+void CPlayerX::NextAttack()
+{
+	if (m_nLastAttackNum < MOTION_ATTACK3)
+	{
+		m_bAttackDis = false;
+		SetNextMotion(m_nLastAttackNum + 1);
+		m_bAttack = true;
+	}
+}
+
+//==========================================================================================
+//ゴール判定チェック
+//==========================================================================================
+/*
+void CPlayerX::GoalCheck()
+{
+	for (int j = 0; j < SET_PRIORITY; j++)
+	{
+		for (int i = 0; i < MAX_OBJECT; i++)
+		{
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr)
+			{
+				CObject::TYPE type = pObj->GetType();
+
+				if (type == CObject::TYPE::TYPE_3D_G_MARKER)
+				{
+					CGoal* pGoal = dynamic_cast<CGoal*>(pObj);
+					if (pGoal != nullptr)
+					{
+						D3DXVECTOR3 PlayerMin = { -15.0f,10.0f,0.0f };
+						D3DXVECTOR3 PlayerMax = { 15.0f,35.0f,0.0f };
+						D3DXVECTOR3 GoalMin = pGoal->GetModelMin();
+						D3DXVECTOR3 GoalMax = pGoal->GetModelMax();
+						if (m_pos.x + PlayerMax.x > (pGoal->CObjectX::GetPos().x + GoalMin.x * 2.0f) &&
+							m_pos.x + PlayerMin.x < (pGoal->CObjectX::GetPos().x + GoalMax.x * 2.0f) &&
+							m_pos.y + PlayerMax.y > (pGoal->CObjectX::GetPos().y + GoalMin.y * 2.0f) &&
+							m_pos.y + PlayerMin.y < (pGoal->CObjectX::GetPos().y + GoalMax.y * 2.0f))
+						{
+							m_move.x *= 0.001f;
+							CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_RESULT);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+*/
+
+//==========================================================================================
+//死亡チェック
+//==========================================================================================
+void CPlayerX::DeadCheck()
+{
+	if (m_nLife <= 0)
+	{
+		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_RESULT);
+	}
+}
+
+//==========================================================================================
+//モーションの初期化処理
+//==========================================================================================
+void CPlayerX::MotionInit()
+{
+	MotionDataLoad();
+
+	m_CurMotion = 0;
+	m_CurKey = 0;
+	m_NowFrame = 0;
+}
+
+//==========================================================================================
+//次のモーションに移行する処理
+//==========================================================================================
+void CPlayerX::SetNextMotion(int nNextMotionNum)
+{
+	m_CurMotion = nNextMotionNum;
+	m_CurKey = 0;
+	m_NowFrame = 0;
+	SetNextKey();
+}
+//==========================================================================================
+//次のキーのモーション処理
+//==========================================================================================
+void CPlayerX::SetNextKey()
+{
+	//現在の位置・角度
+	D3DXVECTOR3 NowPos = {};
+	D3DXVECTOR3 NowRot = {};
+
+	//次の位置・角度
+	D3DXVECTOR3 NextPos = {};
+	D3DXVECTOR3 NextRot = {};
+
+	//動きの差分を求める用
+	D3DXVECTOR3 DifPos = {};
+	D3DXVECTOR3 DifRot = {};
+
+	//計算用
+	D3DXVECTOR3 DigitPos = {};
+	D3DXVECTOR3 DigitRot = {};
+
+	int nNowKey = m_CurKey;
+	int nNowMotion = m_CurMotion;
+	int nNextKey = (m_CurKey + 1) % m_aMotion[nNowMotion].nKeyNum;
+	float fRatioFrame = (float)m_NowFrame / (float)m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame;
+
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
+	{
+		//現在のキーの情報
+		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;	
+		NowRot = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].rot;
+
+		//次のキーの情報
+		NextPos = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].pos;
+		NextRot = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].rot;
+
+		//差分を求める
+		DifPos = NextPos - NowPos;
+		DifRot = NextRot - NowRot;
+
+		//-3.14～3.14の間を超える場合の修正
+		if (DifRot.x >= D3DX_PI)
+		{
+			DifRot.x -= D3DX_PI * 2;
+		}
+		if (DifRot.y >= D3DX_PI)
+		{
+			DifRot.y -= D3DX_PI * 2;
+		}
+		if (DifRot.z >= D3DX_PI)
+		{
+			DifRot.z -= D3DX_PI * 2;
+		}
+		if (DifRot.x <= -D3DX_PI)
+		{
+			DifRot.x += D3DX_PI * 2;
+		}
+		if (DifRot.y <= -D3DX_PI)
+		{
+			DifRot.y += D3DX_PI * 2;
+		}
+		if (DifRot.z <= -D3DX_PI)
+		{
+			DifRot.z += D3DX_PI * 2;
+		}
+
+		DigitPos = DifPos * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultPos() + NowPos;
+		DigitRot = DifRot * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultRot() + NowRot;
+
+		m_apModelParts[nCntParts]->SetPos(DigitPos);
+		m_apModelParts[nCntParts]->SetRot(DigitRot);
+	}
+	/*
+	if (nNowMotion == MOTION_DASH)
+	{
+		D3DXVECTOR3 pos1 = { m_apModelParts[17]->GetWorldMatrix()._41,m_apModelParts[17]->GetWorldMatrix()._42,m_apModelParts[17]->GetWorldMatrix()._43 };
+		D3DXVECTOR3 pos2 = { m_apModelParts[18]->GetWorldMatrix()._41,m_apModelParts[18]->GetWorldMatrix()._42,m_apModelParts[18]->GetWorldMatrix()._43 };
+
+		CParticle3D::Create(pos1, { 0.0f,1.0f,0.0f,0.2f }, 15, 24);
+		CParticle3D::Create(pos1, { 0.4f,0.8f,0.8f,0.2f }, 13, 24);
+
+		CParticle3D::Create(pos2, { 0.0f,1.0f,0.0f,0.2f }, 15, 24);
+		CParticle3D::Create(pos2, { 0.4f,0.8f,0.8f,0.2f }, 13, 24);
+	}
+	*/
+
+	m_NowFrame++;
+
+	if (m_NowFrame == m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
+	{
+		m_CurKey++;
+		m_NowFrame = 0;
+		if (m_CurKey >= m_aMotion[nNowMotion].nKeyNum)
+		{
+			m_CurKey = 0;
+			if (!m_aMotion[nNowMotion].bLoop)
+			{	
+				m_CurMotion = MOTION_DEFAULT;
+				/*
+				DoDashCheck();
+				if (nNowMotion >= MOTION_ATTACK1&&nNowMotion <= MOTION_ATTACK3)
+				{
+					m_nLastAttackNum = nNowMotion;
+					m_move.y -= fGravity;
+					m_bAttack = false;
+					m_bAttackDis = true;
+					if (m_nJumpCnt != MAX_JUMPCNT)
+					{
+						m_CurMotion = MOTION_JUMP;
+					}
+					DoDashCheck();
+				}
+	*/
+			}
+		}
+	}
+}
+
+//==========================================================================================
+//モーションをファイルから読み込み
+//==========================================================================================
+void CPlayerX::MotionDataLoad()
+{
+	char LoadData[128];
+	char ModelPath[128];
+
+	int nNumModel = 0;
+	FILE* pFile;
+	int nCnt = 0;
+
+	int nMotionCnt = 0;
+	int nKeySet = 0;
+	int nKey = 0;
+	D3DXVECTOR3 pos = { 0.0f,0.0f,0.0f };
+	D3DXVECTOR3 rot = { 0.0f,0.0f,0.0f };
+	int nFilenameCnt = 0;
+	int nParent = 0;
+	int nIndex = 0;
+	int nModelCnt = 0;
+
+	pFile = fopen("data\\TEXT\\motion.txt","r");
+	
+	if (pFile != nullptr)
+	{
+		while (1)
+		{
+			fscanf(pFile, "%s", LoadData);
+
+			if (!strcmp(LoadData, "END_SCRIPT"))	// ファイルの最後
+			{
+				fclose(pFile);
+				break;
+			}
+
+			if (LoadData[0] == '#')		// 文字飛ばし
+			{
+				continue;
+			}
+
+			//モデルの読み込み
+			if (!strcmp(LoadData, "NUM_MODEL"))
+			{
+				fscanf(pFile, "%s", LoadData);
+				fscanf(pFile, "%d", &m_ModelParts);
+			}
+			//モデルのファイル名読み込み
+			if (!strcmp(LoadData, "MODEL_FILENAME"))
+			{
+				fscanf(pFile, "%s", LoadData);
+
+				fscanf(pFile, "%s", ModelPath);
+
+				m_pModelFileName[nFilenameCnt] = ModelPath;
+
+				m_apModelParts[nFilenameCnt] = CModelParts::Create(pos, m_pModelFileName[nFilenameCnt]);
+
+				nFilenameCnt++;
+			}
+			//キャラクターの設定の読み込み開始
+			if (!strcmp(LoadData, "CHARACTERSET"))
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", LoadData);
+
+					if (!strcmp(LoadData, "END_CHARACTERSET"))//読み込みを終了
+					{
+						break;
+					}
+					else if (!strcmp(LoadData, "PARTSSET"))
+					{
+						while (1)
+						{
+							fscanf(pFile, "%s", LoadData);
+
+							if (LoadData[0] == '#')
+							{//文字飛ばし
+								fgets(LoadData, 100, pFile);
+								continue;
+							}
+
+							if (!strcmp(LoadData, "END_PARTSSET"))
+							{
+								//読み込みを終了
+								break;
+							}
+							//各パーツのモーションpos値
+							else if (!strcmp(LoadData, "INDEX"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%d", &nIndex);
+							}
+
+							//各パーツのモーションrot値
+							else if (!strcmp(LoadData, "PARENT"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%d", &nParent);
+							}
+							//各パーツのモーションpos値
+							else if (!strcmp(LoadData, "POS"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%f", &pos.x);
+								fscanf(pFile, "%f", &pos.y);
+								fscanf(pFile, "%f", &pos.z);
+							}
+
+							//各パーツのモーションrot値
+							else if (!strcmp(LoadData, "ROT"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%f", &rot.x);
+								fscanf(pFile, "%f", &rot.y);
+								fscanf(pFile, "%f", &rot.z);
+							}
+						}
+						m_apModelParts[nModelCnt]->SetPos(pos);
+						m_apModelParts[nModelCnt]->SetRot(rot);
+
+						m_apModelParts[nModelCnt]->SetDefault();
+						m_apModelParts[nModelCnt]->SetIndex(nIndex);
+						if (nParent != -1)
+						{
+							m_apModelParts[nModelCnt]->SetParent(m_apModelParts[nParent]);
+						}
+						nModelCnt++;
+					}
+				}
+			}
+			
+			//モーションの読み込み開始
+			if (!strcmp(LoadData, "MOTIONSET"))
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", LoadData);
+
+					if (!strcmp(LoadData, "END_MOTIONSET"))//読み込みを終了
+					{
+						break;
+					}
+					//ループの判断
+					else if (!strcmp(LoadData, "LOOP"))
+					{
+						fscanf(pFile, "%s", LoadData);
+						fscanf(pFile, "%d", &m_aMotion[nMotionCnt].bLoop);
+					}
+
+					//全体のキー数の読み込み
+					else  if (!strcmp(LoadData, "NUM_KEY"))
+					{
+						fscanf(pFile, "%s", LoadData);
+						fscanf(pFile, "%d", &m_aMotion[nMotionCnt].nKeyNum);
+					}
+
+					//各キーを読み込み
+					if (!strcmp(LoadData, "KEYSET"))
+					{
+						while (1)
+						{
+							fscanf(pFile, "%s", LoadData); 
+
+							if (LoadData[0] == '#')
+							{//文字飛ばし
+								fgets(LoadData, 100, pFile);
+								continue;
+							}
+
+							if (!strcmp(LoadData, "END_KEYSET"))
+							{
+								//読み込みを終了
+								break;
+							}
+
+							//現在のキーのフレーム数を読み込み
+							else if (!strcmp(LoadData, "FRAME"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%d", &m_aMotion[nMotionCnt].aKetSet[nKeySet].nFrame);
+							}
+
+							//現在のキーの読み込み
+							if (!strcmp(LoadData, "KEY"))
+							{
+								while (1)
+								{
+									fscanf(pFile, "%s", LoadData);
+
+									if (!strcmp(LoadData, "END_KEY"))
+									{
+										// 読み込みを終了
+										break;
+									}
+
+									//各パーツのモーションpos値
+									else if (!strcmp(LoadData, "POS"))
+									{
+										fscanf(pFile, "%s", LoadData);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.x);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.y);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.z);
+									}
+
+									//各パーツのモーションrot値
+									else if (!strcmp(LoadData, "ROT"))
+									{
+										fscanf(pFile, "%s", LoadData);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.x);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.y);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.z);
+									}
+								}
+								//キー番号を進める
+								nKey++;
+							}
+						}
+						//キー番号を初期化、キーセット番号を進める
+						nKey = 0;
+						nKeySet++;
+					}
+				}
+				//キーセット番号を初期化、モーション番号を進める
+				nKeySet = 0;
+				nMotionCnt++;
+			}
+		}
+	}
+	else
+	{
+		assert(pFile == nullptr);
+	}
+}
+
+bool CPlayerX::TestUseMeshCollision()
+{
+	// 地形判定
+	BOOL  bIsHit = false;
+	float fLandDistance;
+	DWORD dwHitIndex = 0U;
+	float fHitU;
+	float fHitV;
+	LPD3DXMESH pMesh = nullptr;
+	for (int j = 0; j < SET_PRIORITY; j++) {
+		for (int i = 0; i < MAX_OBJECT; i++) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
+					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
+					if (pTest != nullptr) {
+						pMesh = pTest->GetMesh();
+					}
+				}
+			}
+		}
+	}
+
+	D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	D3DXIntersect(pMesh, &m_pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+	
+	// ----- 接地時処理 -----
+	if (bIsHit)
+	{
+		//取得したレイ射出地点
+		m_pos.y += fLandDistance;
+		return true;
+	}
+	return false;
+}
