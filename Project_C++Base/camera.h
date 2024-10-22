@@ -19,6 +19,8 @@ public:
 	void Uninit();
 	void Update();
 	void SetCamera();
+	void SetCameraDistance(float distance) { m_camDistance = distance; };
+	float GetCameraDistance() { return m_camDistance; };
 	D3DXVECTOR3& GetPlayerPos();
 	void SetPlayerPos(D3DXVECTOR3 pos);
 	float GetRotZ();

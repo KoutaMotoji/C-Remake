@@ -144,6 +144,9 @@
     <ClCompile Include="reticle.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
+    <ClCompile Include="bullet3D.cpp">
+      <Filter>ソース ファイル\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -231,6 +234,9 @@
       <Filter>ヘッダー ファイル\3D\Model</Filter>
     </ClInclude>
     <ClInclude Include="reticle.h">
+      <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet3D.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
   </ItemGroup>

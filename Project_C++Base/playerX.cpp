@@ -7,6 +7,7 @@
 #include "playerX.h"
 
 #include "particle3D.h"
+#include "bullet3D.h"
 
 #include "game.h"
 #include "collision.h"
@@ -21,7 +22,7 @@ const int CPlayerX::MAX_STAMINA = 500;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false),m_bAttack(false), m_SecZrot(0.8f)
+CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false)
 {
 	for (int i = 0; i < MAX_MODELPARTS; i++)
 	{
@@ -44,7 +45,7 @@ void CPlayerX::Init()
 {
 
 	MotionInit();
-	m_pReticle = CReticle::Create({ 0.0f,0.0f,150.0f });
+	m_pReticle = CReticle::Create({ 0.0f,0.0f,500.0f });
 	CObject::SetType(TYPE_3D_PLAYER);
 }
 
@@ -65,32 +66,57 @@ void CPlayerX::Uninit()
 void CPlayerX::Update()
 {
 	D3DXVECTOR3 CameraPos;
-	//if (CManager::GetInstance()->GetCamera()->GetPlayerPos() != nullptr)
-	//{
-	//	CameraPos = CameraPosDigit();
-	//}
-	//else
-	//{
-	//	assert(!(CameraPos = CameraPosDigit()));
-	//}
+
 	ReticleController();
 	SetNextKey();
 	FloorCollision();
 	PMove(CameraPos.z);
-	if (!m_bAttack)
+	if (!m_bMotion)
 	{
 		if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_X) == true||
 			CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_R) == true)
 		{
-			SetNextMotion(MOTION_ATTACK1);
-			m_bAttack = true;
+			if (!m_bTransformed)
+			{
+				SetNextMotion(MOTION_TRANS_JET_TO_ROBO);
+			}
+			else
+			{
+				SetNextMotion(MOTION_TRANS_ROBO_TO_JET);
+			}
+			m_bTransformed = !m_bTransformed;
+			m_bMotion = true;
 		}
 	}
 	if (!TestUseMeshCollision())
 	{
 		m_pReticle->AddPos(m_move);
 	}
+	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_SHOULDER) == true && !m_bMotion)
+	{
+	
+		D3DXVECTOR3 digitRot = {0.0f,0.0f,0.0f};
+		D3DXVECTOR3 posMtx = { m_apModelParts[19]->GetWorldMatrix()._41, m_apModelParts[19]->GetWorldMatrix()._42 ,m_apModelParts[19]->GetWorldMatrix()._43 };
 
+		digitRot.x = (m_pReticle->GetPos().x - posMtx.x) * 0.2f;
+		digitRot.y = (m_pReticle->GetPos().y - posMtx.y) * 0.2f;
+		digitRot.z = (m_pReticle->GetPos().z - posMtx.z) * 0.2f;
+		D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
+
+		D3DXVec3Normalize(&SetdigitedRot, &digitRot);
+		
+		if (m_bTransformed)
+		{
+			SetNextMotion(MOTION_ROBO_SHOT);
+			m_bMotion = true;
+			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150,25,30);
+		}
+		else
+		{
+			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 0.0f,1.0f,0.2f,1.0f }, 120,10,20);
+
+		}
+	}
 	m_pos += m_move;
 	//移動量を更新
 	m_move.x += (0.0f - m_move.x) * 0.15f;
@@ -178,12 +204,12 @@ bool CPlayerX::PMove(float fCamRotZ)
 	if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true||
 		CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
 	{
-		SetNextMotion(MOTION_DASH);
+
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
 		CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
 	{
-		SetNextMotion(MOTION_DEFAULT);
+
 	}
 	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true||CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DLEFT) == true)
 	{//Aキーが押された
@@ -212,10 +238,7 @@ bool CPlayerX::PMove(float fCamRotZ)
 		}
 	}
 	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2,0.0f};
-	//if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_SPACE) == true || CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_A) == true)
-	//{
-	//	m_move.y += 2.25f;
-	//}
+
 	return true;
 }
 
@@ -430,7 +453,7 @@ void CPlayerX::SetNextKey()
 
 	m_NowFrame++;
 
-	if (m_NowFrame == m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
+	if (m_NowFrame >= m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
 	{
 		m_CurKey++;
 		m_NowFrame = 0;
@@ -439,14 +462,22 @@ void CPlayerX::SetNextKey()
 			m_CurKey = 0;
 			if (!m_aMotion[nNowMotion].bLoop)
 			{	
-				if (m_CurMotion == MOTION_ATTACK1)
+				if (m_CurMotion == MOTION_TRANS_JET_TO_ROBO||
+					m_CurMotion == MOTION_TRANS_ROBO_TO_JET||
+					m_CurMotion == MOTION_ROBO_SHOT)
 				{
-					m_bAttack = false;
+					m_bMotion = false;
+
+				}
+				if (m_bTransformed)
+				{
+					m_CurMotion = MOTION_ROBO_NUTO;
 				}
 				else
 				{
-					m_CurMotion = MOTION_DEFAULT;
+					m_CurMotion = MOTION_JET_NUTO;
 				}
+				
 				
 			}
 		}
@@ -740,7 +771,51 @@ void CPlayerX::ReticleController()
 D3DXVECTOR3 CPlayerX::CameraPosDigit()
 {
 	D3DXVECTOR3 CamPos = {0.0f,0.0f,0.0f};
+
 	CamPos.x = (m_pReticle->GetPos().x + m_pos.x) * 0.5f;
 	CamPos.y = (m_pReticle->GetPos().y + m_pos.y) * 0.5f;
+
 	return CamPos;
+}
+
+
+D3DXVECTOR3 CPlayerX::RifleMtxSet()
+{
+	D3DXMATRIX RifleMtx = m_apModelParts[19]->GetWorldMatrix();
+	D3DXMATRIX UseMtx;
+
+	D3DXVECTOR3 Addpos = {40.0f,0.0f,0.0f};
+	D3DXVECTOR3 Addrot = { 0.0f,0.0f,0.0f };
+
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans;
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&UseMtx);
+
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot,
+		Addrot.y,
+		Addrot.x,
+		Addrot.z);
+	D3DXMatrixMultiply(&UseMtx,
+		&UseMtx,
+		&mtxRot);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans,
+		Addpos.x,
+		Addpos.y,
+		Addpos.z);
+	D3DXMatrixMultiply(&UseMtx,
+		&UseMtx,
+		&mtxTrans);
+
+	//ワールド行列を親の行列に掛ける
+	D3DXMatrixMultiply(&UseMtx,
+		&UseMtx,
+		&RifleMtx);
+
+	D3DXVECTOR3 RiflePos = { UseMtx._41,UseMtx._42,UseMtx._43 };
+
+	return RiflePos;
 }

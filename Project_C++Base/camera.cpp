@@ -43,23 +43,23 @@ void CCamera::Update(void)
 #if _DEBUG
 
 
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickR(CJoypad::JOYSTICK_DLEFT) == true)
-	//{
-	//	m_fRotZ += 0.05f;
-	//	if (m_fRotZ > D3DX_PI)
-	//	{
-	//		m_fRotZ = -D3DX_PI;
-	//	}
-	//}
+	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_LEFTARROW) == true)
+	{
+		m_fRotZ += 0.05f;
+		if (m_fRotZ > D3DX_PI)
+		{
+			m_fRotZ = -D3DX_PI;
+		}
+	}
 
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickR(CJoypad::JOYSTICK_DRIGHT) == true)
-	//{
-	//	m_fRotZ -= 0.05f;
-	//	if (m_fRotZ < -1 * D3DX_PI)
-	//	{
-	//		m_fRotZ = D3DX_PI;
-	//	}
-	//}
+	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_RIGHTARROW) == true)
+	{
+		m_fRotZ -= 0.05f;
+		if (m_fRotZ < -1 * D3DX_PI)
+		{
+			m_fRotZ = D3DX_PI;
+		}
+	}
 #endif // _DEBUG
 
 	float m_Dis = ( m_camDistance);

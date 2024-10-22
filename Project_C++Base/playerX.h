@@ -50,13 +50,7 @@ private:
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
 	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); };	//ダメージ加算、生存確認
-	void DoDashCheck() {
-		if (CManager::GetInstance()->GetJoypad()->GetJoyStickRepeat(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
-			CManager::GetInstance()->GetJoypad()->GetJoyStickRepeat(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
-		{
-			SetNextMotion(MOTION_DASH);
-		}
-	};
+
 	//void GoalCheck();						//ゴールしているかチェック
 	void DeadCheck();
 	static const float MOVE_SPEED;			//移動スピードの設定
@@ -67,7 +61,6 @@ private:
 	static const int MAX_LIFE;
 	static const int MAX_STAMINA;
 	bool bStop;				//デバッグ用移動量無効
-	bool m_bAttack;			//攻撃中か否か
 
 
 	CModelParts* m_apModelParts[MAX_MODELPARTS];
@@ -108,20 +101,22 @@ private:
 	void SetNextKey();
 	enum
 	{
-		MOTION_DEFAULT,
-		MOTION_DASH,
-		MOTION_ATTACK1,
-		MOTION_ATTACK2,
-		MOTION_ATTACK3,
-		MOTION_RUSH,
-		MOTION_JUMP
+		MOTION_JET_NUTO = 0,
+		MOTION_JET_NOMAL,
+		MOTION_TRANS_JET_TO_ROBO,
+		MOTION_ROBO_NUTO,
+		MOTION_TRANS_ROBO_TO_JET,
+		MOTION_ROBO_SHOT,
 	};
 	LPD3DXMESH m_pMesh;
 
+	bool m_bMotion;
+	bool m_bTransformed;
 	bool TestUseMeshCollision();
 	CReticle* m_pReticle;
 	void ReticleController();
 	D3DXVECTOR3 CameraPosDigit();
+	D3DXVECTOR3 RifleMtxSet();
 };
 
 #endif
