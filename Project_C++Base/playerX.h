@@ -117,6 +117,8 @@ private:
 	void ReticleController();
 	D3DXVECTOR3 CameraPosDigit();
 	D3DXVECTOR3 RifleMtxSet();
+	bool m_bDamaged;
+	bool MeshObstacle();
 };
 
 #endif

@@ -10,7 +10,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CParticle3D::CParticle3D()
+CParticle3D::CParticle3D():m_bSizeDown(true)
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
@@ -47,8 +47,11 @@ void CParticle3D::Uninit()
 //==========================================================================================
 void CParticle3D::Update()
 {
-	CBillboard::AddScale(-m_MinutSize);
-	D3DXVECTOR3 scale = CBillboard::GetScale();
+	if (m_bSizeDown)
+	{
+		CBillboard::AddScale(-m_MinutSize);
+	}
+
 	if (m_nLifeTime > 0)
 	{
 		m_nLifeTime--;
@@ -97,7 +100,7 @@ void CParticle3D::Draw()
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CParticle3D* CParticle3D::Create(D3DXVECTOR3 pos, D3DXCOLOR col, float Radius,int LifeTime)
+CParticle3D* CParticle3D::Create(D3DXVECTOR3 pos, D3DXCOLOR col, float Radius,int LifeTime,bool bSizeDown)
 {
 	CParticle3D* particle = new CParticle3D;
 
@@ -106,5 +109,6 @@ CParticle3D* CParticle3D::Create(D3DXVECTOR3 pos, D3DXCOLOR col, float Radius,in
 	particle->m_nLifeTime = LifeTime;
 	float f = (1.0f / LifeTime);
 	particle->m_MinutSize = f;
+	particle->m_bSizeDown = bSizeDown;
 	return particle;
 }

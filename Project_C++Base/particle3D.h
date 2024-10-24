@@ -19,10 +19,11 @@ public:
 	void Uninit()override;		//終了
 	void Update()override;		//更新
 	void Draw()override;		//描画
-	static CParticle3D* Create(D3DXVECTOR3 pos,D3DXCOLOR col,float Radius,int LifeTime);
+	static CParticle3D* Create(D3DXVECTOR3 pos,D3DXCOLOR col,float Radius,int LifeTime,bool bSizeDown);
 private:
 	int m_nLifeTime;		//消えるまでの時間
 	float m_MinutSize;		//毎秒減算するサイズ
+	bool m_bSizeDown;
 };
 
 #endif

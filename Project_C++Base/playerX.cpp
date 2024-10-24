@@ -22,7 +22,7 @@ const int CPlayerX::MAX_STAMINA = 500;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false)
+CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false)
 {
 	for (int i = 0; i < MAX_MODELPARTS; i++)
 	{
@@ -113,9 +113,13 @@ void CPlayerX::Update()
 		}
 		else
 		{
-			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 0.0f,1.0f,0.2f,1.0f }, 120,10,20);
+			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 0.0f,1.0f,0.2f,1.0f }, 120,5,22);
 
 		}
+	}
+	if (CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_RIGHT_SHOULDER) == true)
+	{
+		m_move.y -= 5.0f;
 	}
 	m_pos += m_move;
 	//移動量を更新
@@ -237,7 +241,7 @@ bool CPlayerX::PMove(float fCamRotZ)
 			m_rot.z += (m_SecZrot / 10);
 		}
 	}
-	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2,0.0f};
+	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, 0.0f, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2};
 
 	return true;
 }
@@ -248,27 +252,25 @@ bool CPlayerX::PMove(float fCamRotZ)
 //==========================================================================================
 void CPlayerX::FloorCollision()
 {
-	
-
-	if (m_pos.y <= -500)
+	if (m_pos.y < -500)
 	{
-		m_pos.y -= m_move.y;
-		m_pReticle->AddPos(-m_move);
+		m_pos.y = -500;
+		//m_pReticle->AddPos(-m_move);
 	}
 	else if (m_pos.y > 500)
 	{
-		m_pos.y -= m_move.y;
-		m_pReticle->AddPos(-m_move);
+		m_pos.y = 500;
+		//m_pReticle->AddPos(-m_move);
 	}
-	if (m_pos.x <= -500)
+	if (m_pos.x < -700)
 	{
-		m_pos.x -= m_move.x;
-		m_pReticle->AddPos(-m_move);
+		m_pos.x = -700;
+		//m_pReticle->AddPos(-m_move);
 	}
-	else if (m_pos.x > 500)
+	else if (m_pos.x > 700)
 	{
-		m_pos.x -= m_move.x;
-		m_pReticle->AddPos(-m_move);
+		m_pos.x = 700;
+		//m_pReticle->AddPos(-m_move);
 	}
 
 }
@@ -753,7 +755,7 @@ bool CPlayerX::TestUseMeshCollision()
 	if (bIsHit)
 	{
 		//取得したレイ射出地点
-		m_pos.y += fLandDistance;
+		m_pos.y += fLandDistance - m_move.y;
 
 		return true;
 	}
@@ -774,7 +776,7 @@ D3DXVECTOR3 CPlayerX::CameraPosDigit()
 
 	CamPos.x = (m_pReticle->GetPos().x + m_pos.x) * 0.5f;
 	CamPos.y = (m_pReticle->GetPos().y + m_pos.y) * 0.5f;
-
+	CamPos.z = m_pos.z;
 	return CamPos;
 }
 
@@ -784,7 +786,7 @@ D3DXVECTOR3 CPlayerX::RifleMtxSet()
 	D3DXMATRIX RifleMtx = m_apModelParts[19]->GetWorldMatrix();
 	D3DXMATRIX UseMtx;
 
-	D3DXVECTOR3 Addpos = {40.0f,0.0f,0.0f};
+	D3DXVECTOR3 Addpos = {40.0f,0.0f,-4.5f};
 	D3DXVECTOR3 Addrot = { 0.0f,0.0f,0.0f };
 
 	//計算用マトリックス

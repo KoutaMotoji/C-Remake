@@ -147,6 +147,9 @@
     <ClCompile Include="bullet3D.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
+    <ClCompile Include="eff_explosion.cpp">
+      <Filter>ソース ファイル\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -238,6 +241,9 @@
     </ClInclude>
     <ClInclude Include="bullet3D.h">
       <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="eff_explosion.h">
+      <Filter>ヘッダー ファイル\2D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

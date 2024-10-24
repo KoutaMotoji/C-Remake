@@ -1,28 +1,25 @@
 //===============================================================================
 //
-//  C++使った2D(enemy_basic.cpp)
+//  C++使った2D(watermelon.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "test_meshCollision.h"
-#include "playerX.h"
-
+#include "eff_explosion.h"
 #include "manager.h"
-#include "game.h"
-
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTestMeshCollision::CTestMeshCollision() 
+CEffExplosion::CEffExplosion()
 {
-
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\bomb000.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 8,2 });
 }
 
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CTestMeshCollision::~CTestMeshCollision()
+CEffExplosion::~CEffExplosion()
 {
 
 }
@@ -30,46 +27,72 @@ CTestMeshCollision::~CTestMeshCollision()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CTestMeshCollision::Init()
+void CEffExplosion::Init()
 {
-	CObject::SetType(TYPE_3D_MESHOBJECT);
-	CObjectX::Init();
+	CObject::SetType(TYPE_BILLBOARD);
+	CBillboard::Init();
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CTestMeshCollision::Uninit()
+void CEffExplosion::Uninit()
 {
-	CObjectX::Uninit();
+	CBillboard::Uninit();
 }
 
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CTestMeshCollision::Update()
+void CEffExplosion::Update()
 {
-	CObjectX::Update();
+	if (m_nTime > 2)
+	{
+		D3DXVECTOR2 Anim = CBillboard::GetAnim();
+
+		m_nTime = 0;
+
+		if (Anim.x >= 7)
+		{
+			CBillboard::AddAnim({ -8,1 });
+		}
+		if (Anim.y >= 1 && Anim.x >= 7)
+		{
+			Release();
+			return;
+		}
+		if(Anim.x < 8&&
+			Anim.y <= 1)
+		{
+			CBillboard::AddAnim({ 1,0 });
+		}
+		Anim = Anim;
+	}
+	else
+	{
+		m_nTime++;
+	}
+	CBillboard::Update();
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CTestMeshCollision::Draw()
+void CEffExplosion::Draw()
 {
-	CObjectX::Draw();
+	CBillboard::Draw();
 }
 
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CTestMeshCollision* CTestMeshCollision::Create(D3DXVECTOR3 pos)
+CEffExplosion* CEffExplosion::Create(D3DXVECTOR3 pos)
 {
-	CTestMeshCollision* enemy = new CTestMeshCollision;
-	enemy->BindModel("data\\MODEL\\FIeld1416138785.x");
-	enemy->SetModelParam(pos);
-	enemy->Init();
+	CEffExplosion* Effect = new CEffExplosion;
 
-	return enemy;
+	Effect->SetPolygonParam(pos, 40.0f, 40.0f);
+	Effect->Init();
+	Effect->m_nTime = 0;
+	return Effect;
 }
 

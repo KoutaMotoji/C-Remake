@@ -122,16 +122,16 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
-	//フォグの設定
-	m_D3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);		//範囲指定に設定
-	m_D3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
-	m_D3DDevice->SetRenderState(D3DRS_FOGCOLOR, D3DXCOLOR(1.0f,1.0f,1.0f,0.5f));
+	////フォグの設定
+	//m_D3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);		//範囲指定に設定
+	//m_D3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
+	//m_D3DDevice->SetRenderState(D3DRS_FOGCOLOR, D3DXCOLOR(1.0f,1.0f,1.0f,0.5f));
 
-	//範囲指定の設定
-	m_fFogStartPos = 800.0f;
-	m_fFogEndPos = 3000.0f;
-	m_D3DDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&m_fFogStartPos));
-	m_D3DDevice->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&m_fFogEndPos));
+	////範囲指定の設定
+	//m_fFogStartPos = 800.0f;
+	//m_fFogEndPos = 3000.0f;
+	//m_D3DDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&m_fFogStartPos));
+	//m_D3DDevice->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&m_fFogEndPos));
 
 	return S_OK;
 }

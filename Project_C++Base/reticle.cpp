@@ -68,6 +68,9 @@ void CReticle::Draw()
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
+	////Zアルファ
+	//pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+	//pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	CBillboard::Draw();
 
@@ -75,6 +78,11 @@ void CReticle::Draw()
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	////Zアルファ
+	//pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	//pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	//pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 //==========================================================================================

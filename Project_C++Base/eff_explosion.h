@@ -4,30 +4,24 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#ifndef _BULLET3D_H_
-#define _BULLET3D_H_
+#ifndef _EFF_EXPLOSION_H_
+#define _EFF_EXPLOSION_H_
 
 #include "main.h"
 #include "billboard.h"
 
-class CBullet3D :public CBillboard
+class CEffExplosion :public CBillboard
 {
 public:
-	CBullet3D();				//コンストラクタ
-	~CBullet3D()override;		//デストラクタ
+	CEffExplosion();				//コンストラクタ
+	~CEffExplosion()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了
 	void Update()override;		//更新
 	void Draw()override;		//描画
-	static CBullet3D* Create(D3DXVECTOR3 pos,D3DXVECTOR3 move, D3DXCOLOR col,int nLife,float Radius,float EffectSize);
+	static CEffExplosion* Create(D3DXVECTOR3 pos);
 private:
-	float Poly_Size;
-	float m_EffectSize;
-	D3DXVECTOR3 m_move;
-	D3DXCOLOR m_col;
-	int m_nLife;
-	
-	bool MeshCollision();
+	int m_nTime;
 };
 
 #endif

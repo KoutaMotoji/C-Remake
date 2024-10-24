@@ -6,6 +6,8 @@
 //===============================================================================
 #include "bullet3D.h"
 #include "particle3D.h"
+#include "test_meshCollision.h"
+#include "eff_explosion.h"
 
 #include "manager.h"
 
@@ -53,7 +55,13 @@ void CBullet3D::Update()
 	if (m_nLife > 0)
 	{
 		CBillboard::AddPos(m_move);
-		CParticle3D::Create(CBillboard::GetPos(), m_col, Poly_Size, m_EffectSize);
+		CParticle3D::Create(CBillboard::GetPos(), m_col, Poly_Size, m_EffectSize,false);
+		if (MeshCollision())
+		{
+			CEffExplosion::Create(CBillboard::GetPos());
+			CObject::Release();
+			return;
+		}
 		m_nLife--;
 	}
 	else
@@ -106,4 +114,48 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 	bullet->Poly_Size = Radius;
 	bullet->m_EffectSize = EffectSize;
 	return bullet;
+}
+
+//==========================================================================================
+//é©ñ≈ìñÇΩÇËîªíËèàóù
+//==========================================================================================
+bool CBullet3D::MeshCollision()
+{
+	// ínå`îªíË
+	BOOL  bIsHit = false;
+	float fLandDistance;
+	DWORD dwHitIndex = 0U;
+	float fHitU;
+	float fHitV;
+	LPD3DXMESH pMesh = nullptr;
+	for (int j = 0; j < SET_PRIORITY; j++) {
+		for (int i = 0; i < MAX_OBJECT; i++) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
+					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
+					if (pTest != nullptr) {
+						pMesh = pTest->GetMesh();
+					}
+				}
+			}
+		}
+	}
+	
+	D3DXVECTOR3 dir = {0.0f,0.0f,0.0f};
+	D3DXVECTOR3 pos = CBillboard::GetPos();
+	D3DXVec3Normalize(&dir, &m_move);
+
+	D3DXIntersect(pMesh, &pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+	// ----- ê⁄ínéûèàóù -----
+	if (bIsHit)
+	{
+		if (fLandDistance <= 10)
+		{
+			return true;
+		}
+	}
+	return false;
 }
