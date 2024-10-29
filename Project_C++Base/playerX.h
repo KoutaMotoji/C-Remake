@@ -10,7 +10,6 @@
 #include "main.h"
 #include "object.h"
 #include "modelparts.h"
-#include "test_meshCollision.h" 
 #include "reticle.h"
 
 #include "manager.h"
@@ -40,8 +39,8 @@ public:
 
 	D3DXVECTOR3 GetPos() { return m_pos; };
 private:
-	D3DXVECTOR3 m_pos,m_rot,m_size;
-	D3DXVECTOR3 m_move;				//慣性
+	D3DXVECTOR3 m_pos,m_rot,m_size;	//座標・回転・大きさ
+	D3DXVECTOR3 m_move;				//移動量
 	D3DXVECTOR3 m_OldPos;			//過去の位置
 	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
 	D3DXMATRIX m_mtxWeaponWorld;	//武器のワールドマトリックス
@@ -118,7 +117,14 @@ private:
 	D3DXVECTOR3 CameraPosDigit();
 	D3DXVECTOR3 RifleMtxSet();
 	bool m_bDamaged;
+	int m_DamageTime;
 	bool MeshObstacle();
+
+	//=====================			クオータニオン用		====================================
+	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)
+	D3DXQUATERNION m_quat;		//クオータニオン
+	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
+	float m_fValueRot;			//回転量
 };
 
 #endif

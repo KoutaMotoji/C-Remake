@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "manager.h"
 #include "playerX.h"
+#include <random>
 
 CCamera::CCamera():m_nShakeFlame(0),m_fShalePower(0.0f)
 {
@@ -72,7 +73,7 @@ void CCamera::Update(void)
 	m_posR.y = m_PlayerPos.y + 50.0f;
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_6) == true)
 	{
-		SetShake(60, 30);
+		SetShake(60, 20);
 	}
 }
 
@@ -83,9 +84,17 @@ void CCamera::SetCamera(void)
 	if (m_nShakeFlame > 0)
 	{
 		m_nShakeFlame--;
-		float randShake = (rand() % ((200) + (int)m_fShalePower * 100)) / 10;
+		//乱数生成
+		std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+		std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+		std::uniform_int_distribution<> rand_x(-m_fShalePower, m_fShalePower);     // [-1200, 1200] 範囲の一様乱数
+
+		float randShake = (rand_x(mt) );
 		adjust.x = randShake;
 		adjust.z = randShake;
+
+		m_posV += adjust;
+		m_posR += adjust;
 	}
 	LPDIRECT3DDEVICE9 pDevice;
 	//デバイスの取得

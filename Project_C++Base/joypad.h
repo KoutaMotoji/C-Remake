@@ -24,14 +24,15 @@ public:
 		JOYPAD_RIGHT_THUMB,
 		JOYPAD_LEFT_SHOULDER,
 		JOYPAD_RIGHT_SHOULDER,
-		JOYPAD_7,
-		JOYPAD_8,
+		JOYPAD_RIGHT_TRIGGER,
+		JOYPAD_LEFT_TRIGGER,
 		JOYPAD_A,
 		JOYPAD_B,
 		JOYPAD_X,
 		JOYPAD_Y,
 		JOYPAD_MAX
 	}JOYKEY;
+
 	typedef enum
 	{
 		JOYSTICK_DLEFT = 0,
@@ -39,12 +40,14 @@ public:
 		JOYSTICK_DUP,
 		JOYSTICK_DDOWN
 	}JOYSTICK;
+
 	CJoypad();
 	~CJoypad();
 	HRESULT Init(HINSTANCE hInstace, HWND hWnd)override;
 
 	void Uninit()override;
 	void Update()override;
+
 	bool GetPress(JOYKEY key);		//キーのプレス情報
 	bool GetTrigger(JOYKEY key);	//キーのトリガー情報
 	bool GetRelease(JOYKEY key);	//キーのリリース情報

@@ -8,8 +8,12 @@
 #include "manager.h"
 #include "fade.h"
 #include "object.h"
+#include "sky_bg.h"
+#include "mesh_cylinder.h"
+
 #include "game.h"
 #include "test_meshCollision.h"
+#include "test_obstacle.h"
 
 #include "playerX.h"
 
@@ -42,7 +46,12 @@ HRESULT CGame::Init()
 {
 	CScene::Init();
 	CPlayerX::Create({ 0.0f,0.0f,0.0f });
+	CSkyBg::Create({ 0.0f,5000.0f,5000 });
+	CMeshCylinder::Create({ 0.0f,0.0f,0.0f });
 	CTestMeshCollision::Create({ 0.0f,0.0f,0.0f });
+	CTestObstacle::Create({-100.0f,0.0f,500.0f}, 0);
+	CTestObstacle::Create({ 200.0f,0.0f,200.0f }, 1);
+
 	LoadMapData();
 	SetBGObject();
 	return S_OK;

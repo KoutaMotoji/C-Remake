@@ -19,6 +19,8 @@ public:
 	HRESULT Init();
 	void Uninit();
 	void Draw();
+	void Draw(float alpha);
+
 	static CModelParts* Create(D3DXVECTOR3 pos,const char* apFileName);
 	void SetParent(CModelParts* pParent);
 
@@ -33,6 +35,7 @@ public:
 	D3DXVECTOR3& GetSize() { return m_size; };			//モデル拡縮取得
 	void SetSize(D3DXVECTOR3 size) { m_size = size; };	//モデル拡縮変更
 	void SetDefault() { m_defaultPos = m_pos; m_defaultRot = m_rot; };	//位置・回転初期値設定
+
 	int GetIndex() { return m_nIdx; };					//インデックス番号取得
 	void SetIndex(int Idx) { m_nIdx = Idx; };			//インデックス番号設定
 	D3DXVECTOR3 GetDefaultPos() { return m_defaultPos; };	//位置初期値取得

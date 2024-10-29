@@ -14,9 +14,12 @@
 
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+void ToggleFullscreen(HWND hWnd);// ウィンドウをフルスクリーンにする方法
 
 //グローバル変数
 bool g_bExit = false;
+bool g_isFullscreen = false;// ウィンドウを切り替えるためのフラグ
+RECT g_windowRect;// ウィンドウを切り替えるための変数
 int g_nCountFPS;
 //============================================
 //メイン関数
@@ -169,8 +172,12 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(hWnd);
 			}
 			break;
+		case VK_F11:
+			ToggleFullscreen(hWnd);
+			break;
 		}
 		break;
+
 	case WM_LBUTTONDOWN:
 		//ウィンドウにフォーカスを合わせる
 		SetFocus(hWnd);
@@ -188,4 +195,32 @@ void SetExitGame(void)
 	g_bExit = true;
 }
 
+//************************************************
+// ウィンドウをフルスクリーンに変える処理
+//************************************************
+void ToggleFullscreen(HWND hWnd)
+{
+	// 現在のウィンドウスタイルを取得
+	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
 
+	if (g_isFullscreen)
+	{
+		// ウィンドウモードに切り替え
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, g_windowRect.left, g_windowRect.top,
+			g_windowRect.right - g_windowRect.left, g_windowRect.bottom - g_windowRect.top,
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_NORMAL);
+	}
+	else
+	{
+		// フルスクリーンモードに切り替え
+		GetWindowRect(hWnd, &g_windowRect);
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_MAXIMIZE);
+	}
+
+	g_isFullscreen = !g_isFullscreen;
+}

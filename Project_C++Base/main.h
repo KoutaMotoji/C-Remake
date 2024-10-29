@@ -53,5 +53,6 @@ typedef struct
 //void SetMode(MODE mode);
 //MODE GetMode(void);
 void SetExitGame(void);
+
 #endif 
 

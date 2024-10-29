@@ -81,27 +81,28 @@ void CJoypad::Update()
 		m_joyKeyStateRepeat.Gamepad.bLeftTrigger = OldLeftTrigger & LeftTrigger;
 		m_joyKeyStateRepeat.Gamepad.bRightTrigger = OldRightTrigger & RightTrigger;
 
-		m_joyKeyState = JoykeyState;
 
-		XINPUT_STATE state;
-		ZeroMemory(&state, sizeof(XINPUT_STATE));
+		//XINPUT_STATE state;
+		//ZeroMemory(&state, sizeof(XINPUT_STATE));
 		// 各スティックの入力値がデッドゾーン以下なら入力値を0にする
-		if ((state.Gamepad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
-			state.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
-			(state.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
-				state.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+		if ((JoykeyState.Gamepad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+			JoykeyState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
+			(JoykeyState.Gamepad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+				JoykeyState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 		{//左スティックがデッドゾーン内なので数値を無効
-			state.Gamepad.sThumbLX = 0;
-			state.Gamepad.sThumbLY = 0;
+			JoykeyState.Gamepad.sThumbLX = 0;
+			JoykeyState.Gamepad.sThumbLY = 0;
 		}
-		if ((state.Gamepad.sThumbRX <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
-			state.Gamepad.sThumbRX >  -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) &&
-			(state.Gamepad.sThumbRY <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
-				state.Gamepad.sThumbRY >  -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+
+		if ((JoykeyState.Gamepad.sThumbRX <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
+			JoykeyState.Gamepad.sThumbRX >  -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE) &&
+			(JoykeyState.Gamepad.sThumbRY <  XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
+				JoykeyState.Gamepad.sThumbRY >  -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
 		{//右スティックがデッドゾーン内なので数値を無効
-			state.Gamepad.sThumbRX = 0;
-			state.Gamepad.sThumbRY = 0;
+			JoykeyState.Gamepad.sThumbRX = 0;
+			JoykeyState.Gamepad.sThumbRY = 0;
 		}
+		m_joyKeyState = JoykeyState;
 
 	}
 }
@@ -112,11 +113,11 @@ void CJoypad::Update()
 bool CJoypad::GetPress(JOYKEY key)
 {
 	//もし入力されたボタンがLT・RTならボタン入力に変換する
-	if (key == JOYPAD_LEFT_SHOULDER)
+	if (key == JOYPAD_LEFT_TRIGGER)
 	{
 		return (m_joyKeyState.Gamepad.bLeftTrigger & key) ? true : false;
 	}
-	else if (key == JOYPAD_RIGHT_SHOULDER)
+	else if (key == JOYPAD_RIGHT_TRIGGER)
 	{
 		return (m_joyKeyState.Gamepad.bRightTrigger & key) ? true : false;
 	}
@@ -132,11 +133,11 @@ bool CJoypad::GetPress(JOYKEY key)
 bool CJoypad::GetTrigger(JOYKEY key)
 {
 	//もし入力されたボタンがLT・RTならボタン入力に変換する
-	if (key == JOYPAD_LEFT_SHOULDER)
+	if (key == JOYPAD_LEFT_TRIGGER)
 	{
 		return (m_joyKeyStateTrigger.Gamepad.bLeftTrigger & key) ? true : false;
 	}
-	else if (key == JOYPAD_RIGHT_SHOULDER)
+	else if (key == JOYPAD_RIGHT_TRIGGER)
 	{
 		return (m_joyKeyStateTrigger.Gamepad.bRightTrigger & key) ? true : false;
 	}
@@ -152,11 +153,11 @@ bool CJoypad::GetTrigger(JOYKEY key)
 bool CJoypad::GetRelease(JOYKEY key)
 {
 	//もし入力されたボタンがLT・RTならボタン入力に変換する
-	if (key == JOYPAD_LEFT_SHOULDER)
+	if (key == JOYPAD_LEFT_TRIGGER)
 	{
 		return (m_joyKeyStateRelease.Gamepad.bLeftTrigger & key) ? true : false;
 	}
-	else if (key == JOYPAD_RIGHT_SHOULDER)
+	else if (key == JOYPAD_RIGHT_TRIGGER)
 	{
 		return (m_joyKeyStateRelease.Gamepad.bRightTrigger & key) ? true : false;
 	}
@@ -173,11 +174,11 @@ bool CJoypad::GetRepeat(JOYKEY key)
 {
 
 	//もし入力されたボタンがLT・RTならボタン入力に変換する
-	if (key == JOYPAD_LEFT_SHOULDER)
+	if (key == JOYPAD_LEFT_TRIGGER)
 	{
 		return (m_joyKeyStateRepeat.Gamepad.bLeftTrigger & key) ? true : false;
 	}
-	else if (key == JOYPAD_RIGHT_SHOULDER)
+	else if (key == JOYPAD_RIGHT_TRIGGER)
 	{
 		return (m_joyKeyStateRepeat.Gamepad.bRightTrigger & key) ? true : false;
 	}

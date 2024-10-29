@@ -7,6 +7,7 @@
 #include "bullet3D.h"
 #include "particle3D.h"
 #include "test_meshCollision.h"
+#include "test_obstacle.h"
 #include "eff_explosion.h"
 
 #include "manager.h"
@@ -56,6 +57,7 @@ void CBullet3D::Update()
 	{
 		CBillboard::AddPos(m_move);
 		CParticle3D::Create(CBillboard::GetPos(), m_col, Poly_Size, m_EffectSize,false);
+		CParticle3D::Create(CBillboard::GetPos(), {1.0f,1.0f,1.0f,0.8f}, Poly_Size * 0.5f, m_EffectSize, false);
 		if (MeshCollision())
 		{
 			CEffExplosion::Create(CBillboard::GetPos());
@@ -137,25 +139,51 @@ bool CBullet3D::MeshCollision()
 					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
 					if (pTest != nullptr) {
 						pMesh = pTest->GetMesh();
+
+						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
+						D3DXVECTOR3 pos = CBillboard::GetPos();
+						D3DXVec3Normalize(&dir, &m_move);
+
+						D3DXIntersect(pMesh, &pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+						// ----- ê⁄ínéûèàóù -----
+						if (bIsHit)
+						{
+							if (fLandDistance <= 10)
+							{
+								return true;
+							}
+						}
+					}
+				}
+				else if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
+
+					CTestObstacle* pTest = dynamic_cast<CTestObstacle*>(pObj);
+					if (pTest != nullptr) {
+						LPD3DXMESH pMesh = nullptr;
+
+						pMesh = pTest->GetMesh();
+						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
+						D3DXVECTOR3 pos = CBillboard::GetPos();
+						D3DXVec3Normalize(&dir, &m_move);
+
+						D3DXVECTOR3 objpos = pos - pTest->GetPos();
+						D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+						// ----- ê⁄ínéûèàóù -----
+						if (bIsHit)
+						{
+							if (fLandDistance <= 20)
+							{
+								return true;
+							}
+						}
 					}
 				}
 			}
 		}
 	}
 	
-	D3DXVECTOR3 dir = {0.0f,0.0f,0.0f};
-	D3DXVECTOR3 pos = CBillboard::GetPos();
-	D3DXVec3Normalize(&dir, &m_move);
 
-	D3DXIntersect(pMesh, &pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
-
-	// ----- ê⁄ínéûèàóù -----
-	if (bIsHit)
-	{
-		if (fLandDistance <= 10)
-		{
-			return true;
-		}
-	}
 	return false;
 }

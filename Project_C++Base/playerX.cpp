@@ -8,7 +8,8 @@
 
 #include "particle3D.h"
 #include "bullet3D.h"
-
+#include "test_meshCollision.h" 
+#include "test_obstacle.h"
 #include "game.h"
 #include "collision.h"
 
@@ -22,7 +23,7 @@ const int CPlayerX::MAX_STAMINA = 500;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false)
+CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0)
 {
 	for (int i = 0; i < MAX_MODELPARTS; i++)
 	{
@@ -88,11 +89,30 @@ void CPlayerX::Update()
 			m_bMotion = true;
 		}
 	}
+	
+	if (MeshObstacle() &&
+		!m_bDamaged)
+	{
+		m_bDamaged = true;
+		CManager::GetInstance()->GetCamera()->SetShake(20, 30);
+		m_DamageTime = 0;
+	}
 	if (!TestUseMeshCollision())
 	{
 		m_pReticle->AddPos(m_move);
 	}
-	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_SHOULDER) == true && !m_bMotion)
+	if (m_bDamaged)
+	{
+		m_DamageTime++;
+		m_rot.x += 0.2f;
+		m_rot.y += 0.3f;
+		if (m_DamageTime > 100)
+		{
+			m_rot = {0.0f,D3DX_PI,0.0f};
+			m_bDamaged = false;
+		}
+	}
+	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
 	{
 	
 		D3DXVECTOR3 digitRot = {0.0f,0.0f,0.0f};
@@ -109,17 +129,21 @@ void CPlayerX::Update()
 		{
 			SetNextMotion(MOTION_ROBO_SHOT);
 			m_bMotion = true;
-			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150,25,30);
+			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150,25,15);
 		}
 		else
 		{
-			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 0.0f,1.0f,0.2f,1.0f }, 120,5,22);
+			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 0.0f,1.0f,0.2f,1.0f }, 120,5,18);
 
 		}
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_RIGHT_SHOULDER) == true)
 	{
-		m_move.y -= 5.0f;
+		m_move.z -= 5.0f;
+	}
+	else if (CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_RIGHT_TRIGGER) == true)
+	{
+		m_move.z += 5.0f;
 	}
 	m_pos += m_move;
 	//移動量を更新
@@ -145,6 +169,18 @@ void CPlayerX::Draw()
 	//計算用マトリックス
 	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
 
+	//クオータニオンを作成
+	D3DXQuaternionRotationAxis(
+		&m_quat,
+		&m_vecAxis,
+		m_fValueRot);
+
+	//クオータニオンから回転マトリックスを作成
+	D3DXMatrixRotationQuaternion(
+		&mtxRot,
+		&m_quat);
+	m_mtxRot = mtxRot;		//回転マトリックスを保存
+
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -164,6 +200,9 @@ void CPlayerX::Draw()
 		m_rot.z);
 	D3DXMatrixMultiply(&m_mtxWorld,
 		&m_mtxWorld,
+		&m_mtxRot);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
 		&mtxRot);
 	//位置を反映
 	D3DXMatrixTranslation(&mtxTrans,
@@ -178,7 +217,14 @@ void CPlayerX::Draw()
 		&m_mtxWorld);
 	for (int i = 0; i < MAX_MODELPARTS; i++)
 	{
-		m_apModelParts[i]->Draw();
+		if (m_bDamaged)
+		{
+			m_apModelParts[i]->Draw(0.3f);
+		}
+		else
+		{
+			m_apModelParts[i]->Draw();
+		}
 	}
 }
 
@@ -204,6 +250,7 @@ CPlayerX* CPlayerX::Create(D3DXVECTOR3 pos)
 //==========================================================================================
 bool CPlayerX::PMove(float fCamRotZ)
 {
+	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2, 0.0f};
 
 	if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true||
 		CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
@@ -217,20 +264,20 @@ bool CPlayerX::PMove(float fCamRotZ)
 	}
 	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true||CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DLEFT) == true)
 	{//Aキーが押された
-		//位置を更新
-		if (m_rot.z <= m_SecZrot)
-		{
-			m_rot.z += (m_SecZrot / 10);
-		}
+
 	}
 	else if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_D) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DRIGHT) == true)
-	{//Aキーが押された
-		if (m_rot.z >= -m_SecZrot)
-		{
-			m_rot.z -= (m_SecZrot / 10);
-		}
+	{//Dキーが押された
+
 	}
-	if(abs(m_move.x) < 1.0f)
+	if (CManager::GetInstance()->GetJoypad()->GetJoyStickVecL() > 0)
+	{
+		m_vecAxis = { abs(m_move.y),abs(m_move.x),0.0f };
+		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
+
+		m_fValueRot = (2 * (m_move.x + m_move.y) * 10) / (120 * D3DX_PI);
+	}
+	if(abs(m_move.x) < 1.0f && !m_bDamaged)
 	{
 		if (m_rot.z >= 0)
 		{
@@ -241,7 +288,6 @@ bool CPlayerX::PMove(float fCamRotZ)
 			m_rot.z += (m_SecZrot / 10);
 		}
 	}
-	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, 0.0f, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2};
 
 	return true;
 }
@@ -255,22 +301,35 @@ void CPlayerX::FloorCollision()
 	if (m_pos.y < -500)
 	{
 		m_pos.y = -500;
-		//m_pReticle->AddPos(-m_move);
 	}
 	else if (m_pos.y > 500)
 	{
 		m_pos.y = 500;
-		//m_pReticle->AddPos(-m_move);
 	}
 	if (m_pos.x < -700)
 	{
 		m_pos.x = -700;
-		//m_pReticle->AddPos(-m_move);
 	}
 	else if (m_pos.x > 700)
 	{
 		m_pos.x = 700;
-		//m_pReticle->AddPos(-m_move);
+	}
+
+	if (m_pReticle->GetPos().y < -500)
+	{
+		m_pReticle->SetPos({ m_pReticle->GetPos().x, -500 ,m_pReticle->GetPos().z });
+	}
+	else if (m_pReticle->GetPos().y > 500)
+	{
+		m_pReticle->SetPos({ m_pReticle->GetPos().x, 500 ,m_pReticle->GetPos().z });
+	}
+	if (m_pReticle->GetPos().x < -700)
+	{
+		m_pReticle->SetPos({ -700, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
+	}
+	else if (m_pReticle->GetPos().x > 700)
+	{
+		m_pReticle->SetPos({ 700, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
 	}
 
 }
@@ -355,6 +414,7 @@ void CPlayerX::MotionInit()
 	m_CurMotion = 0;
 	m_CurKey = 0;
 	m_NowFrame = 0;
+
 }
 
 //==========================================================================================
@@ -365,6 +425,7 @@ void CPlayerX::SetNextMotion(int nNextMotionNum)
 	m_CurMotion = nNextMotionNum;
 	m_CurKey = 0;
 	m_NowFrame = 0;
+
 	SetNextKey();
 }
 //==========================================================================================
@@ -395,10 +456,10 @@ void CPlayerX::SetNextKey()
 
 	for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 	{
-		//現在のキーの情報
-		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;	
-		NowRot = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].rot;
-
+		//現在の向きと位置の情報
+		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;
+		NowRot = m_apModelParts[nCntParts]->GetRot();
+		
 		//次のキーの情報
 		NextPos = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].pos;
 		NextRot = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].rot;
@@ -439,19 +500,7 @@ void CPlayerX::SetNextKey()
 		m_apModelParts[nCntParts]->SetPos(DigitPos);
 		m_apModelParts[nCntParts]->SetRot(DigitRot);
 	}
-	/*
-	if (nNowMotion == MOTION_DASH)
-	{
-		D3DXVECTOR3 pos1 = { m_apModelParts[17]->GetWorldMatrix()._41,m_apModelParts[17]->GetWorldMatrix()._42,m_apModelParts[17]->GetWorldMatrix()._43 };
-		D3DXVECTOR3 pos2 = { m_apModelParts[18]->GetWorldMatrix()._41,m_apModelParts[18]->GetWorldMatrix()._42,m_apModelParts[18]->GetWorldMatrix()._43 };
 
-		CParticle3D::Create(pos1, { 0.0f,1.0f,0.0f,0.2f }, 15, 24);
-		CParticle3D::Create(pos1, { 0.4f,0.8f,0.8f,0.2f }, 13, 24);
-
-		CParticle3D::Create(pos2, { 0.0f,1.0f,0.0f,0.2f }, 15, 24);
-		CParticle3D::Create(pos2, { 0.4f,0.8f,0.8f,0.2f }, 13, 24);
-	}
-	*/
 
 	m_NowFrame++;
 
@@ -478,9 +527,7 @@ void CPlayerX::SetNextKey()
 				else
 				{
 					m_CurMotion = MOTION_JET_NUTO;
-				}
-				
-				
+				}			
 			}
 		}
 	}
@@ -722,57 +769,17 @@ void CPlayerX::MotionDataLoad()
 	}
 }
 
-//==============================　　メッシュ当たり判定テスト用　　=============================================================================
-bool CPlayerX::TestUseMeshCollision()
-{
-	// 地形判定
-	BOOL  bIsHit = false;
-	float fLandDistance;
-	DWORD dwHitIndex = 0U;
-	float fHitU;
-	float fHitV;
-	LPD3DXMESH pMesh = nullptr;
-	for (int j = 0; j < SET_PRIORITY; j++) {
-		for (int i = 0; i < MAX_OBJECT; i++) {
-			CObject* pObj = CObject::GetObjects(j, i);
-			if (pObj != nullptr) {
-				CObject::TYPE type = pObj->GetType();
-				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
-					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
-					if (pTest != nullptr) {
-						pMesh = pTest->GetMesh();
-					}
-				}
-			}
-		}
-	}
-
-	D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-	D3DXIntersect(pMesh, &m_pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
-	
-	// ----- 接地時処理 -----
-	if (bIsHit)
-	{
-		//取得したレイ射出地点
-		m_pos.y += fLandDistance - m_move.y;
-
-		return true;
-	}
-	return false;
-}
-
 void CPlayerX::ReticleController()
 {
 	D3DXVECTOR2 ReticleMove = CManager::GetInstance()->GetJoypad()->GetJoyStickVecR();
-
+	D3DXVec2Normalize(&ReticleMove, &ReticleMove);
 	m_pReticle->AddPos({ ReticleMove.x * 5,ReticleMove.y * 5,0.0f });
 }
 
 
 D3DXVECTOR3 CPlayerX::CameraPosDigit()
 {
-	D3DXVECTOR3 CamPos = {0.0f,0.0f,0.0f};
+	D3DXVECTOR3 CamPos = { 0.0f,0.0f,0.0f };
 
 	CamPos.x = (m_pReticle->GetPos().x + m_pos.x) * 0.5f;
 	CamPos.y = (m_pReticle->GetPos().y + m_pos.y) * 0.5f;
@@ -786,7 +793,7 @@ D3DXVECTOR3 CPlayerX::RifleMtxSet()
 	D3DXMATRIX RifleMtx = m_apModelParts[19]->GetWorldMatrix();
 	D3DXMATRIX UseMtx;
 
-	D3DXVECTOR3 Addpos = {40.0f,0.0f,-4.5f};
+	D3DXVECTOR3 Addpos = { 40.0f,0.0f,-4.5f };
 	D3DXVECTOR3 Addrot = { 0.0f,0.0f,0.0f };
 
 	//計算用マトリックス
@@ -821,3 +828,98 @@ D3DXVECTOR3 CPlayerX::RifleMtxSet()
 
 	return RiflePos;
 }
+
+//==============================　　メッシュ当たり判定テスト用　　=============================================================================
+bool CPlayerX::TestUseMeshCollision()
+{	//=============================		地形メッシュ判定		==========================================================================
+	// 地形判定
+	BOOL  bIsHit = false;
+	float fLandDistance;
+	DWORD dwHitIndex = 0U;
+	float fHitU;
+	float fHitV;
+	LPD3DXMESH pMesh = nullptr;
+	for (int j = 0; j < SET_PRIORITY; j++) {
+		for (int i = 0; i < MAX_OBJECT; i++) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
+					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
+					if (pTest != nullptr) {
+						pMesh = pTest->GetMesh();
+					}
+				}
+			}
+		}
+	}
+
+	D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	D3DXIntersect(pMesh, &m_pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+	
+	// ----- 接地時処理 -----
+	if (bIsHit)
+	{
+		if (m_bTransformed)
+		{
+			//取得したレイ射出地点
+			m_pos.y += fLandDistance - m_move.y + 45.0f;
+		}
+		else
+		{
+			//取得したレイ射出地点
+			m_pos.y += fLandDistance - m_move.y;
+		}
+
+
+		return true;
+	}
+	return false;
+}
+
+
+bool CPlayerX::MeshObstacle()
+{	//=============================		障害物メッシュ判定		==========================================================================
+	for (int j = 0; j < SET_PRIORITY; j++) {
+		for (int i = 0; i < MAX_OBJECT; i++) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
+
+					// 地形判定
+					BOOL  bIsHit = false;
+					float fLandDistance;
+					DWORD dwHitIndex = 0U;
+					float fHitU;
+					float fHitV;
+
+					CTestObstacle* pTest = dynamic_cast<CTestObstacle*>(pObj);
+					if (pTest != nullptr) {
+						LPD3DXMESH pMesh = nullptr;
+
+						pMesh = pTest->GetMesh();
+						D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+						D3DXVECTOR3 objpos = m_pos - pTest->GetPos();
+						D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+						// ----- 接地時処理 -----
+						if (bIsHit)
+						{
+							
+							if (fLandDistance< 10)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	return false;
+}
+
