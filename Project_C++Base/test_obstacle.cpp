@@ -70,11 +70,11 @@ CTestObstacle* CTestObstacle::Create(D3DXVECTOR3 pos,int Type)
 	CTestObstacle* enemy = new CTestObstacle;
 	if (Type == 0)
 	{
-		enemy->BindModel("data\\MODEL\\Gate.x");
+		enemy->BindModel("data\\MODEL\\gate000.x");
 	}
 	else
 	{
-		enemy->BindModel("data\\MODEL\\statue.x");
+		enemy->BindModel("data\\MODEL\\statue000.x");
 	}
 
 	enemy->SetModelParam(pos);

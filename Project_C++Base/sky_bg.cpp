@@ -30,7 +30,7 @@ CSkyBg::~CSkyBg()
 //==========================================================================================
 void CSkyBg::Init()
 {
-	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\sky_bg.png");
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\field.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
 
 	CObject::SetType(TYPE_3D_FIELD);
@@ -68,8 +68,8 @@ void CSkyBg::Draw()
 CSkyBg* CSkyBg::Create(D3DXVECTOR3 pos)
 {
 	CSkyBg* field = new CSkyBg;
-	field->SetPolygonParam(pos, 4500, 7500);
+	field->SetPolygonParam(pos, 15000, 15000);
 	field->Init();
-	field->SetRot({ -D3DX_PI * 0.5f,0.0f,0.0f });
+	field->SetRot({ 0.0f,0.0f,0.0f });
 	return field;
 }

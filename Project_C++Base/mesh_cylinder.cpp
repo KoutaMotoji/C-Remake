@@ -5,17 +5,18 @@
 //
 //===============================================================================
 #include "mesh_cylinder.h"
+
 #include "manager.h"
 
 //静的メンバ初期化
-const float CMeshCylinder::MAX_WIDTH = 700.0f;
-const float CMeshCylinder::MAX_HEIGHT = 600.0f;
-const int CMeshCylinder::MAX_VTX = 12;
-const int CMeshCylinder::MAX_INDEX = 14;
-
-const int CMeshCylinder::MAX_CORNER = 6;
+const float CMeshCylinder::MAX_WIDTH = 15000.0f;
+const float CMeshCylinder::MAX_HEIGHT = 7500.0f;
 
 
+const int CMeshCylinder::MAX_CORNER = 12;
+
+const int CMeshCylinder::MAX_VTX = MAX_CORNER * 2;
+const int CMeshCylinder::MAX_INDEX = MAX_VTX  + 2;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
@@ -45,7 +46,10 @@ void CMeshCylinder::Init()
 	CObject::SetType(TYPE_3D_FIELD);
 
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
-
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\sky_bg.png",
+		&m_apTexMeshCylinder);
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VTX,
 		D3DUSAGE_WRITEONLY,
@@ -69,9 +73,10 @@ void CMeshCylinder::Init()
 	for (int i = 0; i < 2; ++i)	{
 		for (int j = 0; j < MAX_CORNER; ++j)	{
 			float radian = (((float)j) / (float)MAX_CORNER);
-			pVtx[i + j].pos.x = m_pos.x + (cosf(radian  * 2 * D3DX_PI) * MAX_WIDTH);
-			pVtx[i + j].pos.z = m_pos.z + (sinf(radian  * 2 * D3DX_PI) * MAX_WIDTH);
-			pVtx[i + j].pos.y = m_pos.y + i * MAX_HEIGHT;
+			int nNum = ((i * MAX_CORNER) + j);
+			pVtx[nNum].pos.x = m_pos.x + (cosf(radian  * 2 * D3DX_PI) * MAX_WIDTH);
+			pVtx[nNum].pos.z = m_pos.z + (sinf(radian  * 2 * D3DX_PI) * MAX_WIDTH);
+			pVtx[nNum].pos.y = m_pos.y + i * -MAX_HEIGHT;
 		}
 	}
 	for (int i = 0; i < MAX_VTX; ++i)
@@ -80,23 +85,31 @@ void CMeshCylinder::Init()
 
 		pVtx[i].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 	}
+	for (int i = 0; i < 2; ++i)
+	{
+		for (int j = 0; j < MAX_CORNER; ++j) {
+			int nNum = ((i * MAX_CORNER) + j);
 
+			pVtx[nNum].tex = {
+				(float)(( 1.0f / (MAX_CORNER)) * j * 2),
+				(float)(1.0f * i)
+			};
+		}
+	}
 	m_pVtxBuffMeshCylinder->Unlock();
 
 	int nLoop = 0;
 
 	WORD* pIdx;	//インデックス情報のポインタ
-
 	//インデックスバッファのロック
 	m_pIdxBuffMeshCylinder->Lock(0, 0, (void**)&pIdx, 0);
 
 	for (int X = 0; X < MAX_CORNER; ++X)
 	{
 		pIdx[nLoop] = (X + MAX_CORNER);
-
 		++nLoop;
 
-		pIdx[nLoop] = (X);
+		pIdx[nLoop] = X;
 
 		++nLoop;
 	}
@@ -105,7 +118,7 @@ void CMeshCylinder::Init()
 
 	++nLoop;
 
-	pIdx[nLoop] = (0);
+	pIdx[nLoop] = 0;
 
 	m_pIdxBuffMeshCylinder->Unlock();
 }
@@ -137,7 +150,6 @@ void CMeshCylinder::Uninit()
 //==========================================================================================
 void CMeshCylinder::Update()
 {
-
 }
 
 //==========================================================================================
@@ -187,9 +199,9 @@ void CMeshCylinder::Draw()
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
 		0,
 		0,
-		MAX_INDEX,
+		MAX_VTX,
 		0,
-		12);
+		MAX_VTX);
 
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);	//カリング戻し
 
@@ -203,5 +215,6 @@ CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos)
 {
 	CMeshCylinder* field = new CMeshCylinder;
 	field->Init();
+	field->m_pos = pos;
 	return field;
 }

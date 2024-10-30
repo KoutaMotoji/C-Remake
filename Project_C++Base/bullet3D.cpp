@@ -110,7 +110,7 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 
 	bullet->SetPolygonParam(pos, Radius, Radius,col);
 	bullet->Init();
-	bullet->m_move = move * 10;
+	bullet->m_move = move * 20;
 	bullet->m_col = col;
 	bullet->m_nLife = nLife;
 	bullet->Poly_Size = Radius;

@@ -99,7 +99,7 @@ void CPlayerX::Update()
 	}
 	if (!TestUseMeshCollision())
 	{
-		m_pReticle->AddPos(m_move);
+		m_pReticle->AddPos({m_move.x,m_move.y,0.0f});
 	}
 	if (m_bDamaged)
 	{
@@ -124,12 +124,12 @@ void CPlayerX::Update()
 		D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
 
 		D3DXVec3Normalize(&SetdigitedRot, &digitRot);
-		
+		SetdigitedRot.z;
 		if (m_bTransformed)
 		{
 			SetNextMotion(MOTION_ROBO_SHOT);
 			m_bMotion = true;
-			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150,25,15);
+			CBullet3D::Create(RifleMtxSet(), SetdigitedRot , { 1.0f,0.0f,0.2f,1.0f }, 150,25,15);
 		}
 		else
 		{
@@ -145,6 +145,9 @@ void CPlayerX::Update()
 	{
 		m_move.z += 5.0f;
 	}
+
+	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
+
 	m_pos += m_move;
 	//à⁄ìÆó ÇçXêV
 	m_move.x += (0.0f - m_move.x) * 0.15f;
@@ -298,38 +301,38 @@ bool CPlayerX::PMove(float fCamRotZ)
 //==========================================================================================
 void CPlayerX::FloorCollision()
 {
-	if (m_pos.y < -500)
+	if (m_pos.y < -1000)
 	{
-		m_pos.y = -500;
+		m_pos.y = -1000;
 	}
-	else if (m_pos.y > 500)
+	else if (m_pos.y > 1000)
 	{
-		m_pos.y = 500;
+		m_pos.y = 1000;
 	}
-	if (m_pos.x < -700)
+	if (m_pos.x < -1200)
 	{
-		m_pos.x = -700;
+		m_pos.x = -1200;
 	}
-	else if (m_pos.x > 700)
+	else if (m_pos.x > 1200)
 	{
-		m_pos.x = 700;
+		m_pos.x = 1200;
 	}
 
-	if (m_pReticle->GetPos().y < -500)
+	if (m_pReticle->GetPos().y < m_pos.y -300)
 	{
-		m_pReticle->SetPos({ m_pReticle->GetPos().x, -500 ,m_pReticle->GetPos().z });
+		m_pReticle->SetPos({ m_pReticle->GetPos().x, m_pos.y - 300 ,m_pReticle->GetPos().z });
 	}
-	else if (m_pReticle->GetPos().y > 500)
+	else if (m_pReticle->GetPos().y > m_pos.y + 300)
 	{
-		m_pReticle->SetPos({ m_pReticle->GetPos().x, 500 ,m_pReticle->GetPos().z });
+		m_pReticle->SetPos({ m_pReticle->GetPos().x, m_pos.y + 300 ,m_pReticle->GetPos().z });
 	}
-	if (m_pReticle->GetPos().x < -700)
+	if (m_pReticle->GetPos().x < m_pos.x - 500)
 	{
-		m_pReticle->SetPos({ -700, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
+		m_pReticle->SetPos({ m_pos.x - 500, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
 	}
-	else if (m_pReticle->GetPos().x > 700)
+	else if (m_pReticle->GetPos().x > m_pos.x + 500)
 	{
-		m_pReticle->SetPos({ 700, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
+		m_pReticle->SetPos({ m_pos.x + 500, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
 	}
 
 }
@@ -908,7 +911,7 @@ bool CPlayerX::MeshObstacle()
 						if (bIsHit)
 						{
 							
-							if (fLandDistance< 10)
+							if (fLandDistance< 10 + m_move.z)
 							{
 								return true;
 							}
