@@ -6,6 +6,7 @@
 //===============================================================================
 #include "bullet3D.h"
 #include "particle3D.h"
+#include "mesh_Boss_Terra.h"
 #include "test_meshCollision.h"
 #include "test_obstacle.h"
 #include "eff_explosion.h"
@@ -159,6 +160,30 @@ bool CBullet3D::MeshCollision()
 				else if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
 
 					CTestObstacle* pTest = dynamic_cast<CTestObstacle*>(pObj);
+					if (pTest != nullptr) {
+						LPD3DXMESH pMesh = nullptr;
+
+						pMesh = pTest->GetMesh();
+						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
+						D3DXVECTOR3 pos = CBillboard::GetPos();
+						D3DXVec3Normalize(&dir, &m_move);
+
+						D3DXVECTOR3 objpos = pos - pTest->GetPos();
+						D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+						// ----- ê⁄ínéûèàóù -----
+						if (bIsHit)
+						{
+							if (fLandDistance <= 20)
+							{
+								return true;
+							}
+						}
+					}
+				}
+				else if (type == CObject::TYPE::TYPE_3D_BOSSTERRA) {
+
+					CBossTerra* pTest = dynamic_cast<CBossTerra*>(pObj);
 					if (pTest != nullptr) {
 						LPD3DXMESH pMesh = nullptr;
 

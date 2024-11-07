@@ -43,7 +43,7 @@ void CMeshCylinder::Init()
 	m_pVtxBuffMeshCylinder = nullptr;
 	m_pIdxBuffMeshCylinder = nullptr;
 
-	CObject::SetType(TYPE_3D_FIELD);
+	CObject::SetType(TYPE_3D_MESHOBJECT);
 
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 	//テクスチャの読み込み
@@ -65,11 +65,11 @@ void CMeshCylinder::Init()
 		D3DPOOL_MANAGED,
 		&m_pIdxBuffMeshCylinder,
 		NULL);
-
+	
 	VERTEX_3D* pVtx;	//頂点情報のポインタ
-
+	
 	m_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
-
+	
 	for (int i = 0; i < 2; ++i)	{
 		for (int j = 0; j < MAX_CORNER; ++j)	{
 			float radian = (((float)j) / (float)MAX_CORNER);

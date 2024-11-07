@@ -6,6 +6,9 @@
 //===============================================================================
 
 #include "manager.h"
+
+#include "t_player.h"
+
 #include "title.h"
 #include "fade.h"
 
@@ -31,6 +34,8 @@ CTitle::~CTitle()
 HRESULT CTitle::Init()
 {
 	CScene::Init();
+
+	CTitlePlayer::Create({ 0.0f, 0.0f, 0.0f});
 	return S_OK;
 }
 

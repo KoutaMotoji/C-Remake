@@ -31,7 +31,7 @@ HRESULT CModelParts::Init()
 {
 	m_pParent = nullptr;
 
-	for (int i = 0; i < MAX_MODEL_TEX; i++)
+	for (int i = 0; i < MAX_MODEL_TEX; ++i)
 	{
 		m_pTextureObjectX[i] = nullptr;
 	}
@@ -55,7 +55,7 @@ void CModelParts::Uninit()
 		m_pBuffMat->Release();
 		m_pBuffMat = NULL;
 	}
-	for (int i = 0; i < (int)m_dwNumMat; i++)
+	for (int i = 0; i < (int)m_dwNumMat; ++i)
 	{
 		if (m_pTextureObjectX[i] != nullptr)
 		{
@@ -138,7 +138,7 @@ void CModelParts::Draw()
 	pDevice->GetMaterial(&matDef);
 	//マテリアルデータへのポインタを取得
 	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
-	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
+	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; ++nCntMat)
 	{
 		//マテリアルの設定
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
@@ -206,7 +206,7 @@ void CModelParts::BindModel(const char* apFileName)
 		&m_pMesh);
 	D3DXMATERIAL* pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
 
-	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
+	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; ++nCntMat)
 	{
 		if (pMat[nCntMat].pTextureFilename != NULL)
 		{

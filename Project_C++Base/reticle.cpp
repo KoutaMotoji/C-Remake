@@ -59,25 +59,11 @@ void CReticle::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 
-	//加算合成の設定
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_INVDESTCOLOR);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCCOLOR);
-	//アルファテスト設定
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-
 	////Zアルファ
 	//pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 	//pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	CBillboard::Draw();
-
-	//通常の合成に戻す設定
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	////Zアルファ
 	//pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);

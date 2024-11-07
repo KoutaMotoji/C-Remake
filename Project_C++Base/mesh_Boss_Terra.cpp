@@ -1,25 +1,27 @@
 //===============================================================================
 //
-//  C++使った2D(watermelon.cpp)
+//  C++使った2D(enemy_basic.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "eff_explosion.h"
+#include "mesh_Boss_Terra.h"
+#include "playerX.h"
+
 #include "manager.h"
+#include "game.h"
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CEffExplosion::CEffExplosion():m_nTime(0)
+CBossTerra::CBossTerra():m_bMove(false)
 {
-	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\bomb000.png");
-	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 8,2 });
+
 }
 
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CEffExplosion::~CEffExplosion()
+CBossTerra::~CBossTerra()
 {
 
 }
@@ -27,83 +29,61 @@ CEffExplosion::~CEffExplosion()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CEffExplosion::Init()
+void CBossTerra::Init()
 {
-	CObject::SetType(TYPE_BILLBOARD);
-	CBillboard::Init();
+	CObject::SetType(TYPE_3D_BOSSTERRA);
+	CObjectX::Init();
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CEffExplosion::Uninit()
+void CBossTerra::Uninit()
 {
-	CBillboard::Uninit();
+	CObjectX::Uninit();
 }
 
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CEffExplosion::Update()
+void CBossTerra::Update()
 {
-	if (m_nTime > 2)
+	D3DXVECTOR3 pos = CObjectX::GetPos();
+	if (CObjectX::GetPos().x > 500.0f ||
+		CObjectX::GetPos().x < -500.0f)
 	{
-		D3DXVECTOR2 Anim = CBillboard::GetAnim();
-
-		m_nTime = 0;
-
-		if (Anim.x >= 7)
-		{
-			CBillboard::AddAnim({ -8,1 });
-		}
-		if (Anim.y >= 1 && Anim.x >= 7)
-		{
-			Release();
-			return;
-		}
-		if(Anim.x < 8&&
-			Anim.y <= 1)
-		{
-			CBillboard::AddAnim({ 1,0 });
-		}
-		Anim = Anim;
+		m_bMove = !m_bMove;
+	}
+	if (m_bMove)
+	{
+		CObjectX::AddPos({ 5.0f,0.0f,0.0f });
 	}
 	else
 	{
-		m_nTime++;
+		CObjectX::AddPos({ -5.0f,0.0f,0.0f });
 	}
-	CBillboard::Update();
+	CObjectX::Update();
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CEffExplosion::Draw()
+void CBossTerra::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
-
-	//Zアルファ
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-
-	CBillboard::Draw();
-
-	//Zアルファ
-	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	CObjectX::Draw();
 }
 
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CEffExplosion* CEffExplosion::Create(D3DXVECTOR3 pos)
+CBossTerra* CBossTerra::Create(D3DXVECTOR3 pos)
 {
-	CEffExplosion* Effect = new CEffExplosion;
+	CBossTerra* enemy = new CBossTerra;
 
-	Effect->SetPolygonParam(pos, 60.0f, 60.0f);
-	Effect->Init();
-	Effect->m_nTime = 0;
-	return Effect;
+	enemy->BindModel("data\\MODEL\\Boss_Terra.x");
+	enemy->SetModelParam(pos);
+	enemy->Init();
+
+	return enemy;
 }
 

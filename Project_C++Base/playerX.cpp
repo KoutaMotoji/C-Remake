@@ -14,7 +14,7 @@
 #include "collision.h"
 
 
-const float CPlayerX::MOVE_SPEED = 0.55f;
+const float CPlayerX::MOVE_SPEED = 0.35f;
 const int CPlayerX::MAX_LIFE = 1000;
 const int CPlayerX::MAX_STAMINA = 500;
 
@@ -25,7 +25,7 @@ const int CPlayerX::MAX_STAMINA = 500;
 //==========================================================================================
 CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0)
 {
-	for (int i = 0; i < MAX_MODELPARTS; i++)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i] = nullptr;
 	}
@@ -55,7 +55,7 @@ void CPlayerX::Init()
 //==========================================================================================
 void CPlayerX::Uninit()
 {
-	for (int i = 0; i < MAX_MODELPARTS; i++)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i]->Uninit();
 	}
@@ -94,7 +94,7 @@ void CPlayerX::Update()
 		!m_bDamaged)
 	{
 		m_bDamaged = true;
-		CManager::GetInstance()->GetCamera()->SetShake(20, 30);
+		CManager::GetInstance()->GetCamera()->SetShake(20, 40);
 		m_DamageTime = 0;
 	}
 	if (!TestUseMeshCollision())
@@ -103,7 +103,7 @@ void CPlayerX::Update()
 	}
 	if (m_bDamaged)
 	{
-		m_DamageTime++;
+		++m_DamageTime;
 		m_rot.x += 0.2f;
 		m_rot.y += 0.3f;
 		if (m_DamageTime > 100)
@@ -133,8 +133,7 @@ void CPlayerX::Update()
 		}
 		else
 		{
-			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 0.0f,1.0f,0.2f,1.0f }, 120,5,18);
-
+			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120,10,18);
 		}
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_RIGHT_SHOULDER) == true)
@@ -150,9 +149,9 @@ void CPlayerX::Update()
 
 	m_pos += m_move;
 	//移動量を更新
-	m_move.x += (0.0f - m_move.x) * 0.15f;
-	m_move.y += (0.0f - m_move.y) * 0.15f;
-	m_move.z += (0.0f - m_move.z) * 0.15f;
+	m_move.x += (0.0f - m_move.x) * 0.17f;
+	m_move.y += (0.0f - m_move.y) * 0.17f;
+	m_move.z += (0.0f - m_move.z) * 0.17f;
 
 	CameraPos = CameraPosDigit();
 
@@ -229,6 +228,7 @@ void CPlayerX::Draw()
 			m_apModelParts[i]->Draw();
 		}
 	}
+	m_pReticle->Draw();
 }
 
 //==========================================================================================
@@ -279,6 +279,7 @@ bool CPlayerX::PMove(float fCamRotZ)
 		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
 
 		m_fValueRot = (2 * (m_move.x + m_move.y) * 10) / (120 * D3DX_PI);
+		m_pReticle->SetPos({ m_pos.x + m_move.x * 10,m_pos.y + m_move.y * 10, m_pos.z + 500 });
 	}
 	if(abs(m_move.x) < 1.0f && !m_bDamaged)
 	{
@@ -457,7 +458,7 @@ void CPlayerX::SetNextKey()
 	int nNextKey = (m_CurKey + 1) % m_aMotion[nNowMotion].nKeyNum;
 	float fRatioFrame = (float)m_NowFrame / (float)m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame;
 
-	for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; ++nCntParts)
 	{
 		//現在の向きと位置の情報
 		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;
@@ -505,11 +506,11 @@ void CPlayerX::SetNextKey()
 	}
 
 
-	m_NowFrame++;
+	++m_NowFrame;
 
 	if (m_NowFrame >= m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
 	{
-		m_CurKey++;
+		++m_CurKey;
 		m_NowFrame = 0;
 		if (m_CurKey >= m_aMotion[nNowMotion].nKeyNum)
 		{
@@ -594,7 +595,7 @@ void CPlayerX::MotionDataLoad()
 
 				m_apModelParts[nFilenameCnt] = CModelParts::Create(pos, m_pModelFileName[nFilenameCnt]);
 
-				nFilenameCnt++;
+				++nFilenameCnt;
 			}
 			//キャラクターの設定の読み込み開始
 			if (!strcmp(LoadData, "CHARACTERSET"))
@@ -664,7 +665,7 @@ void CPlayerX::MotionDataLoad()
 						{
 							m_apModelParts[nModelCnt]->SetParent(m_apModelParts[nParent]);
 						}
-						nModelCnt++;
+						++nModelCnt;
 					}
 				}
 			}
@@ -752,17 +753,17 @@ void CPlayerX::MotionDataLoad()
 									}
 								}
 								//キー番号を進める
-								nKey++;
+								++nKey;
 							}
 						}
 						//キー番号を初期化、キーセット番号を進める
 						nKey = 0;
-						nKeySet++;
+						++nKeySet;
 					}
 				}
 				//キーセット番号を初期化、モーション番号を進める
 				nKeySet = 0;
-				nMotionCnt++;
+				++nMotionCnt;
 			}
 		}
 	}
@@ -782,10 +783,12 @@ void CPlayerX::ReticleController()
 
 D3DXVECTOR3 CPlayerX::CameraPosDigit()
 {
-	D3DXVECTOR3 CamPos = { 0.0f,0.0f,0.0f };
+	//D3DXVECTOR3 CamPos = { 0.0f,0.0f,0.0f };
 
-	CamPos.x = (m_pReticle->GetPos().x + m_pos.x) * 0.5f;
-	CamPos.y = (m_pReticle->GetPos().y + m_pos.y) * 0.5f;
+	D3DXVECTOR3 CamPos = m_pos;
+
+	//CamPos.x = (m_pReticle->GetPos().x + m_pos.x) * 0.5f;
+	//CamPos.y = (m_pReticle->GetPos().y + m_pos.y) * 0.5f;
 	CamPos.z = m_pos.z;
 	return CamPos;
 }
@@ -842,7 +845,7 @@ bool CPlayerX::TestUseMeshCollision()
 	float fHitU;
 	float fHitV;
 	LPD3DXMESH pMesh = nullptr;
-	for (int j = 0; j < SET_PRIORITY; j++) {
+	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; i++) {
 			CObject* pObj = CObject::GetObjects(j, i);
 			if (pObj != nullptr) {
@@ -884,8 +887,8 @@ bool CPlayerX::TestUseMeshCollision()
 
 bool CPlayerX::MeshObstacle()
 {	//=============================		障害物メッシュ判定		==========================================================================
-	for (int j = 0; j < SET_PRIORITY; j++) {
-		for (int i = 0; i < MAX_OBJECT; i++) {
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
 			CObject* pObj = CObject::GetObjects(j, i);
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();

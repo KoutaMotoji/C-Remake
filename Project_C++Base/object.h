@@ -38,7 +38,8 @@ public:
 		TYPE_BILLBOARD,
 		TYPE_3D_ITEMS,
 		TYPE_3D_MESHOBJECT,
-		TYPE_3D_OBSTACLE
+		TYPE_3D_OBSTACLE,
+		TYPE_3D_BOSSTERRA
 	}TYPE;
 
 	CObject(int nPriority = 3);		//コンストラクタ

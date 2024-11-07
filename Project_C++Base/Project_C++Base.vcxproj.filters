@@ -55,6 +55,18 @@
     <Filter Include="ヘッダー ファイル\System\Input">
       <UniqueIdentifier>{0e1492a7-1b2d-4281-8323-ebb4e4534da9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D\Model\Enemy">
+      <UniqueIdentifier>{aef66b42-b1f3-4402-9b3f-4ce686b346d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Model\Enemy">
+      <UniqueIdentifier>{0286e047-733a-48a1-9d38-ceb01a81a58d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\TitleObj">
+      <UniqueIdentifier>{185651fb-7555-4753-b7ec-416345eff701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\TitleObj">
+      <UniqueIdentifier>{67d6ee3e-7462-4b67-9e3b-5b414d8879f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -159,6 +171,12 @@
     <ClCompile Include="mesh_cylinder.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
+    <ClCompile Include="mesh_Boss_Terra.cpp">
+      <Filter>ソース ファイル\3D\Model\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="t_player.cpp">
+      <Filter>ソース ファイル\3D\TitleObj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -262,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="mesh_cylinder.h">
       <Filter>ヘッダー ファイル\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh_Boss_Terra.h">
+      <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="t_player.h">
+      <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

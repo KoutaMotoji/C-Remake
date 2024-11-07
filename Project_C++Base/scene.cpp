@@ -11,6 +11,7 @@
 #include "game.h"
 #include "title.h"
 #include "result.h"
+#include "manager.h"
 
 //==========================================================================================
 //コンストラクタ
@@ -33,6 +34,8 @@ CScene::~CScene()
 //==========================================================================================
 HRESULT CScene::Init()
 {
+	CManager::GetInstance()->GetCamera()->SetCamDefault();
+
 	return S_OK;
 }
 
