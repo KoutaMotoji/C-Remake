@@ -67,12 +67,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 	// 現在のウィンドウスタイルを取得
 	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
 
+#ifndef _DEBUG
+
+	g_isFullscreen = true;
 	// フルスクリーンモードに切り替え
 	GetWindowRect(hWnd, &g_windowRect);
 	SetWindowLong(hWnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
 	SetWindowPos(hWnd, HWND_TOP, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
 		SWP_FRAMECHANGED | SWP_NOACTIVATE);
 	ShowWindow(hWnd, SW_MAXIMIZE);
+
+#endif // _RELEASE
+
 
 	DWORD dwCurrentTime;		//現在時刻
 	DWORD dwExecLastTime;		//現在時刻を取得

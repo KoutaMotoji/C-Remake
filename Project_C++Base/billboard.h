@@ -33,11 +33,17 @@ public:
 	static CBillboard* Create(D3DXVECTOR3 pos);
 	void SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth);					//初期設定
 	void SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth, D3DXCOLOR col);	//初期設定(色変更オーバーロード)
+	void SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth, D3DXCOLOR col,int nMaxValue);	//初期設定(ゲージタイプ用オーバーロード)
 
-	void BindTexture(LPDIRECT3DTEXTURE9 pTex);	//作ったテクスチャ 
+	void BindTexture(LPDIRECT3DTEXTURE9 pTex);						//作ったテクスチャ 
 	void BindTexture(LPDIRECT3DTEXTURE9 pTex,D3DXVECTOR2 Slice);	//作ったテクスチャ(アニメーション用オーバーロード) 
 	
+	void SetGauge(int nValue) { m_nNowValue = nValue; }				//ゲージの数値変更
 private:
+	float CalcGaugeValue();
+	void UpdateNormal();
+	void UpdateGauge();
+
 	LPDIRECT3DTEXTURE9 m_pTextureBillboard;
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuffBillboard;
 
@@ -54,8 +60,16 @@ private:
 	float m_fLength;
 	float m_fHeight;
 	float m_fWidth;
+	int m_nMaxValue, m_nNowValue;	//ゲージの最大容量、現在の容量
 	static const float MAX_OBJ3DHEIGHT;
 	static const float MAX_OBJ3DWIDTH;
+
+	enum class TYPE
+	{
+		TYPE_NORMAL = 0,
+		TYPE_GAUGE,
+	};
+	TYPE m_Type;
 };
 
 #endif

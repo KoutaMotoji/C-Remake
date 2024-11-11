@@ -39,7 +39,8 @@ public:
 		TYPE_3D_ITEMS,
 		TYPE_3D_MESHOBJECT,
 		TYPE_3D_OBSTACLE,
-		TYPE_3D_BOSSTERRA
+		TYPE_3D_BOSSTERRA,
+		TYPE_3D_MADEMESH
 	}TYPE;
 
 	CObject(int nPriority = 3);		//コンストラクタ

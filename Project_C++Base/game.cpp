@@ -48,13 +48,15 @@ HRESULT CGame::Init()
 {
 	CScene::Init();
 	CPlayerX::Create({ 0.0f,0.0f,0.0f });
-	CMeshCylinder::Create({ 0.0f,6500.0f,0.0f });
+
+	CMeshCylinder::Create({ 0.0f,0.0f,0.0f });
+
 	CSkyBg::Create({ 0.0f,-1000.0f,0.0f });
 	CTestMeshCollision::Create({ 0.0f,0.0f,0.0f });
 	CTestObstacle::Create({-200.0f,-1000.0f,700.0f}, 0);
 	CTestObstacle::Create({ 500.0f,-1000.0f,-300.0f }, 1);
 
-	CBossTerra::Create({ 0.0f,300.0f,0.0f });
+	//CBossTerra::Create({ 0.0f,300.0f,0.0f });
 
 	LoadMapData();
 	SetBGObject();

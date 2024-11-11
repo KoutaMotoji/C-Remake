@@ -20,18 +20,23 @@ public:
 	void Update()override;		//更新
 	void Draw()override;		//描画
 	static CMeshCylinder* Create(D3DXVECTOR3 pos);
+
+	LPD3DXMESH GetMesh() { return m_pMesh; };
+	D3DXVECTOR3 GetPos() { return m_pos; }
 private:
-	int m_nVtx;
 	
 	D3DXVECTOR3 m_pos, m_rot;
 	D3DXMATRIX m_mtx;
 
+	LPD3DXMESH m_pMesh;
+
 	//テクスチャ
 	LPDIRECT3DTEXTURE9 m_apTexMeshCylinder;
-	//頂点情報のポインタ
-	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuffMeshCylinder;
-	//インデックスバッファへのポインタ
-	LPDIRECT3DINDEXBUFFER9 m_pIdxBuffMeshCylinder;
+
+	////頂点情報のポインタ
+	//LPDIRECT3DVERTEXBUFFER9 m_pVtxBuffMeshCylinder;
+	////インデックスバッファへのポインタ
+	//LPDIRECT3DINDEXBUFFER9 m_pIdxBuffMeshCylinder;
 
 	static const int MAX_VTX;
 	static const int MAX_CORNER;

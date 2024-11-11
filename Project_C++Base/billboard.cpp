@@ -99,25 +99,14 @@ void CBillboard::Uninit()
 //==========================================================================================
 void CBillboard::Update()
 {
-	VERTEX_3D* pVtx;	//頂点情報のポインタ
-
-	//頂点バッファをロックして、頂点情報へのポインタを取得
-	m_pVtxBuffBillboard->Lock(0, 0, (void**)&pVtx, 0);
-	//頂点座標の設定
-
-	//頂点カラーの設定
-	pVtx[0].col = m_col;
-	pVtx[1].col = m_col;
-	pVtx[2].col = m_col;
-	pVtx[3].col = m_col;
-
-	//テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f + ((1.0f / m_Slice.x) * m_Anim.x), 0.0f + ((1.0f / m_Slice.y) * m_Anim.y));
-	pVtx[1].tex = D3DXVECTOR2((1.0f / m_Slice.x) + ((1.0f / m_Slice.x) * m_Anim.x), 0.0f + ((1.0f / m_Slice.y) * m_Anim.y));
-	pVtx[2].tex = D3DXVECTOR2(0.0f + ((1.0f / m_Slice.x) * m_Anim.x), (1.0f / m_Slice.y) + ((1.0f / m_Slice.y) * m_Anim.y));
-	pVtx[3].tex = D3DXVECTOR2((1.0f / m_Slice.x) + ((1.0f / m_Slice.x) * m_Anim.x), (1.0f / m_Slice.y) + ((1.0f / m_Slice.y) * m_Anim.y));
-	//頂点バッファのアンロック
-	m_pVtxBuffBillboard->Unlock();
+	if (m_Type == TYPE::TYPE_GAUGE)
+	{
+		UpdateGauge();
+	}
+	else
+	{
+		UpdateNormal();
+	}
 }
 
 //==========================================================================================
@@ -213,6 +202,7 @@ void CBillboard::SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth)
 	m_fLength = sqrtf(m_fWidth * m_fWidth + m_fHeight * m_fHeight) / 2.0f;
 	//対角線の角度を算出
 	m_fAngle = atan2f(m_fWidth, m_fHeight);
+	m_Type = CBillboard::TYPE::TYPE_NORMAL;
 }
 
 //==========================================================================================
@@ -229,6 +219,27 @@ void CBillboard::SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth, D
 	m_fLength = sqrtf(m_fWidth * m_fWidth + m_fHeight * m_fHeight) / 2.0f;
 	//対角線の角度を算出
 	m_fAngle = atan2f(m_fWidth, m_fHeight);
+	m_Type = CBillboard::TYPE::TYPE_NORMAL;
+
+}
+
+//==========================================================================================
+//生成時の初期設定処理 (ゲージタイプ用オーバーロード)
+//==========================================================================================
+void CBillboard::SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth, D3DXCOLOR col,int nMaxValue)
+{
+	m_pos = pos;
+	m_fHeight = fHeight;
+	m_fWidth = fWidth;
+	m_scale = { 1.0f,1.0f,1.0f };
+	m_col = col;
+	m_nMaxValue = nMaxValue;
+	m_nNowValue = nMaxValue;
+	//対角線の長さを算出
+	m_fLength = sqrtf(m_fWidth * m_fWidth + m_fHeight * m_fHeight) / 2.0f;
+	//対角線の角度を算出
+	m_fAngle = atan2f(m_fWidth, m_fHeight);
+	m_Type = CBillboard::TYPE::TYPE_GAUGE;
 }
 
 //==========================================================================================
@@ -247,5 +258,77 @@ void CBillboard::BindTexture(LPDIRECT3DTEXTURE9 pTex,D3DXVECTOR2 Slice)
 {
 	m_pTextureBillboard = pTex;
 	m_Slice = Slice;
+}
+
+//==========================================================================================
+//ゲージの長さ計算
+//==========================================================================================
+float CBillboard::CalcGaugeValue()
+{
+	float fval = 0;
+	fval = (m_fWidth / m_nMaxValue) * m_nNowValue;
 	
+	return fval;
+}
+
+//==========================================================================================
+//通常タイプの更新処理
+//==========================================================================================
+void CBillboard::UpdateNormal()
+{
+	VERTEX_3D* pVtx;	//頂点情報のポインタ
+
+//頂点バッファをロックして、頂点情報へのポインタを取得
+	m_pVtxBuffBillboard->Lock(0, 0, (void**)&pVtx, 0);
+	//頂点座標の設定
+
+	//頂点カラーの設定
+	pVtx[0].col = m_col;
+	pVtx[1].col = m_col;
+	pVtx[2].col = m_col;
+	pVtx[3].col = m_col;
+
+	//テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f + ((1.0f / m_Slice.x) * m_Anim.x), 0.0f + ((1.0f / m_Slice.y) * m_Anim.y));
+	pVtx[1].tex = D3DXVECTOR2((1.0f / m_Slice.x) + ((1.0f / m_Slice.x) * m_Anim.x), 0.0f + ((1.0f / m_Slice.y) * m_Anim.y));
+	pVtx[2].tex = D3DXVECTOR2(0.0f + ((1.0f / m_Slice.x) * m_Anim.x), (1.0f / m_Slice.y) + ((1.0f / m_Slice.y) * m_Anim.y));
+	pVtx[3].tex = D3DXVECTOR2((1.0f / m_Slice.x) + ((1.0f / m_Slice.x) * m_Anim.x), (1.0f / m_Slice.y) + ((1.0f / m_Slice.y) * m_Anim.y));
+	//頂点バッファのアンロック
+	m_pVtxBuffBillboard->Unlock();
+}
+
+//==========================================================================================
+//ゲージタイプの更新処理
+//==========================================================================================
+void CBillboard::UpdateGauge()
+{
+	float fWidth;
+	fWidth = CalcGaugeValue();
+	float fGauge;
+	fGauge = (1.0f / m_nMaxValue) * m_nNowValue;
+
+	VERTEX_3D* pVtx;	//頂点情報のポインタ
+	//頂点バッファをロックして、頂点情報へのポインタを取得
+	m_pVtxBuffBillboard->Lock(0, 0, (void**)&pVtx, 0);
+	
+	//頂点座標の設定
+	pVtx[0].pos = D3DXVECTOR3(-fWidth, +m_fHeight, +10.0f);
+	pVtx[1].pos = D3DXVECTOR3(+fWidth, +m_fHeight, +10.0f);
+	pVtx[2].pos = D3DXVECTOR3(-fWidth, -m_fHeight, +10.0f);
+	pVtx[3].pos = D3DXVECTOR3(+fWidth, -m_fHeight, +10.0f);
+
+	//頂点カラーの設定
+	pVtx[0].col = m_col;
+	pVtx[1].col = m_col;
+	pVtx[2].col = m_col;
+	pVtx[3].col = m_col;
+
+	//テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(fGauge, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f - fGauge, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(fGauge, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f - fGauge, 1.0f);
+
+	//頂点バッファのアンロック
+	m_pVtxBuffBillboard->Unlock();
 }

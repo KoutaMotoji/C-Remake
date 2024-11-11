@@ -9,6 +9,7 @@
 #include "mesh_Boss_Terra.h"
 #include "test_meshCollision.h"
 #include "test_obstacle.h"
+#include "mesh_cylinder.h"
 #include "eff_explosion.h"
 
 #include "manager.h"
@@ -199,6 +200,36 @@ bool CBullet3D::MeshCollision()
 						if (bIsHit)
 						{
 							if (fLandDistance <= 20)
+							{
+								pTest->Damaged(5);
+								return true;
+							}
+						}
+					}
+				}
+				else if (type == CObject::TYPE::TYPE_3D_MADEMESH) {
+					CMeshCylinder* pTest = dynamic_cast<CMeshCylinder*>(pObj);
+					if (pTest != nullptr) {
+						// ínå`îªíË
+						BOOL  bIsHit = false;
+						float fLandDistance;
+						DWORD dwHitIndex = 0U;
+						float fHitU;
+						float fHitV;
+						LPD3DXMESH pMesh = nullptr;
+
+						pMesh = pTest->GetMesh();
+						D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+						D3DXVECTOR3 pos = CBillboard::GetPos();
+						D3DXVec3Normalize(&dir, &m_move);
+
+						D3DXVECTOR3 objpos = pos - pTest->GetPos();
+						D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+						// ----- ê⁄ínéûèàóù -----
+						if (bIsHit)
+						{
+							if (fLandDistance < 20)
 							{
 								return true;
 							}

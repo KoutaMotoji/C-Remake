@@ -178,34 +178,17 @@ bool CTitlePlayer::PMove(float fCamRotZ)
 		m_vecAxis = { abs(m_move.y),abs(m_move.x),0.0f };
 		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
 
-		m_fValueRot = (2 * (m_move.x + m_move.y) * 10) / (120 * D3DX_PI);
 	}
 
 	return true;
 }
-
 
 //==========================================================================================
 //è∞ìñÇΩÇËîªíË
 //==========================================================================================
 void CTitlePlayer::FloorCollision()
 {
-	if (m_pos.y < -1000)
-	{
-		m_pos.y = -1000;
-	}
-	else if (m_pos.y > 1000)
-	{
-		m_pos.y = 1000;
-	}
-	if (m_pos.x < -1200)
-	{
-		m_pos.x = -1200;
-	}
-	else if (m_pos.x > 1200)
-	{
-		m_pos.x = 1200;
-	}
+
 }
 
 

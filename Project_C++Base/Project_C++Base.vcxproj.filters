@@ -177,6 +177,9 @@
     <ClCompile Include="t_player.cpp">
       <Filter>ソース ファイル\3D\TitleObj</Filter>
     </ClCompile>
+    <ClCompile Include="gauge_Boss_Life.cpp">
+      <Filter>ソース ファイル\3D\Model\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -286,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="t_player.h">
       <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
+    </ClInclude>
+    <ClInclude Include="gauge_Boss_Life.h">
+      <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

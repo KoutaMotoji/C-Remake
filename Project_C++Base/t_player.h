@@ -42,11 +42,7 @@ private:
 	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
 	void FloorCollision();			//床との当たり判定
 
-	//void GoalCheck();						//ゴールしているかチェック
-	void DeadCheck();
 	static const float MOVE_SPEED;			//移動スピードの設定
-
-
 
 	CModelParts* m_apModelParts[MAX_MODELPARTS];
 

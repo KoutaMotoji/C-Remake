@@ -9,18 +9,19 @@
 #include "manager.h"
 
 //静的メンバ初期化
-const float CMeshCylinder::MAX_WIDTH = 15000.0f;
-const float CMeshCylinder::MAX_HEIGHT = 7500.0f;
+const float CMeshCylinder::MAX_WIDTH = 600.0f;
+const float CMeshCylinder::MAX_HEIGHT = 750.0f;
 
 
-const int CMeshCylinder::MAX_CORNER = 12;
+const int CMeshCylinder::MAX_CORNER = 6;
 
 const int CMeshCylinder::MAX_VTX = MAX_CORNER * 2;
 const int CMeshCylinder::MAX_INDEX = MAX_VTX  + 2;
+
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CMeshCylinder::CMeshCylinder():m_nVtx(MAX_VTX), m_pos({0.0f,0.0f,0.0f}), m_rot({0.0f,0.0f,0.0f})
+CMeshCylinder::CMeshCylinder(): m_pos({0.0f,0.0f,0.0f}), m_rot({0.0f,0.0f,0.0f})
 {
 
 }
@@ -40,36 +41,47 @@ void CMeshCylinder::Init()
 {
 	//各ポインタの初期化
 	m_apTexMeshCylinder = nullptr;
-	m_pVtxBuffMeshCylinder = nullptr;
-	m_pIdxBuffMeshCylinder = nullptr;
+	m_pMesh = nullptr;
+	//m_pVtxBuffMeshCylinder = nullptr;
+	//m_pIdxBuffMeshCylinder = nullptr;
 
-	CObject::SetType(TYPE_3D_MESHOBJECT);
+	CObject::SetType(TYPE_3D_MADEMESH);
 
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\sky_bg.png",
 		&m_apTexMeshCylinder);
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VTX,
-		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_3D,
-		D3DPOOL_MANAGED,
-		&m_pVtxBuffMeshCylinder,
-		NULL);
 
-	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * MAX_INDEX,
-		D3DUSAGE_WRITEONLY,
-		D3DFMT_INDEX16,
-		D3DPOOL_MANAGED,
-		&m_pIdxBuffMeshCylinder,
-		NULL);
+	////頂点バッファの生成
+	//pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VTX,
+	//	D3DUSAGE_WRITEONLY,
+	//	FVF_VERTEX_3D,
+	//	D3DPOOL_MANAGED,
+	//	&m_pVtxBuffMeshCylinder,
+	//	NULL);
+
+	////インデックスバッファの生成
+	//pDevice->CreateIndexBuffer(sizeof(WORD) * MAX_INDEX,
+	//	D3DUSAGE_WRITEONLY,
+	//	D3DFMT_INDEX16,
+	//	D3DPOOL_MANAGED,
+	//	&m_pIdxBuffMeshCylinder,
+	//	NULL);
+	
+	D3DXCreateMeshFVF(
+		(DWORD)MAX_VTX,
+		(DWORD)MAX_VTX,
+		D3DXMESH_WRITEONLY | D3DXMESH_MANAGED,
+		FVF_VERTEX_3D,
+		pDevice,
+		&m_pMesh);
 	
 	VERTEX_3D* pVtx;	//頂点情報のポインタ
 	
-	m_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
-	
+	//メッシュの頂点バッファのロック
+	m_pMesh->LockVertexBuffer(0, (LPVOID*)&pVtx);
+
 	for (int i = 0; i < 2; ++i)	{
 		for (int j = 0; j < MAX_CORNER; ++j)	{
 			float radian = (((float)j) / (float)MAX_CORNER);
@@ -96,31 +108,56 @@ void CMeshCylinder::Init()
 			};
 		}
 	}
-	m_pVtxBuffMeshCylinder->Unlock();
+	//メッシュの頂点バッファのアンロック
+	m_pMesh->UnlockVertexBuffer();
 
 	int nLoop = 0;
 
 	WORD* pIdx;	//インデックス情報のポインタ
-	//インデックスバッファのロック
-	m_pIdxBuffMeshCylinder->Lock(0, 0, (void**)&pIdx, 0);
+	//メッシュのインデックスバッファのロック
+	m_pMesh->LockIndexBuffer(0, (LPVOID*)&pIdx);
 
-	for (int X = 0; X < MAX_CORNER; ++X)
+	for (int X = 0; X < MAX_CORNER - 1; ++X)
 	{
 		pIdx[nLoop] = (X + MAX_CORNER);
 		++nLoop;
 
 		pIdx[nLoop] = X;
+		++nLoop;
 
+		pIdx[nLoop] = (X + 1 + MAX_CORNER);
+		++nLoop;
+		
+
+		pIdx[nLoop] = X;
+		++nLoop;
+
+		pIdx[nLoop] = (X + 1 + MAX_CORNER);
+		++nLoop;
+
+		pIdx[nLoop] = X + 1;
 		++nLoop;
 	}
 
-	pIdx[nLoop] = (MAX_CORNER);
+	pIdx[nLoop] = (MAX_VTX - 1);
+	++nLoop;
 
+	pIdx[nLoop] = (MAX_CORNER - 1);
+	++nLoop;
+
+	pIdx[nLoop] = (MAX_CORNER);
+	++nLoop;
+
+	pIdx[nLoop] = (MAX_CORNER - 1);
+	++nLoop;
+
+	pIdx[nLoop] = (MAX_CORNER);
 	++nLoop;
 
 	pIdx[nLoop] = 0;
 
-	m_pIdxBuffMeshCylinder->Unlock();
+	//メッシュのインデックスバッファのアンロック
+	m_pMesh->UnlockIndexBuffer();
 }
 
 //==========================================================================================
@@ -133,15 +170,10 @@ void CMeshCylinder::Uninit()
 		m_apTexMeshCylinder->Release();
 		m_apTexMeshCylinder = nullptr;
 	}
-	if (m_pIdxBuffMeshCylinder != nullptr)
+	if (m_pMesh != nullptr)
 	{
-		m_pIdxBuffMeshCylinder->Release();
-		m_pIdxBuffMeshCylinder = nullptr;
-	}
-	if (m_pVtxBuffMeshCylinder != nullptr)
-	{
-		m_pVtxBuffMeshCylinder->Release();
-		m_pVtxBuffMeshCylinder = nullptr;
+		m_pMesh->Release();
+		m_pMesh = nullptr;
 	}
 }
 
@@ -183,27 +215,32 @@ void CMeshCylinder::Draw()
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtx);
-	//頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, m_pVtxBuffMeshCylinder, 0, sizeof(VERTEX_3D));
-	//インデックスバッファをデータストリームに設定
-	pDevice->SetIndices(m_pIdxBuffMeshCylinder);
+
+	////頂点バッファをデータストリームに設定
+	//pDevice->SetStreamSource(0, m_pVtxBuffMeshCylinder, 0, sizeof(VERTEX_3D));
+	////インデックスバッファをデータストリームに設定
+	//pDevice->SetIndices(m_pIdxBuffMeshCylinder);
 	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_3D);
+	//pDevice->SetFVF(FVF_VERTEX_3D);
 	//テクスチャの設定
+
 	pDevice->SetTexture(0, m_apTexMeshCylinder);
 
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);	//カリング戻し
 
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);	//カリングを両面に
 
-	//ポリゴンの描画
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
-		0,
-		0,
-		MAX_VTX,
-		0,
-		MAX_VTX);
+	m_pMesh->DrawSubset(0);
 
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);	//カリング戻し
+
+	////ポリゴンの描画
+	//pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
+	//	0,
+	//	0,
+	//	MAX_VTX,
+	//	0,
+	//	MAX_VTX);
+
 
 }
 
@@ -216,5 +253,6 @@ CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos)
 	CMeshCylinder* field = new CMeshCylinder;
 	field->Init();
 	field->m_pos = pos;
+	field->m_pos.y += MAX_HEIGHT;
 	return field;
 }

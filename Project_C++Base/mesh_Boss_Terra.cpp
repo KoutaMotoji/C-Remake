@@ -13,7 +13,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBossTerra::CBossTerra():m_bMove(false)
+CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false)
 {
 
 }
@@ -32,6 +32,7 @@ CBossTerra::~CBossTerra()
 void CBossTerra::Init()
 {
 	CObject::SetType(TYPE_3D_BOSSTERRA);
+	m_Gauge = CGaugeBoss::Create(CObjectX::GetPos(), { 700,50 }, m_nLife);
 	CObjectX::Init();
 }
 
@@ -40,6 +41,10 @@ void CBossTerra::Init()
 //==========================================================================================
 void CBossTerra::Uninit()
 {
+	if (m_Gauge != nullptr)
+	{
+		m_Gauge->Uninit();
+	}
 	CObjectX::Uninit();
 }
 
@@ -62,6 +67,9 @@ void CBossTerra::Update()
 	{
 		CObjectX::AddPos({ -5.0f,0.0f,0.0f });
 	}
+
+	m_Gauge->SetPos({ CObjectX::GetPos().x,CObjectX::GetPos().y + 300.0f ,CObjectX::GetPos().z });
+
 	CObjectX::Update();
 }
 

@@ -10,6 +10,7 @@
 #include "bullet3D.h"
 #include "test_meshCollision.h" 
 #include "test_obstacle.h"
+#include "mesh_cylinder.h"
 #include "game.h"
 #include "collision.h"
 
@@ -17,6 +18,7 @@
 const float CPlayerX::MOVE_SPEED = 0.35f;
 const int CPlayerX::MAX_LIFE = 1000;
 const int CPlayerX::MAX_STAMINA = 500;
+
 
 
 
@@ -129,11 +131,11 @@ void CPlayerX::Update()
 		{
 			SetNextMotion(MOTION_ROBO_SHOT);
 			m_bMotion = true;
-			CBullet3D::Create(RifleMtxSet(), SetdigitedRot , { 1.0f,0.0f,0.2f,1.0f }, 150,25,15);
+			CBullet3D::Create(RifleMtxSet() + m_move, SetdigitedRot , { 1.0f,0.0f,0.2f,1.0f }, 150,25,15);
 		}
 		else
 		{
-			CBullet3D::Create(RifleMtxSet(), SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120,10,18);
+			CBullet3D::Create(RifleMtxSet() + m_move, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120,10,18);
 		}
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_RIGHT_SHOULDER) == true)
@@ -217,7 +219,7 @@ void CPlayerX::Draw()
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtxWorld);
-	for (int i = 0; i < MAX_MODELPARTS; i++)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		if (m_bDamaged)
 		{
@@ -275,23 +277,24 @@ bool CPlayerX::PMove(float fCamRotZ)
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetJoyStickVecL() > 0)
 	{
-		m_vecAxis = { abs(m_move.y),abs(m_move.x),0.0f };
+		m_vecAxis = { m_move.y,m_move.x,0.0f };
 		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
 
-		m_fValueRot = (2 * (m_move.x + m_move.y) * 10) / (120 * D3DX_PI);
+		m_fValueRot = (2 * sqrtf((m_move.x * m_move.x) + (m_move.y* m_move.y)) * 10) / (120 * D3DX_PI);
+
 		m_pReticle->SetPos({ m_pos.x + m_move.x * 10,m_pos.y + m_move.y * 10, m_pos.z + 500 });
 	}
-	if(abs(m_move.x) < 1.0f && !m_bDamaged)
-	{
-		if (m_rot.z >= 0)
-		{
-			m_rot.z -= (m_SecZrot / 10);
-		}
-		if (m_rot.z <= 0)
-		{
-			m_rot.z += (m_SecZrot / 10);
-		}
-	}
+	//if(abs(m_move.x) < 1.0f && !m_bDamaged)
+	//{
+	//	if (m_rot.z >= 0)
+	//	{
+	//		m_rot.z -= (m_SecZrot / 10);
+	//	}
+	//	if (m_rot.z <= 0)
+	//	{
+	//		m_rot.z += (m_SecZrot / 10);
+	//	}
+	//}
 
 	return true;
 }
@@ -302,7 +305,7 @@ bool CPlayerX::PMove(float fCamRotZ)
 //==========================================================================================
 void CPlayerX::FloorCollision()
 {
-	if (m_pos.y < -1000)
+	/*if (m_pos.y < -1000)
 	{
 		m_pos.y = -1000;
 	}
@@ -334,7 +337,7 @@ void CPlayerX::FloorCollision()
 	else if (m_pReticle->GetPos().x > m_pos.x + 500)
 	{
 		m_pReticle->SetPos({ m_pos.x + 500, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
-	}
+	}*/
 
 }
 
@@ -893,16 +896,14 @@ bool CPlayerX::MeshObstacle()
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();
 				if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
-
-					// 地形判定
-					BOOL  bIsHit = false;
-					float fLandDistance;
-					DWORD dwHitIndex = 0U;
-					float fHitU;
-					float fHitV;
-
 					CTestObstacle* pTest = dynamic_cast<CTestObstacle*>(pObj);
 					if (pTest != nullptr) {
+						// 地形判定
+						BOOL  bIsHit = false;
+						float fLandDistance;
+						DWORD dwHitIndex = 0U;
+						float fHitU;
+						float fHitV;
 						LPD3DXMESH pMesh = nullptr;
 
 						pMesh = pTest->GetMesh();
@@ -921,11 +922,10 @@ bool CPlayerX::MeshObstacle()
 						}
 					}
 				}
+				
 			}
 		}
 	}
-
-
 	return false;
 }
 

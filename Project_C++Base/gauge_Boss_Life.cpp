@@ -1,76 +1,66 @@
 //===============================================================================
 //
-//  C++使った3D(result.cpp)
+//  C++使った2D(object2D.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
-
+#include "gauge_Boss_Life.h"
 #include "manager.h"
-
-#include "t_player.h"
-
-#include "title.h"
-#include "fade.h"
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTitle::CTitle()
-{
-
+CGaugeBoss::CGaugeBoss() {
 }
 
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CTitle::~CTitle()
-{
-
+CGaugeBoss::~CGaugeBoss()	{
 }
 
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-HRESULT CTitle::Init()
+void CGaugeBoss::Init()
 {
-	CScene::Init();
-
-	CTitlePlayer::Create({ 0.0f, 0.0f, 0.0f});
-
-	return S_OK;
+	CObject::SetType(TYPE_BILLBOARD);
+	CBillboard::Init();
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CTitle::Uninit()
+void CGaugeBoss::Uninit()
 {
-
-	CScene::Uninit();
+	CBillboard::Uninit();
 }
-
 
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CTitle::Update()
+void CGaugeBoss::Update()
 {
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN) || CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A))
-	{
-		//if (!(CManager::GetInstance()->GetFade()->GetUse()))
-		//{
-
-		//}
-		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
-
-	}
-	CScene::Update();
+	CBillboard::Update();
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CTitle::Draw()
+void CGaugeBoss::Draw()
 {
-	CScene::Draw();
+	CBillboard::Draw();
+}
+
+//==========================================================================================
+//生成処理
+//==========================================================================================
+CGaugeBoss* CGaugeBoss::Create(D3DXVECTOR3 pos,D3DXVECTOR2 size,int MaxValue)
+{
+	CGaugeBoss* object3D = new CGaugeBoss;
+
+	object3D->SetPolygonParam(pos, size.y, size.x, {0.0f,1.0f,0.8f,1.0f},MaxValue);
+
+	object3D->Init();
+	return object3D;
 }

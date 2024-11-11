@@ -226,6 +226,7 @@ void CObjectX::SetModelSize()
 		//頂点フォーマットのサイズ分ポイン多を進める
 		pVtxBuff += sizeFVF;
 	}
+	m_pMesh->UnlockVertexBuffer();
 
 	//直径を算出
 	m_radius = (m_vtxMaxModel - m_vtxMinModel);
