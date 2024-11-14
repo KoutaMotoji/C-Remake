@@ -67,6 +67,18 @@
     <Filter Include="ヘッダー ファイル\3D\TitleObj">
       <UniqueIdentifier>{67d6ee3e-7462-4b67-9e3b-5b414d8879f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Scene\Edit">
+      <UniqueIdentifier>{0a995dbf-076a-46a0-9306-8787cf6ea702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Scene\Edit">
+      <UniqueIdentifier>{397e21c4-3766-4c04-b318-933c2ababb8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\Tools">
+      <UniqueIdentifier>{465f8f09-eda9-40db-bff8-51ddaa9b90cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Tools">
+      <UniqueIdentifier>{ffc9dc57-20df-40b5-8563-0ecd73e579fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -180,6 +192,12 @@
     <ClCompile Include="gauge_Boss_Life.cpp">
       <Filter>ソース ファイル\3D\Model\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="EDIT_particle.cpp">
+      <Filter>ソース ファイル\Scene\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="particle_system.cpp">
+      <Filter>ソース ファイル\3D\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -292,6 +310,12 @@
     </ClInclude>
     <ClInclude Include="gauge_Boss_Life.h">
       <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EDIT_particle.h">
+      <Filter>ヘッダー ファイル\Scene\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_system.h">
+      <Filter>ヘッダー ファイル\3D\Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

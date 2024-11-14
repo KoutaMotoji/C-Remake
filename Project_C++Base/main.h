@@ -24,6 +24,7 @@
 #pragma comment(lib,"winmm.lib")	//システム時刻取得に必要
 #pragma comment(lib,"dinput8.lib")	//入力処理に必要
 #pragma comment(lib,"xinput.lib")
+
 //マクロ定義
 #define SCREEN_WIDTH	(1280)
 #define SCREEN_HEIGHT	(720)

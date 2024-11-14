@@ -11,6 +11,7 @@
 #include "test_obstacle.h"
 #include "mesh_cylinder.h"
 #include "eff_explosion.h"
+#include "collision.h"
 
 #include "manager.h"
 
@@ -125,12 +126,8 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 //==========================================================================================
 bool CBullet3D::MeshCollision()
 {
-	// 地形判定
-	BOOL  bIsHit = false;
-	float fLandDistance;
-	DWORD dwHitIndex = 0U;
-	float fHitU;
-	float fHitV;
+	CCollision* pCollision  = new CCollision();
+
 	LPD3DXMESH pMesh = nullptr;
 	for (int j = 0; j < SET_PRIORITY; j++) {
 		for (int i = 0; i < MAX_OBJECT; i++) {
@@ -145,24 +142,21 @@ bool CBullet3D::MeshCollision()
 						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 						D3DXVECTOR3 pos = CBillboard::GetPos();
 						D3DXVec3Normalize(&dir, &m_move);
-
-						D3DXIntersect(pMesh, &pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
-
+						float ChedkDis = 10.0f;
 						// ----- 接地時処理 -----
-						if (bIsHit)
+						if (pCollision->MeshToIntersectCollision(pMesh, pos, dir, ChedkDis))
 						{
-							if (fLandDistance <= 10)
-							{
-								return true;
-							}
-						}
+							delete pCollision;
+							pCollision = nullptr;
+
+							return true;
+						}						
 					}
 				}
 				else if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
 
 					CTestObstacle* pTest = dynamic_cast<CTestObstacle*>(pObj);
 					if (pTest != nullptr) {
-						LPD3DXMESH pMesh = nullptr;
 
 						pMesh = pTest->GetMesh();
 						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
@@ -170,15 +164,14 @@ bool CBullet3D::MeshCollision()
 						D3DXVec3Normalize(&dir, &m_move);
 
 						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+						float ChedkDis = 20.0f;
 
-						// ----- 接地時処理 -----
-						if (bIsHit)
+						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
-							if (fLandDistance <= 20)
-							{
-								return true;
-							}
+							delete pCollision;
+							pCollision = nullptr;
+
+							return true;
 						}
 					}
 				}
@@ -186,7 +179,6 @@ bool CBullet3D::MeshCollision()
 
 					CBossTerra* pTest = dynamic_cast<CBossTerra*>(pObj);
 					if (pTest != nullptr) {
-						LPD3DXMESH pMesh = nullptr;
 
 						pMesh = pTest->GetMesh();
 						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
@@ -194,45 +186,14 @@ bool CBullet3D::MeshCollision()
 						D3DXVec3Normalize(&dir, &m_move);
 
 						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+						float ChedkDis = 20.0f;
 
-						// ----- 接地時処理 -----
-						if (bIsHit)
+						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
-							if (fLandDistance <= 20)
-							{
-								pTest->Damaged(5);
-								return true;
-							}
-						}
-					}
-				}
-				else if (type == CObject::TYPE::TYPE_3D_MADEMESH) {
-					CMeshCylinder* pTest = dynamic_cast<CMeshCylinder*>(pObj);
-					if (pTest != nullptr) {
-						// 地形判定
-						BOOL  bIsHit = false;
-						float fLandDistance;
-						DWORD dwHitIndex = 0U;
-						float fHitU;
-						float fHitV;
-						LPD3DXMESH pMesh = nullptr;
-
-						pMesh = pTest->GetMesh();
-						D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-						D3DXVECTOR3 pos = CBillboard::GetPos();
-						D3DXVec3Normalize(&dir, &m_move);
-
-						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
-
-						// ----- 接地時処理 -----
-						if (bIsHit)
-						{
-							if (fLandDistance < 20)
-							{
-								return true;
-							}
+							delete pCollision;
+							pCollision = nullptr;
+							pTest->Damaged(5);
+							return true;
 						}
 					}
 				}

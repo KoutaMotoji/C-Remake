@@ -9,11 +9,11 @@
 #include "manager.h"
 
 //静的メンバ初期化
-const float CMeshCylinder::MAX_WIDTH = 600.0f;
-const float CMeshCylinder::MAX_HEIGHT = 750.0f;
+const float CMeshCylinder::MAX_WIDTH = 6000.0f;
+const float CMeshCylinder::MAX_HEIGHT = 7500.0f;
 
 
-const int CMeshCylinder::MAX_CORNER = 6;
+const int CMeshCylinder::MAX_CORNER = 8;
 
 const int CMeshCylinder::MAX_VTX = MAX_CORNER * 2;
 const int CMeshCylinder::MAX_INDEX = MAX_VTX  + 2;
@@ -53,22 +53,6 @@ void CMeshCylinder::Init()
 		"data\\TEXTURE\\sky_bg.png",
 		&m_apTexMeshCylinder);
 
-	////頂点バッファの生成
-	//pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MAX_VTX,
-	//	D3DUSAGE_WRITEONLY,
-	//	FVF_VERTEX_3D,
-	//	D3DPOOL_MANAGED,
-	//	&m_pVtxBuffMeshCylinder,
-	//	NULL);
-
-	////インデックスバッファの生成
-	//pDevice->CreateIndexBuffer(sizeof(WORD) * MAX_INDEX,
-	//	D3DUSAGE_WRITEONLY,
-	//	D3DFMT_INDEX16,
-	//	D3DPOOL_MANAGED,
-	//	&m_pIdxBuffMeshCylinder,
-	//	NULL);
-	
 	D3DXCreateMeshFVF(
 		(DWORD)MAX_VTX,
 		(DWORD)MAX_VTX,
@@ -216,14 +200,6 @@ void CMeshCylinder::Draw()
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtx);
 
-	////頂点バッファをデータストリームに設定
-	//pDevice->SetStreamSource(0, m_pVtxBuffMeshCylinder, 0, sizeof(VERTEX_3D));
-	////インデックスバッファをデータストリームに設定
-	//pDevice->SetIndices(m_pIdxBuffMeshCylinder);
-	//頂点フォーマットの設定
-	//pDevice->SetFVF(FVF_VERTEX_3D);
-	//テクスチャの設定
-
 	pDevice->SetTexture(0, m_apTexMeshCylinder);
 
 
@@ -232,15 +208,6 @@ void CMeshCylinder::Draw()
 	m_pMesh->DrawSubset(0);
 
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);	//カリング戻し
-
-	////ポリゴンの描画
-	//pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
-	//	0,
-	//	0,
-	//	MAX_VTX,
-	//	0,
-	//	MAX_VTX);
-
 
 }
 
@@ -253,6 +220,6 @@ CMeshCylinder* CMeshCylinder::Create(D3DXVECTOR3 pos)
 	CMeshCylinder* field = new CMeshCylinder;
 	field->Init();
 	field->m_pos = pos;
-	field->m_pos.y += MAX_HEIGHT;
+	field->m_pos.y += MAX_HEIGHT * 0.6;
 	return field;
 }

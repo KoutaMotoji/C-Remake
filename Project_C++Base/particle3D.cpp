@@ -10,7 +10,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CParticle3D::CParticle3D():m_bSizeDown(true)
+CParticle3D::CParticle3D():m_bSizeDown(true), m_move({0.0f,0.0f,0.0f})
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
@@ -61,6 +61,7 @@ void CParticle3D::Update()
 		CObject::Release();
 		return;
 	}
+	CBillboard::AddPos(m_move);
 	CBillboard::Update();
 }
 
@@ -106,9 +107,26 @@ CParticle3D* CParticle3D::Create(D3DXVECTOR3 pos, D3DXCOLOR col, float Radius,in
 
 	particle->SetPolygonParam(pos, Radius, Radius,col);
 	particle->Init();
-	particle->m_nLifeTime = LifeTime;
-	float f = (1.0f / LifeTime);
+	particle->m_nLifeTime = LifeTime;	//残留時間
+	float f = (1.0f / LifeTime);		//残留時間から1フレームの減少値を計算、下で設定
 	particle->m_MinutSize = f;
-	particle->m_bSizeDown = bSizeDown;
+	particle->m_bSizeDown = bSizeDown;	//サイズ減少の是非を設定
+	return particle;
+}
+
+//==========================================================================================
+//生成処理(移動量追加オーバーロード)
+//==========================================================================================
+CParticle3D* CParticle3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, float Radius, int LifeTime, bool bSizeDown)
+{
+	CParticle3D* particle = new CParticle3D;
+
+	particle->SetPolygonParam(pos, Radius, Radius, col);
+	particle->Init();
+	particle->m_nLifeTime = LifeTime;	//残留時間
+	float f = (1.0f / LifeTime);		//残留時間から1フレームの減少値を計算、下で設定
+	particle->m_MinutSize = f;
+	particle->m_bSizeDown = bSizeDown;	//サイズ減少の是非を設定
+	particle->m_move = move;			//移動量を設定
 	return particle;
 }
