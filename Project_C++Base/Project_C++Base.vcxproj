@@ -173,8 +173,10 @@
     <ClInclude Include="objectX.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="particle3D.h" />
+    <ClInclude Include="particle_behavior.h" />
     <ClInclude Include="particle_system.h" />
     <ClInclude Include="playerX.h" />
+    <ClInclude Include="player_observer.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="reticle.h" />
@@ -185,6 +187,7 @@
     <ClInclude Include="test_obstacle.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="tree_billboard.h" />
     <ClInclude Include="t_player.h" />
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +219,7 @@
     <ClCompile Include="particle3D.cpp" />
     <ClCompile Include="particle_system.cpp" />
     <ClCompile Include="playerX.cpp" />
+    <ClCompile Include="player_observer.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="reticle.cpp" />
@@ -226,6 +230,7 @@
     <ClCompile Include="test_obstacle.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="tree_billboard.cpp" />
     <ClCompile Include="t_player.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

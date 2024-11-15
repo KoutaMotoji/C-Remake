@@ -21,6 +21,7 @@ public:
 	void Uninit()override;		//終了
 	void Update()override;		//更新
 	void Draw()override;		//描画
+	void Draw(D3DXCOLOR col);		//描画
 
 	D3DXVECTOR3 GetPos() { return m_pos; };				//座標取得
 	void AddPos(D3DXVECTOR3 pos) { m_pos += pos; };		//座標移動
@@ -34,6 +35,7 @@ public:
 
 	D3DXVECTOR3 GetModelMin() { return m_vtxMinModel; };
 	D3DXVECTOR3 GetModelMax() { return m_vtxMaxModel; };
+	D3DXMATRIX GetMatrix() { return m_mtxWorld; }
 	static CObjectX* Create(D3DXVECTOR3 pos);
 	void SetModelParam(D3DXVECTOR3 pos);					//初期設定
 	void BindModel(const char* apFileName);	//モデル読み込み 
@@ -46,6 +48,7 @@ private:
 	D3DXVECTOR3 m_radius;		//半径
 	D3DXCOLOR m_col;
 	
+	D3DMATERIAL9 m_defMat;
 	D3DXMATRIX m_mtxWorld;
 	LPD3DXMESH m_pMesh;
 	LPD3DXBUFFER m_pBuffMat;

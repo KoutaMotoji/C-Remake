@@ -12,8 +12,10 @@
 
 #include "mesh_Boss_Terra.h"
 #include "mesh_cylinder.h"
+#include "tree_billboard.h"
 
 #include "game.h"
+#include "player_observer.h"
 #include "test_meshCollision.h"
 #include "test_obstacle.h"
 
@@ -50,13 +52,40 @@ HRESULT CGame::Init()
 	CPlayerX::Create({ 0.0f,0.0f,0.0f });
 
 	CMeshCylinder::Create({ 0.0f,0.0f,0.0f });
-
 	CSkyBg::Create({ 0.0f,-1000.0f,0.0f });
-	CTestMeshCollision::Create({ 0.0f,0.0f,0.0f });
+	CTestMeshCollision::Create({ 0.0f,-1500.0f,0.0f });
+	CTestMeshCollision::Create({ 0.0f,-1500.0f,12000.0f });
+
 	CTestObstacle::Create({-200.0f,-1000.0f,700.0f}, 0);
 	CTestObstacle::Create({ 500.0f,-1000.0f,-300.0f }, 1);
 
-	//CBossTerra::Create({ 0.0f,300.0f,0.0f });
+	for (int i = 0; i < 100; ++i)
+	{
+		//乱数生成
+		std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+		std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+		std::uniform_int_distribution<> rand_x(1500, 4000);     // [1500, 4000] 範囲の一様乱数
+		std::uniform_int_distribution<> rand_z(-200, 8000);		 // [-200, 6000] 範囲の一様乱数
+
+		std::uniform_int_distribution<> type(0, 2);				 // [0, 3] 範囲の一様乱数
+
+		CTreeBillboard::Create({ (float)rand_x(mt),-1000.0f,(float)rand_z(mt) }, type(mt));
+	}
+	for (int i = 0; i < 100; ++i)
+	{
+		//乱数生成
+		std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+		std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+		std::uniform_int_distribution<> rand_x(1500, 4000);     // [1500, 4000] 範囲の一様乱数
+		std::uniform_int_distribution<> rand_z(-200, 8000);		 // [-200, 6000] 範囲の一様乱数
+
+		std::uniform_int_distribution<> type(0, 2);				 // [0, 3] 範囲の一様乱数
+
+		CTreeBillboard::Create({ (float)rand_x(mt) * -1,-1000.0f,(float)rand_z(mt) }, type(mt));
+	}
+
+	CBossTerra::Create({ 0.0f,300.0f,0.0f });
+	CPlayerObserver::PlayerSearch();
 
 	LoadMapData();
 	SetBGObject();

@@ -5,12 +5,13 @@
 //
 //===============================================================================
 #include "mesh_cylinder.h"
+#include "player_observer.h"
 
 #include "manager.h"
 
 //静的メンバ初期化
-const float CMeshCylinder::MAX_WIDTH = 6000.0f;
-const float CMeshCylinder::MAX_HEIGHT = 7500.0f;
+const float CMeshCylinder::MAX_WIDTH = 12000.0f;
+const float CMeshCylinder::MAX_HEIGHT = 10000.0f;
 
 
 const int CMeshCylinder::MAX_CORNER = 8;
@@ -87,8 +88,9 @@ void CMeshCylinder::Init()
 			int nNum = ((i * MAX_CORNER) + j);
 
 			pVtx[nNum].tex = {
-				(float)(( 1.0f / (MAX_CORNER)) * j * 2),
+				(float)(( 1.0f / (MAX_CORNER)) * j  *2),
 				(float)(1.0f * i)
+
 			};
 		}
 	}
@@ -166,6 +168,20 @@ void CMeshCylinder::Uninit()
 //==========================================================================================
 void CMeshCylinder::Update()
 {
+	VERTEX_3D* pVtx;	//頂点情報のポインタ
+
+	//メッシュの頂点バッファのロック
+	m_pMesh->LockVertexBuffer(0, (LPVOID*)&pVtx);
+
+	for (int i = 0; i < MAX_VTX; ++i)
+	{
+		pVtx[i].tex.x += 0.00015f;
+	}
+
+	//メッシュの頂点バッファのアンロック
+	m_pMesh->UnlockVertexBuffer();
+
+	m_pos.z = CPlayerObserver::GetPlayerPos().z;
 }
 
 //==========================================================================================

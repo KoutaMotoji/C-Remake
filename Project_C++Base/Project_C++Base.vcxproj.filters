@@ -79,6 +79,12 @@
     <Filter Include="ヘッダー ファイル\3D\Tools">
       <UniqueIdentifier>{ffc9dc57-20df-40b5-8563-0ecd73e579fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D\Model\StageObj">
+      <UniqueIdentifier>{4d7cf27f-cc9f-4eac-a352-195dbb435f99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Model\StageObj">
+      <UniqueIdentifier>{50ec65da-f62f-4164-9241-f8429618b7fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -162,9 +168,6 @@
     <ClCompile Include="billboard.cpp">
       <Filter>ソース ファイル\Base</Filter>
     </ClCompile>
-    <ClCompile Include="test_meshCollision.cpp">
-      <Filter>ソース ファイル\3D\Model</Filter>
-    </ClCompile>
     <ClCompile Include="reticle.cpp">
       <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
@@ -173,15 +176,6 @@
     </ClCompile>
     <ClCompile Include="eff_explosion.cpp">
       <Filter>ソース ファイル\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="test_obstacle.cpp">
-      <Filter>ソース ファイル\3D\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="sky_bg.cpp">
-      <Filter>ソース ファイル\3D</Filter>
-    </ClCompile>
-    <ClCompile Include="mesh_cylinder.cpp">
-      <Filter>ソース ファイル\3D</Filter>
     </ClCompile>
     <ClCompile Include="mesh_Boss_Terra.cpp">
       <Filter>ソース ファイル\3D\Model\Enemy</Filter>
@@ -197,6 +191,24 @@
     </ClCompile>
     <ClCompile Include="particle_system.cpp">
       <Filter>ソース ファイル\3D\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="player_observer.cpp">
+      <Filter>ソース ファイル\System</Filter>
+    </ClCompile>
+    <ClCompile Include="test_meshCollision.cpp">
+      <Filter>ソース ファイル\3D\Model\StageObj</Filter>
+    </ClCompile>
+    <ClCompile Include="test_obstacle.cpp">
+      <Filter>ソース ファイル\3D\Model\StageObj</Filter>
+    </ClCompile>
+    <ClCompile Include="sky_bg.cpp">
+      <Filter>ソース ファイル\3D\Model\StageObj</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh_cylinder.cpp">
+      <Filter>ソース ファイル\3D\Model\StageObj</Filter>
+    </ClCompile>
+    <ClCompile Include="tree_billboard.cpp">
+      <Filter>ソース ファイル\3D\Model\StageObj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -281,9 +293,6 @@
     <ClInclude Include="billboard.h">
       <Filter>ヘッダー ファイル\Base</Filter>
     </ClInclude>
-    <ClInclude Include="test_meshCollision.h">
-      <Filter>ヘッダー ファイル\3D\Model</Filter>
-    </ClInclude>
     <ClInclude Include="reticle.h">
       <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
@@ -292,15 +301,6 @@
     </ClInclude>
     <ClInclude Include="eff_explosion.h">
       <Filter>ヘッダー ファイル\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="test_obstacle.h">
-      <Filter>ヘッダー ファイル\3D\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="sky_bg.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh_cylinder.h">
-      <Filter>ヘッダー ファイル\3D</Filter>
     </ClInclude>
     <ClInclude Include="mesh_Boss_Terra.h">
       <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
@@ -316,6 +316,27 @@
     </ClInclude>
     <ClInclude Include="particle_system.h">
       <Filter>ヘッダー ファイル\3D\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="particle_behavior.h">
+      <Filter>ヘッダー ファイル\3D\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="player_observer.h">
+      <Filter>ヘッダー ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh_cylinder.h">
+      <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
+    </ClInclude>
+    <ClInclude Include="test_meshCollision.h">
+      <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
+    </ClInclude>
+    <ClInclude Include="test_obstacle.h">
+      <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
+    </ClInclude>
+    <ClInclude Include="sky_bg.h">
+      <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
+    </ClInclude>
+    <ClInclude Include="tree_billboard.h">
+      <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

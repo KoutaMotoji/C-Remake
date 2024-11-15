@@ -20,6 +20,8 @@ public:
 	void Update()override;		//çXêV
 	void Draw()override;		//ï`âÊ
 	static CEffExplosion* Create(D3DXVECTOR3 pos);
+	static CEffExplosion* Create(D3DXVECTOR3 pos,float Radius);
+
 private:
 	int m_nTime;
 };

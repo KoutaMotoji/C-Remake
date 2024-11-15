@@ -107,3 +107,15 @@ CEffExplosion* CEffExplosion::Create(D3DXVECTOR3 pos)
 	return Effect;
 }
 
+//==========================================================================================
+//¶¬ˆ—
+//==========================================================================================
+CEffExplosion* CEffExplosion::Create(D3DXVECTOR3 pos,float Radius)
+{
+	CEffExplosion* Effect = new CEffExplosion;
+
+	Effect->SetPolygonParam(pos, Radius, Radius);
+	Effect->Init();
+	Effect->m_nTime = 0;
+	return Effect;
+}

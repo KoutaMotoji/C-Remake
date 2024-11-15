@@ -66,7 +66,7 @@ void CObjectX::Uninit()
 //==========================================================================================
 void CObjectX::Update()
 {
-
+	
 }
 
 //==========================================================================================
@@ -116,12 +116,74 @@ void CObjectX::Draw()
 	pDevice->GetMaterial(&matDef);
 	//マテリアルデータへのポインタを取得
 	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
-	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
+	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; ++nCntMat)
 	{
 		//マテリアルの設定
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 		//テクスチャの設定
 		pDevice->SetTexture(0, m_pTextureObjectX[nCntMat]);
+		//モデル(パーツ)の描画
+		m_pMesh->DrawSubset(nCntMat);
+	}
+	//保存していたマテリアルを戻す
+	pDevice->SetMaterial(&matDef);
+}
+//==========================================================================================
+//描画処理
+//==========================================================================================
+void CObjectX::Draw(D3DXCOLOR col)
+{
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
+	D3DMATERIAL9 matDef;
+	D3DXMATERIAL* pMat;
+
+	//ワールドマトリックス
+	D3DXMatrixIdentity(&m_mtxWorld);
+
+
+	D3DXMatrixScaling(&mtxSize,
+		m_size.y,
+		m_size.x,
+		m_size.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxSize);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot,
+		m_rot.y,
+		m_rot.x,
+		m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxRot);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans,
+		m_pos.x,
+		m_pos.y,
+		m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxTrans);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD,
+		&m_mtxWorld);
+	//現在のマテリアルを取得
+	pDevice->GetMaterial(&matDef);
+	//マテリアルデータへのポインタを取得
+	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; ++nCntMat)
+	{
+		D3DMATERIAL9 pMatCopy = (pMat[nCntMat].MatD3D);
+		pMatCopy.Diffuse = col;
+		//マテリアルの設定
+		pDevice->SetMaterial(&pMatCopy);
+		//テクスチャの設定
+		pDevice->SetTexture(0, m_pTextureObjectX[nCntMat]);
+
 		//モデル(パーツ)の描画
 		m_pMesh->DrawSubset(nCntMat);
 	}
@@ -178,6 +240,9 @@ void CObjectX::BindModel(const char* apFileName)
 				&m_pTextureObjectX[nCntMat]);
 		}
 	}
+
+	pDevice->GetMaterial(&m_defMat);
+
 	SetModelSize();
 }
 

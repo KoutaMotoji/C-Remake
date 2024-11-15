@@ -127,6 +127,7 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 bool CBullet3D::MeshCollision()
 {
 	CCollision* pCollision  = new CCollision();
+	D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 
 	LPD3DXMESH pMesh = nullptr;
 	for (int j = 0; j < SET_PRIORITY; j++) {
@@ -138,13 +139,13 @@ bool CBullet3D::MeshCollision()
 					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
 					if (pTest != nullptr) {
 						pMesh = pTest->GetMesh();
-
-						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 						D3DXVECTOR3 pos = CBillboard::GetPos();
 						D3DXVec3Normalize(&dir, &m_move);
-						float ChedkDis = 10.0f;
+
+						D3DXVECTOR3 objpos = pos - pTest->GetPos();
+						float ChedkDis = 20.0f;
 						// ----- Ú’nŽžˆ— -----
-						if (pCollision->MeshToIntersectCollision(pMesh, pos, dir, ChedkDis))
+						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
 							delete pCollision;
 							pCollision = nullptr;
@@ -159,7 +160,6 @@ bool CBullet3D::MeshCollision()
 					if (pTest != nullptr) {
 
 						pMesh = pTest->GetMesh();
-						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 						D3DXVECTOR3 pos = CBillboard::GetPos();
 						D3DXVec3Normalize(&dir, &m_move);
 
@@ -179,22 +179,25 @@ bool CBullet3D::MeshCollision()
 
 					CBossTerra* pTest = dynamic_cast<CBossTerra*>(pObj);
 					if (pTest != nullptr) {
-
 						pMesh = pTest->GetMesh();
-						D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 						D3DXVECTOR3 pos = CBillboard::GetPos();
 						D3DXVec3Normalize(&dir, &m_move);
 
 						D3DXVECTOR3 objpos = pos - pTest->GetPos();
 						float ChedkDis = 20.0f;
-
+						
 						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
 							delete pCollision;
 							pCollision = nullptr;
-							pTest->Damaged(5);
+							if (!pTest->GetDamageState() && !pTest->GetDeadState())
+							{
+								pTest->Damaged(20);
+							}
 							return true;
 						}
+						
+						return false;
 					}
 				}
 			}

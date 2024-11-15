@@ -18,7 +18,7 @@ const int CBillboard::MAX_POLYGON = 2;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBillboard::CBillboard() : m_fWidth(0), m_fHeight(0)
+CBillboard::CBillboard(int nPriority) :CObject(nPriority), m_fWidth(0), m_fHeight(0)
 {
 	m_pVtxBuffBillboard = nullptr;
 	m_pTextureBillboard = nullptr;

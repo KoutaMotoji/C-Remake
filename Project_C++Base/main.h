@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <cmath>
 #include <stdio.h>
+#include <iostream>
 
 //ライブラリのリンク	
 #pragma comment(lib,"d3d9.lib")		//描画処理に必要

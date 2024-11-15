@@ -13,7 +13,7 @@
 class CBillboard :public CObject
 {
 public:
-	CBillboard();				//コンストラクタ
+	CBillboard(int nPriority = SET_PRIORITY * 0.5);				//コンストラクタ
 	~CBillboard()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

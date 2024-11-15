@@ -58,3 +58,20 @@ bool CCollision::MeshToIntersectCollision(LPD3DXMESH pMesh, D3DXVECTOR3 pos, D3D
 
 	return (bIsHit && fLandDistance <= CheckDistance);
 }
+
+//==========================================================================================
+//飛ばしたレイとメッシュの判定(交差距離を渡すオーバーロード)
+//==========================================================================================
+bool CCollision::MeshToIntersectCollision(float* Distance,LPD3DXMESH pMesh, D3DXVECTOR3 pos, D3DXVECTOR3 dir, float CheckDistance)
+{
+	// 地形判定
+	BOOL  bIsHit = false;
+	float fLandDistance;
+	DWORD dwHitIndex = 0U;
+	float fHitU;
+	float fHitV;
+
+	D3DXIntersect(pMesh, &pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+	*Distance = fLandDistance;
+	return (bIsHit && fLandDistance <= CheckDistance);
+}

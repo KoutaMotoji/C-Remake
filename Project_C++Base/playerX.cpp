@@ -305,7 +305,7 @@ bool CPlayerX::PMove(float fCamRotZ)
 //==========================================================================================
 void CPlayerX::FloorCollision()
 {
-	/*if (m_pos.y < -1000)
+	if (m_pos.y < -1000)
 	{
 		m_pos.y = -1000;
 	}
@@ -337,7 +337,7 @@ void CPlayerX::FloorCollision()
 	else if (m_pReticle->GetPos().x > m_pos.x + 500)
 	{
 		m_pReticle->SetPos({ m_pos.x + 500, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
-	}*/
+	}
 
 }
 
@@ -857,34 +857,37 @@ bool CPlayerX::TestUseMeshCollision()
 					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
 					if (pTest != nullptr) {
 						pMesh = pTest->GetMesh();
+						if (pTest != nullptr) {
+							// 地形判定
+		
+							LPD3DXMESH pMesh = nullptr;
+
+							pMesh = pTest->GetMesh();
+							D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+							D3DXVECTOR3 objpos = m_pos - pTest->GetPos();
+							D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+							// ----- 接地時処理 -----
+							if (bIsHit)
+							{
+								if (m_bTransformed)
+								{
+									m_pos.y += fLandDistance - m_move.y + 45.0f;
+								}
+								else
+								{
+									m_pos.y += fLandDistance - m_move.y;
+								}
+								return true;
+							}
+						}
 					}
 				}
 			}
 		}
 	}
-
-	D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-	D3DXIntersect(pMesh, &m_pos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
-	
-	// ----- 接地時処理 -----
-	if (bIsHit)
-	{
-		if (m_bTransformed)
-		{
-			//取得したレイ射出地点
-			m_pos.y += fLandDistance - m_move.y + 45.0f;
-		}
-		else
-		{
-			//取得したレイ射出地点
-			m_pos.y += fLandDistance - m_move.y;
-		}
-
-
-		return true;
-	}
 	return false;
+	
 }
 
 
