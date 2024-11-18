@@ -8,6 +8,8 @@
 #define _GAME_H_
 
 #include "scene.h"
+#include "test_obstacle.h"
+
 
 class CGame : public CScene
 {
@@ -22,8 +24,11 @@ public:
 private:
 	void LoadMapData();
 	void SetBGObject();
+	void MakeRandTree();
 
 	static const int BG_OBJ_CNT;
+	CTestObstacle* m_obs;
+
 };
 
 #endif

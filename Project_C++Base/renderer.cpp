@@ -125,7 +125,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	//フォグの設定
 	m_D3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);		//範囲指定に設定
 	m_D3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
-	m_D3DDevice->SetRenderState(D3DRS_FOGCOLOR, D3DXCOLOR(1.0f,1.0f,1.0f,0.5f));
+	m_D3DDevice->SetRenderState(D3DRS_FOGCOLOR, D3DXCOLOR(1.0f,1.0f,1.0f,0.6f));
 
 	//範囲指定の設定
 	m_fFogStartPos = 4500.0f;

@@ -210,6 +210,9 @@
     <ClCompile Include="tree_billboard.cpp">
       <Filter>ソース ファイル\3D\Model\StageObj</Filter>
     </ClCompile>
+    <ClCompile Include="boss_reticle.cpp">
+      <Filter>ソース ファイル\3D\Model\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -337,6 +340,9 @@
     </ClInclude>
     <ClInclude Include="tree_billboard.h">
       <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_reticle.h">
+      <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

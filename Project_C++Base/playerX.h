@@ -124,7 +124,7 @@ private:
 	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)
 	D3DXQUATERNION m_quat;		//クオータニオン
 	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
-	float m_fValueRot;			//回転量
+	float m_fValueRot;			//回転量	
 };
 
 #endif

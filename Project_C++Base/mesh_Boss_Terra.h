@@ -10,6 +10,7 @@
 #include "main.h"
 #include "objectX.h"
 #include "gauge_Boss_Life.h"
+#include "boss_reticle.h"
 
 class CBossTerra :public CObjectX
 {
@@ -33,15 +34,18 @@ public:
 	};
 	bool GetDamageState() { return m_bDamaging; }
 	bool GetDeadState() { return m_bDead; }
+	bool AttackRateCheck();
 protected:
 
 private:
+	CBossReticle* m_Reticle[2];
 	CGaugeBoss* m_Gauge;
 	int m_nLife;
 	bool m_bMove;
 	bool m_bDead;
 	int m_nDamageFrame;
 	int m_nDeadFrame;
+	int m_nAttackFrame;
 	bool m_bDamaging;
 };
 

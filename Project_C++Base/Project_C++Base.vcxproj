@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="billboard.h" />
+    <ClInclude Include="boss_reticle.h" />
     <ClInclude Include="bullet3D.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
@@ -192,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="billboard.cpp" />
+    <ClCompile Include="boss_reticle.cpp" />
     <ClCompile Include="bullet3D.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="collision.cpp" />

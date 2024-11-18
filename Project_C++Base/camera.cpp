@@ -87,9 +87,9 @@ void CCamera::SetCamera(void)
 		//乱数生成
 		std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 		std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-		std::uniform_int_distribution<> rand_x(-m_fShalePower, m_fShalePower);     // [-1200, 1200] 範囲の一様乱数
+		std::uniform_int_distribution<> rand_value(-m_fShalePower, m_fShalePower);     // クエイク関数呼び出し時の引数での範囲の一様乱数
 
-		float randShake = (rand_x(mt) );
+		float randShake = (rand_value(mt) );
 		adjust.x = randShake;
 		adjust.z = randShake;
 

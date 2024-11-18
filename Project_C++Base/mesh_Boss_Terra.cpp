@@ -7,6 +7,7 @@
 #include "mesh_Boss_Terra.h"
 #include "eff_explosion.h"
 #include "playerX.h"
+#include "player_observer.h"
 
 #include "manager.h"
 #include "game.h"
@@ -15,9 +16,10 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamaging(false), m_nDamageFrame(0),m_nDeadFrame(0)
+CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamaging(false), m_nDamageFrame(0),m_nDeadFrame(0),m_nAttackFrame(0)
 {
-
+	m_Reticle[0] = nullptr;
+	m_Reticle[1] = nullptr;
 }
 
 //==========================================================================================
@@ -56,6 +58,7 @@ void CBossTerra::Uninit()
 void CBossTerra::Update()
 {
 	D3DXVECTOR3 pos = CObjectX::GetPos();
+	D3DXVECTOR3 Playerpos = CPlayerObserver::GetPlayerPos();
 	if (CObjectX::GetPos().x > 500.0f ||
 		CObjectX::GetPos().x < -500.0f)
 	{
@@ -71,7 +74,27 @@ void CBossTerra::Update()
 		{
 			CObjectX::AddPos({ -5.0f,0.0f,0.0f });
 		}
+		if (AttackRateCheck())
+		{
+			m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
+			m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
+		}
+		if (m_Reticle[0] != nullptr &&
+			m_Reticle[1] != nullptr)
+		{
+			m_Reticle[0]->SetPos(Playerpos);
+			m_Reticle[1]->SetPos(Playerpos);
+			if (m_Reticle[0]->GetLifeState() ||
+				m_Reticle[1]->GetLifeState())
+			{
+				m_Reticle[0]->Release();
+				m_Reticle[1]->Release();
+				m_Reticle[0] = nullptr;
+				m_Reticle[1] = nullptr;
+			}
+		}
 	}
+	
 
 	if (m_bDamaging)
 	{
@@ -119,6 +142,9 @@ CBossTerra* CBossTerra::Create(D3DXVECTOR3 pos)
 	return enemy;
 }
 
+//==========================================================================================
+//死亡演出処理
+//==========================================================================================
 void CBossTerra::DeathAnim() {
 	if (m_nDeadFrame % 5 == 0)
 	{
@@ -151,3 +177,16 @@ void CBossTerra::DeathAnim() {
 	CObjectX::AddPos({0.0f, -2.0f, 0.0f});
 	
 };
+
+//==========================================================================================
+//攻撃のレート管理処理
+//==========================================================================================
+bool CBossTerra::AttackRateCheck()
+{
+	if (m_nAttackFrame >= 180) {
+		m_nAttackFrame = 0;
+		return true;
+	}
+	++m_nAttackFrame;
+	return false;
+}

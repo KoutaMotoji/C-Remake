@@ -147,7 +147,14 @@ void CBillboard::Draw()
 	D3DXMatrixMultiply(&m_mtxWorld,
 		&m_mtxWorld,
 		&mtxSize);
-
+	//Œü‚«‚ð”½‰f
+	D3DXMatrixRotationYawPitchRoll(&mtxRot,
+		m_rot.y,
+		m_rot.x,
+		m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxRot);
 	//ˆÊ’u‚ð”½‰f
 	D3DXMatrixTranslation(&mtxTrans,
 		m_pos.x,

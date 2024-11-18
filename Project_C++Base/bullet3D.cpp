@@ -59,8 +59,8 @@ void CBullet3D::Update()
 	if (m_nLife > 0)
 	{
 		CBillboard::AddPos(m_move);
-		CParticle3D::Create(CBillboard::GetPos(), m_col, Poly_Size, m_EffectSize,false);
-		CParticle3D::Create(CBillboard::GetPos(), {1.0f,1.0f,1.0f,0.8f}, Poly_Size * 0.5f, m_EffectSize, false);
+		CParticle3D::Create(CBillboard::GetPos(), m_col, Poly_Size, m_EffectSize * 0.5f,false);
+		CParticle3D::Create(CBillboard::GetPos(), {1.0f,1.0f,1.0f,0.8f}, Poly_Size * 0.5f, m_EffectSize * 0.5f, false);
 		if (MeshCollision())
 		{
 			CEffExplosion::Create(CBillboard::GetPos());
@@ -90,6 +90,7 @@ void CBullet3D::Draw()
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
 	//アルファテスト設定
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
@@ -113,9 +114,9 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 
 	bullet->SetPolygonParam(pos, Radius, Radius,col);
 	bullet->Init();
-	bullet->m_move = move * 20;
+	bullet->m_move = move * 30;
 	bullet->m_col = col;
-	bullet->m_nLife = nLife;
+	bullet->m_nLife = nLife ;
 	bullet->Poly_Size = Radius;
 	bullet->m_EffectSize = EffectSize;
 	return bullet;
