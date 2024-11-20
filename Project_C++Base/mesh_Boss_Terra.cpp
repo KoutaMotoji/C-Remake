@@ -8,6 +8,7 @@
 #include "eff_explosion.h"
 #include "playerX.h"
 #include "player_observer.h"
+#include "boss_bullet.h"
 
 #include "manager.h"
 #include "game.h"
@@ -59,6 +60,7 @@ void CBossTerra::Update()
 {
 	D3DXVECTOR3 pos = CObjectX::GetPos();
 	D3DXVECTOR3 Playerpos = CPlayerObserver::GetPlayerPos();
+
 	if (CObjectX::GetPos().x > 500.0f ||
 		CObjectX::GetPos().x < -500.0f)
 	{
@@ -87,6 +89,43 @@ void CBossTerra::Update()
 			if (m_Reticle[0]->GetLifeState() ||
 				m_Reticle[1]->GetLifeState())
 			{
+				D3DXVECTOR3 setpos1 ={-500.0f,300.0f,-500.0f};
+				D3DXVECTOR3	setpos2 ={-300.0f,300.0f,-500.0f};
+				D3DXVECTOR3	setpos3 ={ -70.0f,300.0f,0.0f};
+				D3DXVECTOR3	setpos4 ={  70.0f,300.0f,0.0f};
+				D3DXVECTOR3	setpos5 ={ 300.0f,300.0f,-500.0f};
+				D3DXVECTOR3	setpos6 ={ 500.0f,300.0f,-500.0f};
+
+				setpos1	+= pos;
+				setpos2	+= pos;
+				setpos3	+= pos;
+				setpos4	+= pos;
+				setpos5	+= pos;
+				setpos6	+= pos;
+
+				D3DXVECTOR3 value1 = Playerpos - setpos1;
+				D3DXVECTOR3 value2 = Playerpos - setpos2;
+				D3DXVECTOR3 value3 = Playerpos - setpos3;
+				D3DXVECTOR3 value4 = Playerpos - setpos4;
+				D3DXVECTOR3 value5 = Playerpos - setpos5;
+				D3DXVECTOR3 value6 = Playerpos - setpos6;
+
+				D3DXVec3Normalize(&value1, &value1);
+				D3DXVec3Normalize(&value2, &value2);
+				D3DXVec3Normalize(&value3, &value3);
+				D3DXVec3Normalize(&value4, &value4);
+				D3DXVec3Normalize(&value5, &value5);
+				D3DXVec3Normalize(&value6, &value6);
+
+				CBossBullet::Create(setpos1, value1, { 0.2f,0.2f,0.8f,1.0f }, 70, 150, 100);
+				CBossBullet::Create(setpos2, value2, { 0.8f,0.1f,0.1f,1.0f }, 70, 150, 100);
+				CBossBullet::Create(setpos3, value3, { 0.2f,0.2f,0.8f,1.0f }, 70, 150, 100);
+				CBossBullet::Create(setpos4, value4, { 0.8f,0.1f,0.1f,1.0f }, 70, 150, 100);
+				CBossBullet::Create(setpos5, value5, { 0.2f,0.2f,0.8f,1.0f }, 70, 150, 100);
+				CBossBullet::Create(setpos6, value6, { 0.8f,0.1f,0.1f,1.0f }, 70, 150, 100);
+
+
+
 				m_Reticle[0]->Release();
 				m_Reticle[1]->Release();
 				m_Reticle[0] = nullptr;

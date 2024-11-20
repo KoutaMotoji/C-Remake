@@ -10,16 +10,16 @@
 #include "main.h"
 #include "objectX.h"
 
-class CTestObstacle :public CObjectX
+class CMeshObstacle :public CObjectX
 {
 public:
-	CTestObstacle();				//コンストラクタ
-	~CTestObstacle()override;		//デストラクタ
+	CMeshObstacle();				//コンストラクタ
+	~CMeshObstacle()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了
 	void Update()override;		//更新
 	void Draw()override;		//描画
-	static CTestObstacle* Create(D3DXVECTOR3 pos,int Type);
+	static CMeshObstacle* Create(D3DXVECTOR3 pos,int Type);
 protected:
 
 private:

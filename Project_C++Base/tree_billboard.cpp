@@ -5,7 +5,7 @@
 // 
 //===============================================================================
 #include "tree_billboard.h"
-#include "test_meshCollision.h"
+#include "mesh_ground.h"
 #include "collision.h"
 
 #include "manager.h"
@@ -84,7 +84,7 @@ void CTreeBillboard::SetPosGround(float HalfRadius)
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();
 				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
-					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
+					CMeshGround* pTest = dynamic_cast<CMeshGround*>(pObj);
 					if (pTest != nullptr) {
 						pMesh = pTest->GetMesh();
 						D3DXVECTOR3 pos = CBillboard::GetPos();

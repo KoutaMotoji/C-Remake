@@ -4,7 +4,7 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "test_meshCollision.h"
+#include "mesh_ground.h"
 #include "playerX.h"
 
 #include "manager.h"
@@ -14,7 +14,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTestMeshCollision::CTestMeshCollision() 
+CMeshGround::CMeshGround() 
 {
 
 }
@@ -22,7 +22,7 @@ CTestMeshCollision::CTestMeshCollision()
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CTestMeshCollision::~CTestMeshCollision()
+CMeshGround::~CMeshGround()
 {
 
 }
@@ -30,7 +30,7 @@ CTestMeshCollision::~CTestMeshCollision()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CTestMeshCollision::Init()
+void CMeshGround::Init()
 {
 	CObject::SetType(TYPE_3D_MESHOBJECT);
 	CObjectX::Init();
@@ -39,7 +39,7 @@ void CTestMeshCollision::Init()
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CTestMeshCollision::Uninit()
+void CMeshGround::Uninit()
 {
 	CObjectX::Uninit();
 }
@@ -47,7 +47,7 @@ void CTestMeshCollision::Uninit()
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CTestMeshCollision::Update()
+void CMeshGround::Update()
 {
 	CObjectX::Update();
 }
@@ -55,7 +55,7 @@ void CTestMeshCollision::Update()
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CTestMeshCollision::Draw()
+void CMeshGround::Draw()
 {
 	CObjectX::Draw();
 }
@@ -63,9 +63,9 @@ void CTestMeshCollision::Draw()
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CTestMeshCollision* CTestMeshCollision::Create(D3DXVECTOR3 pos)
+CMeshGround* CMeshGround::Create(D3DXVECTOR3 pos)
 {
-	CTestMeshCollision* enemy = new CTestMeshCollision;
+	CMeshGround* enemy = new CMeshGround;
 	enemy->BindModel("data\\MODEL\\Field60576y88unvy6nunu.x");
 	enemy->SetModelParam(pos);
 	enemy->Init();

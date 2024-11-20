@@ -8,7 +8,7 @@
 #define _GAME_H_
 
 #include "scene.h"
-#include "test_obstacle.h"
+#include "mesh_obstacle.h"
 
 
 class CGame : public CScene
@@ -27,7 +27,7 @@ private:
 	void MakeRandTree();
 
 	static const int BG_OBJ_CNT;
-	CTestObstacle* m_obs;
+	CMeshObstacle* m_obs;
 
 };
 

@@ -20,14 +20,16 @@ public:
 	void Update()override;		//çXêV
 	void Draw()override;		//ï`âÊ
 	static CBullet3D* Create(D3DXVECTOR3 pos,D3DXVECTOR3 move, D3DXCOLOR col,int nLife,float Radius,float EffectSize);
-private:
+protected:
+	virtual bool MeshCollision();
 	float Poly_Size;
 	float m_EffectSize;
 	D3DXVECTOR3 m_move;
 	D3DXCOLOR m_col;
 	int m_nLife;
-	
-	bool MeshCollision();
+
+private:
+
 };
 
 #endif

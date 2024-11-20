@@ -195,10 +195,10 @@
     <ClCompile Include="player_observer.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="test_meshCollision.cpp">
+    <ClCompile Include="mesh_ground.cpp">
       <Filter>ソース ファイル\3D\Model\StageObj</Filter>
     </ClCompile>
-    <ClCompile Include="test_obstacle.cpp">
+    <ClCompile Include="mesh_obstacle.cpp">
       <Filter>ソース ファイル\3D\Model\StageObj</Filter>
     </ClCompile>
     <ClCompile Include="sky_bg.cpp">
@@ -211,6 +211,9 @@
       <Filter>ソース ファイル\3D\Model\StageObj</Filter>
     </ClCompile>
     <ClCompile Include="boss_reticle.cpp">
+      <Filter>ソース ファイル\3D\Model\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="boss_bullet.cpp">
       <Filter>ソース ファイル\3D\Model\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
@@ -329,10 +332,10 @@
     <ClInclude Include="mesh_cylinder.h">
       <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
     </ClInclude>
-    <ClInclude Include="test_meshCollision.h">
+    <ClInclude Include="mesh_ground.h">
       <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
     </ClInclude>
-    <ClInclude Include="test_obstacle.h">
+    <ClInclude Include="mesh_obstacle.h">
       <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
     </ClInclude>
     <ClInclude Include="sky_bg.h">
@@ -342,6 +345,9 @@
       <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
     </ClInclude>
     <ClInclude Include="boss_reticle.h">
+      <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="boss_bullet.h">
       <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

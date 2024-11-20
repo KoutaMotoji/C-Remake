@@ -17,7 +17,7 @@
 
 #include "game.h"
 #include "player_observer.h"
-#include "test_meshCollision.h"
+#include "mesh_ground.h"
 
 #include "playerX.h"
 
@@ -52,15 +52,15 @@ HRESULT CGame::Init()
 
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
 	//CSkyBg::Create({ 0.0f,-1000.0f,0.0f });
-	CTestMeshCollision::Create({ 0.0f,-1500.0f,0.0f });
-	CTestMeshCollision::Create({ 0.0f,-1500.0f,12000.0f });
+	CMeshGround::Create({ 0.0f,-1500.0f,0.0f });
+	CMeshGround::Create({ 0.0f,-1500.0f,12000.0f });
 
-	CTestObstacle::Create({-200.0f,-1000.0f,700.0f}, 0);
-	CTestObstacle::Create({ 500.0f,-1000.0f,-300.0f }, 1);
-	CTestObstacle::Create({ 1200.0f,-1000.0f,3700.0f }, 2);
-	CTestObstacle::Create({ -900.0f,-1000.0f,-1200.0f }, 3);
+	CMeshObstacle::Create({-200.0f,-1000.0f,700.0f}, 0);
+	CMeshObstacle::Create({ 500.0f,-1000.0f,-300.0f }, 1);
+	CMeshObstacle::Create({ 1200.0f,-1000.0f,3700.0f }, 2);
+	CMeshObstacle::Create({ -900.0f,-1000.0f,-1200.0f }, 3);
 
-	m_obs = CTestObstacle::Create({ 0.0f,-500.0f,-1500.0f }, 1);
+	m_obs = CMeshObstacle::Create({ 0.0f,-500.0f,-1500.0f }, 1);
 	m_obs->SetRot({ 0.0f,0.0f,-0.4f });
 	MakeRandTree();
 

@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="billboard.h" />
+    <ClInclude Include="boss_bullet.h" />
     <ClInclude Include="boss_reticle.h" />
     <ClInclude Include="bullet3D.h" />
     <ClInclude Include="camera.h" />
@@ -184,8 +185,8 @@
     <ClInclude Include="scene.h" />
     <ClInclude Include="sky_bg.h" />
     <ClInclude Include="sound.h" />
-    <ClInclude Include="test_meshCollision.h" />
-    <ClInclude Include="test_obstacle.h" />
+    <ClInclude Include="mesh_ground.h" />
+    <ClInclude Include="mesh_obstacle.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="tree_billboard.h" />
@@ -193,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="billboard.cpp" />
+    <ClCompile Include="boss_bullet.cpp" />
     <ClCompile Include="boss_reticle.cpp" />
     <ClCompile Include="bullet3D.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -228,8 +230,8 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sky_bg.cpp" />
     <ClCompile Include="sound.cpp" />
-    <ClCompile Include="test_meshCollision.cpp" />
-    <ClCompile Include="test_obstacle.cpp" />
+    <ClCompile Include="mesh_ground.cpp" />
+    <ClCompile Include="mesh_obstacle.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tree_billboard.cpp" />

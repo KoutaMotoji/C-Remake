@@ -8,8 +8,8 @@
 
 #include "particle3D.h"
 #include "bullet3D.h"
-#include "test_meshCollision.h" 
-#include "test_obstacle.h"
+#include "mesh_ground.h" 
+#include "mesh_obstacle.h"
 #include "mesh_cylinder.h"
 #include "game.h"
 #include "collision.h"
@@ -857,7 +857,7 @@ bool CPlayerX::TestUseMeshCollision()
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();
 				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
-					CTestMeshCollision* pTest = dynamic_cast<CTestMeshCollision*>(pObj);
+					CMeshGround* pTest = dynamic_cast<CMeshGround*>(pObj);
 					if (pTest != nullptr) {
 						pMesh = pTest->GetMesh();
 						if (pTest != nullptr) {
@@ -895,6 +895,7 @@ bool CPlayerX::TestUseMeshCollision()
 
 bool CPlayerX::MeshObstacle()
 {	//=============================		障害物メッシュ判定		==========================================================================
+	CCollision* pCollision = new CCollision();
 
 	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; ++i) {
@@ -902,50 +903,32 @@ bool CPlayerX::MeshObstacle()
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();
 				if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
-					CTestObstacle* pTest = dynamic_cast<CTestObstacle*>(pObj);
+					CMeshObstacle* pTest = dynamic_cast<CMeshObstacle*>(pObj);
 
 					if (pTest != nullptr) {
-						// 地形判定
-						BOOL  bIsHit = false;
-						float fLandDistance;
-						DWORD dwHitIndex = 0U;
-						float fHitU;
-						float fHitV;
-
-						LPD3DXMESH pMesh = nullptr;
-						D3DXMATRIX mWorld;
-						D3DXVECTOR3 vStartl;
-						D3DXVECTOR3 vDirl;
-						D3DXVECTOR3 vEnd;
-
-						pMesh = pTest->GetMesh();
+	
 						D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-						vEnd = m_pos + dir;
-						D3DXMATRIX objMtx  = pTest->GetMatrix();
 
-						// レイを当てる対象のマトリックスの逆行列を取得し、始点と終点の座標に対して座標変換を行い、位置・回転・大きさの補間をする
-						D3DXMatrixInverse(&mWorld, NULL, &objMtx);
-						D3DXVec3TransformCoord(&vStartl, &m_pos, &mWorld);
-						D3DXVec3TransformCoord(&vEnd, &vEnd, &mWorld);
-
-						vDirl = vEnd - vStartl;
-
-						D3DXIntersect(pMesh, &vStartl, &vDirl, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
-
-						// ----- 接地時処理 -----
-						if (bIsHit)
+						if (pCollision->MeshToIntersectCollision(pTest, m_pos, dir, 10 + m_move.z))
 						{
-							
-							if (fLandDistance< 10 + m_move.z)
+							if (pCollision != nullptr)
 							{
-								return true;
+								delete pCollision;
+								pCollision = nullptr;
 							}
+							return true;
+
 						}
 					}
 				}
 				
 			}
 		}
+	}
+	if (pCollision != nullptr)
+	{
+		delete pCollision;
+		pCollision = nullptr;
 	}
 	return false;
 }

@@ -4,7 +4,7 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "test_obstacle.h"
+#include "mesh_obstacle.h"
 #include "playerX.h"
 
 
@@ -14,7 +14,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTestObstacle::CTestObstacle()
+CMeshObstacle::CMeshObstacle()
 {
 
 }
@@ -22,7 +22,7 @@ CTestObstacle::CTestObstacle()
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CTestObstacle::~CTestObstacle()
+CMeshObstacle::~CMeshObstacle()
 {
 
 }
@@ -30,7 +30,7 @@ CTestObstacle::~CTestObstacle()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CTestObstacle::Init()
+void CMeshObstacle::Init()
 {
 	CObject::SetType(TYPE_3D_OBSTACLE);
 	CObjectX::Init();
@@ -39,7 +39,7 @@ void CTestObstacle::Init()
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CTestObstacle::Uninit()
+void CMeshObstacle::Uninit()
 {
 	CObjectX::Uninit();
 }
@@ -47,7 +47,7 @@ void CTestObstacle::Uninit()
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CTestObstacle::Update()
+void CMeshObstacle::Update()
 {
 	D3DXVECTOR3 pos = CObjectX::GetPos();
 	CObjectX::Update();
@@ -56,7 +56,7 @@ void CTestObstacle::Update()
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CTestObstacle::Draw()
+void CMeshObstacle::Draw()
 {
 	CObjectX::Draw();
 }
@@ -64,9 +64,9 @@ void CTestObstacle::Draw()
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CTestObstacle* CTestObstacle::Create(D3DXVECTOR3 pos,int Type)
+CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos,int Type)
 {
-	CTestObstacle* enemy = new CTestObstacle;
+	CMeshObstacle* enemy = new CMeshObstacle;
 	switch (Type)
 	{
 	case 0:

@@ -4,12 +4,11 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "bullet3D.h"
+#include "boss_bullet.h"
 #include "particle3D.h"
 #include "mesh_Boss_Terra.h"
 #include "mesh_ground.h"
 #include "mesh_obstacle.h"
-#include "mesh_cylinder.h"
 #include "eff_explosion.h"
 #include "collision.h"
 
@@ -19,7 +18,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBullet3D::CBullet3D() :m_nLife(1), Poly_Size(0.0f),m_EffectSize(0.0f)
+CBossBullet::CBossBullet()
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
@@ -29,7 +28,7 @@ CBullet3D::CBullet3D() :m_nLife(1), Poly_Size(0.0f),m_EffectSize(0.0f)
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CBullet3D::~CBullet3D()
+CBossBullet::~CBossBullet()
 {
 
 }
@@ -37,7 +36,7 @@ CBullet3D::~CBullet3D()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CBullet3D::Init()
+void CBossBullet::Init()
 {
 	CObject::SetType(TYPE_BILLBOARD);
 	CBillboard::Init();
@@ -46,7 +45,7 @@ void CBullet3D::Init()
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CBullet3D::Uninit()
+void CBossBullet::Uninit()
 {
 	CBillboard::Uninit();
 }
@@ -54,35 +53,15 @@ void CBullet3D::Uninit()
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CBullet3D::Update()
+void CBossBullet::Update()
 {
-	if (m_nLife > 0)
-	{
-		CBillboard::AddPos(m_move);
-		CParticle3D::Create(CBillboard::GetPos(), m_col, Poly_Size, m_EffectSize * 0.5f,false);
-		CParticle3D::Create(CBillboard::GetPos(), {1.0f,1.0f,1.0f,0.8f}, Poly_Size * 0.5f, m_EffectSize * 0.5f, false);
-		if (MeshCollision())
-		{
-			CEffExplosion::Create(CBillboard::GetPos());
-			CObject::Release();
-			return;
-		}
-		m_nLife--;
-	}
-	else
-	{
-		CObject::Release();
-		return;
-	}
-
-
-	CBillboard::Update();
+	CBullet3D::Update();
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CBullet3D::Draw()
+void CBossBullet::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 
@@ -108,15 +87,15 @@ void CBullet3D::Draw()
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,int nLife,float Radius,float EffectSize)
+CBossBullet* CBossBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col, int nLife, float Radius, float EffectSize)
 {
-	CBullet3D* bullet = new CBullet3D;
+	CBossBullet* bullet = new CBossBullet;
 
-	bullet->SetPolygonParam(pos, Radius, Radius,col);
+	bullet->SetPolygonParam(pos, Radius, Radius, col);
 	bullet->Init();
-	bullet->m_move = move * 30;
+	bullet->m_move = move * 70;
 	bullet->m_col = col;
-	bullet->m_nLife = nLife ;
+	bullet->m_nLife = nLife;
 	bullet->Poly_Size = Radius;
 	bullet->m_EffectSize = EffectSize;
 	return bullet;
@@ -125,9 +104,9 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 //==========================================================================================
 //自滅当たり判定処理
 //==========================================================================================
-bool CBullet3D::MeshCollision()
+bool CBossBullet::MeshCollision()
 {
-	CCollision* pCollision  = new CCollision();
+	CCollision* pCollision = new CCollision();
 	D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 
 	LPD3DXMESH pMesh = nullptr;
@@ -152,7 +131,7 @@ bool CBullet3D::MeshCollision()
 							pCollision = nullptr;
 
 							return true;
-						}						
+						}
 					}
 				}
 				else if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
@@ -167,44 +146,19 @@ bool CBullet3D::MeshCollision()
 						D3DXVECTOR3 objpos = pos - pTest->GetPos();
 						float ChedkDis = 20.0f;
 
-						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
-						{
-							delete pCollision;
-							pCollision = nullptr;
-
-							return true;
-						}
-					}
-				}
-				else if (type == CObject::TYPE::TYPE_3D_BOSSTERRA) {
-
-					CBossTerra* pTest = dynamic_cast<CBossTerra*>(pObj);
-					if (pTest != nullptr) {
-						pMesh = pTest->GetMesh();
-						D3DXVECTOR3 pos = CBillboard::GetPos();
-						D3DXVec3Normalize(&dir, &m_move);
-
-						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						float ChedkDis = 20.0f;
-						
 						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
 							delete pCollision;
 							pCollision = nullptr;
-							if (!pTest->GetDamageState() && !pTest->GetDeadState())
-							{
-								pTest->Damaged(20);
-							}
+
 							return true;
 						}
-						
-						return false;
 					}
 				}
 			}
 		}
 	}
-	
+
 
 	return false;
 }
