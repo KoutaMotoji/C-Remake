@@ -10,6 +10,7 @@
 #include "scene.h"
 #include "mesh_obstacle.h"
 
+constexpr int MAX_TREESET_NUM = 260;
 
 class CGame : public CScene
 {

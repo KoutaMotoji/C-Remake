@@ -13,6 +13,9 @@
 namespace {
 	float Poly_Radius = 300.0f;
 }
+constexpr float REPLACEMENT_CHECKDIS = 500;
+constexpr float REPLACEMENT_SETDIS = 500;
+
 
 class CTreeBillboard :public CBillboard
 {
@@ -28,6 +31,7 @@ public:
 	void SetPosGround(float HalfRadius);
 private:
 	int m_snTexIdx[3];
+	int m_nTexIdx;
 };
 
 #endif

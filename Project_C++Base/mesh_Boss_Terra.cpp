@@ -14,6 +14,23 @@
 #include "game.h"
 #include <random>
 
+namespace BulletOption {
+	//各弾の発射地点の位置
+	D3DXVECTOR3 setpos1 = { -500.0f,300.0f,-500.0f };
+	D3DXVECTOR3	setpos2 = { -300.0f,300.0f,-500.0f };
+	D3DXVECTOR3	setpos3 = { -70.0f,300.0f,0.0f };
+	D3DXVECTOR3	setpos4 = { 70.0f,300.0f,0.0f };
+	D3DXVECTOR3	setpos5 = { 300.0f,300.0f,-500.0f };
+	D3DXVECTOR3	setpos6 = { 500.0f,300.0f,-500.0f };
+
+	int Life = 70;
+	float Radius = 150;
+	float EffectSize = 100;
+	D3DXCOLOR color1 = { 0.2f,0.2f,0.8f,1.0f };
+	D3DXCOLOR color2 = { 0.8f,0.1f,0.1f,1.0f };
+	D3DXCOLOR DamagingColor = { 1.0f,0.1f,0.2,0.8f };
+}
+
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
@@ -46,6 +63,16 @@ void CBossTerra::Init()
 //==========================================================================================
 void CBossTerra::Uninit()
 {
+	if (m_Reticle[0] != nullptr)
+	{
+		m_Reticle[0]->Release();
+		m_Reticle[0] = nullptr;
+	}
+	if (m_Reticle[1] != nullptr)
+	{
+		m_Reticle[1]->Release();
+		m_Reticle[1] = nullptr;
+	}
 	if (m_Gauge != nullptr)
 	{
 		m_Gauge->Uninit();
@@ -89,42 +116,7 @@ void CBossTerra::Update()
 			if (m_Reticle[0]->GetLifeState() ||
 				m_Reticle[1]->GetLifeState())
 			{
-				D3DXVECTOR3 setpos1 ={-500.0f,300.0f,-500.0f};
-				D3DXVECTOR3	setpos2 ={-300.0f,300.0f,-500.0f};
-				D3DXVECTOR3	setpos3 ={ -70.0f,300.0f,0.0f};
-				D3DXVECTOR3	setpos4 ={  70.0f,300.0f,0.0f};
-				D3DXVECTOR3	setpos5 ={ 300.0f,300.0f,-500.0f};
-				D3DXVECTOR3	setpos6 ={ 500.0f,300.0f,-500.0f};
-
-				setpos1	+= pos;
-				setpos2	+= pos;
-				setpos3	+= pos;
-				setpos4	+= pos;
-				setpos5	+= pos;
-				setpos6	+= pos;
-
-				D3DXVECTOR3 value1 = Playerpos - setpos1;
-				D3DXVECTOR3 value2 = Playerpos - setpos2;
-				D3DXVECTOR3 value3 = Playerpos - setpos3;
-				D3DXVECTOR3 value4 = Playerpos - setpos4;
-				D3DXVECTOR3 value5 = Playerpos - setpos5;
-				D3DXVECTOR3 value6 = Playerpos - setpos6;
-
-				D3DXVec3Normalize(&value1, &value1);
-				D3DXVec3Normalize(&value2, &value2);
-				D3DXVec3Normalize(&value3, &value3);
-				D3DXVec3Normalize(&value4, &value4);
-				D3DXVec3Normalize(&value5, &value5);
-				D3DXVec3Normalize(&value6, &value6);
-
-				CBossBullet::Create(setpos1, value1, { 0.2f,0.2f,0.8f,1.0f }, 70, 150, 100);
-				CBossBullet::Create(setpos2, value2, { 0.8f,0.1f,0.1f,1.0f }, 70, 150, 100);
-				CBossBullet::Create(setpos3, value3, { 0.2f,0.2f,0.8f,1.0f }, 70, 150, 100);
-				CBossBullet::Create(setpos4, value4, { 0.8f,0.1f,0.1f,1.0f }, 70, 150, 100);
-				CBossBullet::Create(setpos5, value5, { 0.2f,0.2f,0.8f,1.0f }, 70, 150, 100);
-				CBossBullet::Create(setpos6, value6, { 0.8f,0.1f,0.1f,1.0f }, 70, 150, 100);
-
-
+				SetBullet(pos, Playerpos);
 
 				m_Reticle[0]->Release();
 				m_Reticle[1]->Release();
@@ -134,7 +126,6 @@ void CBossTerra::Update()
 		}
 	}
 	
-
 	if (m_bDamaging)
 	{
 		++m_nDamageFrame;
@@ -143,12 +134,15 @@ void CBossTerra::Update()
 			m_bDamaging = false;
 		}
 	}
+
 	m_Gauge->SetPos({ CObjectX::GetPos().x,CObjectX::GetPos().y + 300.0f ,CObjectX::GetPos().z });
 	DeathCheck();
 	if(m_bDead)
 	{
 		DeathAnim();
 	}
+	CObjectX::AddPos({ 0.0f,0.0f,10.0f });
+
 	CObjectX::Update();
 }
 
@@ -159,12 +153,13 @@ void CBossTerra::Draw()
 {
 	if (m_bDamaging||m_bDead)
 	{
-		CObjectX::Draw({1.0f,0.1f,0.2,0.8f});
+		CObjectX::Draw(BulletOption::DamagingColor);
 	}
 	else
 	{
 		CObjectX::Draw();
 	}
+
 }
 
 //==========================================================================================
@@ -228,4 +223,40 @@ bool CBossTerra::AttackRateCheck()
 	}
 	++m_nAttackFrame;
 	return false;
+}
+
+//==========================================================================================
+//弾の発射を設定
+//==========================================================================================
+void CBossTerra::SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos)
+{
+	using namespace BulletOption;
+
+	D3DXVECTOR3 pos1 = setpos1 + pos;
+	D3DXVECTOR3 pos2 = setpos2 + pos;
+	D3DXVECTOR3 pos3 = setpos3 + pos;
+	D3DXVECTOR3 pos4 = setpos4 + pos;
+	D3DXVECTOR3 pos5 = setpos5 + pos;
+	D3DXVECTOR3 pos6 = setpos6 + pos;
+
+	D3DXVECTOR3 value1 = Playerpos - pos1;
+	D3DXVECTOR3 value2 = Playerpos - pos2;
+	D3DXVECTOR3 value3 = Playerpos - pos3;
+	D3DXVECTOR3 value4 = Playerpos - pos4;
+	D3DXVECTOR3 value5 = Playerpos - pos5;
+	D3DXVECTOR3 value6 = Playerpos - pos6;
+
+	D3DXVec3Normalize(&value1, &value1);
+	D3DXVec3Normalize(&value2, &value2);
+	D3DXVec3Normalize(&value3, &value3);
+	D3DXVec3Normalize(&value4, &value4);
+	D3DXVec3Normalize(&value5, &value5);
+	D3DXVec3Normalize(&value6, &value6);
+
+	CBossBullet::Create(pos1, value1, color1, Life, Radius, EffectSize);
+	CBossBullet::Create(pos2, value2, color2, Life, Radius, EffectSize);
+	CBossBullet::Create(pos3, value3, color1, Life, Radius, EffectSize);
+	CBossBullet::Create(pos4, value4, color2, Life, Radius, EffectSize);
+	CBossBullet::Create(pos5, value5, color1, Life, Radius, EffectSize);
+	CBossBullet::Create(pos6, value6, color2, Life, Radius, EffectSize);
 }

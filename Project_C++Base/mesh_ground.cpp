@@ -69,7 +69,6 @@ CMeshGround* CMeshGround::Create(D3DXVECTOR3 pos)
 	enemy->BindModel("data\\MODEL\\Field60576y88unvy6nunu.x");
 	enemy->SetModelParam(pos);
 	enemy->Init();
-
 	return enemy;
 }
 

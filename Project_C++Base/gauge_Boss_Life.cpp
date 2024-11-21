@@ -11,6 +11,8 @@
 //コンストラクタ
 //==========================================================================================
 CGaugeBoss::CGaugeBoss() {
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\boss_gauge.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 8,2 });
 }
 
 //==========================================================================================
@@ -59,7 +61,7 @@ CGaugeBoss* CGaugeBoss::Create(D3DXVECTOR3 pos,D3DXVECTOR2 size,int MaxValue)
 {
 	CGaugeBoss* object3D = new CGaugeBoss;
 
-	object3D->SetPolygonParam(pos, size.y, size.x, {0.0f,1.0f,0.8f,1.0f},MaxValue);
+	object3D->SetPolygonParam(pos, size.y, size.x, { 1.0f,1.0f,1.0f,1.0f},MaxValue);
 
 	object3D->Init();
 	return object3D;

@@ -12,6 +12,8 @@
 #include "gauge_Boss_Life.h"
 #include "boss_reticle.h"
 
+
+
 class CBossTerra :public CObjectX
 {
 public:
@@ -20,6 +22,7 @@ public:
 	void Init()override;		//‰Šú‰»
 	void Uninit()override;		//I—¹
 	void Update()override;		//XV
+	void SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos);
 	void Draw()override;		//•`‰æ
 	static CBossTerra* Create(D3DXVECTOR3 pos);
 

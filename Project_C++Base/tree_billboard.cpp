@@ -7,7 +7,7 @@
 #include "tree_billboard.h"
 #include "mesh_ground.h"
 #include "collision.h"
-
+#include "player_observer.h"
 #include "manager.h"
 
 
@@ -51,6 +51,16 @@ void CTreeBillboard::Uninit()
 //==========================================================================================
 void CTreeBillboard::Update()
 {
+	//一定間隔プレイヤーから後ろに離れた場合、X座標のみを参照して一定数後方に再設置する処理
+	if (CBillboard::GetPos().z - CPlayerObserver::GetPlayerPos().z <= REPLACEMENT_CHECKDIS)
+	{
+		D3DXVECTOR3 newPos = CBillboard::GetPos();
+		newPos.z += REPLACEMENT_SETDIS;
+		Create(newPos, m_nTexIdx);
+		//現在のオブジェクトを破棄
+		CObject::Release();
+		return;
+	}
 	CBillboard::Update();
 }
 
@@ -63,7 +73,9 @@ CTreeBillboard* CTreeBillboard::Create(D3DXVECTOR3 pos, int TexIdx)
 
 	tree->SetPolygonParam(pos, Poly_Radius, Poly_Radius, {1.0f,1.0f,1.0f,1.0f});
 	tree->BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(tree->m_snTexIdx[TexIdx]));
+	tree->m_nTexIdx = TexIdx;
 	tree->Init();
+	tree->AddPos({ 0.0f,-1000.0f,0.0f });
 	tree->SetPosGround(Poly_Radius);
 	return tree;
 }

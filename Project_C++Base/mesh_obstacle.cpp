@@ -7,7 +7,6 @@
 #include "mesh_obstacle.h"
 #include "playerX.h"
 
-
 #include "manager.h"
 #include "game.h"
 

@@ -206,13 +206,13 @@ void CGame::MakeRandTree()
 	std::uniform_int_distribution<> rand_z(-200, 10000);		 // [-200, 10000] ”ÍˆÍ‚Ìˆê—l—”
 
 	std::uniform_int_distribution<> type(0, 2);				 // [0, 2] ”ÍˆÍ‚Ìˆê—l—”
-	for (int i = 0; i < 150; ++i)
+	for (int i = 0; i < MAX_TREESET_NUM * 0.5; ++i)
 	{
-		CTreeBillboard::Create({ (float)rand_x(mt),-1000.0f,(float)rand_z(mt) }, type(mt));
+		CTreeBillboard::Create({ (float)rand_x(mt),0.0f,(float)rand_z(mt) }, type(mt));
 	}
-	for (int i = 0; i < 150; ++i)
+	for (int i = 0; i < MAX_TREESET_NUM * 0.5; ++i)
 	{
 
-		CTreeBillboard::Create({ (float)rand_x(mt) * -1,-1000.0f,(float)rand_z(mt) }, type(mt));
+		CTreeBillboard::Create({ (float)rand_x(mt) * -1,0.0f,(float)rand_z(mt) }, type(mt));
 	}
 }

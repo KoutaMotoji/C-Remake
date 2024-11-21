@@ -146,7 +146,7 @@ void CPlayerX::Update()
 	{
 		m_move.z += 5.0f;
 	}
-	//m_move.z += 3.0f;
+	m_move.z += 3.0f;
 
 	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
 
