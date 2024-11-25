@@ -44,7 +44,7 @@ HRESULT CLight::Init(void)
 			vecDir[1] = D3DXVECTOR3(-0.5f, -0.3f, 0.2f);
 			break;
 		case 2:
-			vecDir[2] = D3DXVECTOR3(0.6f, 0.8f, 0.8f);
+			vecDir[2] = D3DXVECTOR3(0.6f, -0.6f, -0.2f);
 			break;
 		}
 		D3DXVec3Normalize(&vecDir[i], &vecDir[i]);

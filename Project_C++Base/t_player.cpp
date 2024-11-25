@@ -37,7 +37,7 @@ void CTitlePlayer::Init()
 	CObject::SetType(TYPE_3D_PLAYER);
 
 	CManager::GetInstance()->GetCamera()->SetCameraDistance(800.0f);
-	CManager::GetInstance()->GetCamera()->SetRotz(D3DX_PI);
+	//CManager::GetInstance()->GetCamera()->SetRotz(D3DX_PI);
 }
 
 //==========================================================================================
@@ -60,11 +60,11 @@ void CTitlePlayer::Update()
 	
 	//CManager::GetInstance()->GetCamera()->AddCameraDistance(-10.0f);
 	m_rot = m_rot;
-	m_pos += m_move;
-	//移動量を更新
-	m_move.x += (0.0f - m_move.x) * 0.15f;
-	m_move.y += (0.0f - m_move.y) * 0.15f;
-	m_move.z += (0.0f - m_move.z) * 0.15f;
+	//m_pos += m_move;
+	////移動量を更新
+	//m_move.x += (0.0f - m_move.x) * 0.15f;
+	//m_move.y += (0.0f - m_move.y) * 0.15f;
+	//m_move.z += (0.0f - m_move.z) * 0.15f;
 
 	CManager::GetInstance()->GetCamera()->SetPlayerPos(m_pos);
 }

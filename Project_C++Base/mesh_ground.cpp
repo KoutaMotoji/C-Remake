@@ -5,10 +5,11 @@
 // 
 //===============================================================================
 #include "mesh_ground.h"
-#include "playerX.h"
+#include "player_observer.h"
 
 #include "manager.h"
 #include "game.h"
+
 
 
 //==========================================================================================
@@ -33,6 +34,7 @@ CMeshGround::~CMeshGround()
 void CMeshGround::Init()
 {
 	CObject::SetType(TYPE_3D_MESHOBJECT);
+	float afgrfdse = this->GetModelMax().z;
 	CObjectX::Init();
 }
 
@@ -49,6 +51,14 @@ void CMeshGround::Uninit()
 //==========================================================================================
 void CMeshGround::Update()
 {
+	if (CPlayerObserver::GetPlayerPos().z  - this->GetPos().z > this->GetModelMax().z * 1.5f)
+	{
+		D3DXVECTOR3 newPos = CObjectX::GetPos();
+		newPos.z += CObjectX::GetModelMax().z * 6 - 20.0f;
+		Create(newPos);
+		this->Release();
+		return;
+	}
 	CObjectX::Update();
 }
 
@@ -66,7 +76,7 @@ void CMeshGround::Draw()
 CMeshGround* CMeshGround::Create(D3DXVECTOR3 pos)
 {
 	CMeshGround* enemy = new CMeshGround;
-	enemy->BindModel("data\\MODEL\\Field60576y88unvy6nunu.x");
+	enemy->BindModel("data\\MODEL\\Field5481646924940.x");
 	enemy->SetModelParam(pos);
 	enemy->Init();
 	return enemy;

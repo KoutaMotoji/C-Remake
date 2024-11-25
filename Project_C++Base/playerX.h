@@ -68,6 +68,7 @@ private:
 	int m_ModelParts;	//モデルパーツ数
 	int m_CurKey;		//現在のキー番号
 	int m_CurMotion;	//現在のモーション番号
+	int m_NextMotion;	//現在のモーション番号
 	int m_KeySetNum;	//キーセット数
 	int m_MotionNum;	//モーション最大数
 	int m_NowFrame;		//現在のフレーム
@@ -98,6 +99,7 @@ private:
 	void MotionDataLoad();
 	void SetNextMotion(int nNextMotionNum);
 	void SetNextKey();
+	bool MotionBlending();
 	enum
 	{
 		MOTION_JET_NUTO = 0,
@@ -106,9 +108,11 @@ private:
 		MOTION_ROBO_NUTO,
 		MOTION_TRANS_ROBO_TO_JET,
 		MOTION_ROBO_SHOT,
+		MOTION_ROBO_SLASH
 	};
 	LPD3DXMESH m_pMesh;
 
+	bool m_bBlend;
 	bool m_bMotion;
 	bool m_bTransformed;
 	bool TestUseMeshCollision();

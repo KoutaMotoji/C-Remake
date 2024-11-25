@@ -216,6 +216,9 @@
     <ClCompile Include="boss_bullet.cpp">
       <Filter>ソース ファイル\3D\Model\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="map_edit.cpp">
+      <Filter>ソース ファイル\Scene\Edit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="boss_bullet.h">
       <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="map_edit.h">
+      <Filter>ヘッダー ファイル\Scene\Edit</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

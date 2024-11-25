@@ -25,7 +25,7 @@ const int CPlayerX::MAX_STAMINA = 500;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0)
+CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false)
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
@@ -71,7 +71,11 @@ void CPlayerX::Update()
 	D3DXVECTOR3 CameraPos;
 
 	ReticleController();
-	SetNextKey();
+	if (!MotionBlending())
+	{
+		SetNextKey();
+	}
+
 	FloorCollision();
 	PMove(CameraPos.z);
 	if (!m_bMotion)
@@ -113,6 +117,10 @@ void CPlayerX::Update()
 			m_rot = {0.0f,D3DX_PI,0.0f};
 			m_bDamaged = false;
 		}
+	}
+	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_RIGHT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
+	{
+		SetNextMotion(MOTION_ROBO_SLASH);
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
 	{
@@ -285,17 +293,6 @@ bool CPlayerX::PMove(float fCamRotZ)
 
 		m_pReticle->SetPos({ m_pos.x + m_move.x * 10,m_pos.y + m_move.y * 10, m_pos.z + 500 });
 	}
-	//if(abs(m_move.x) < 1.0f && !m_bDamaged)
-	//{
-	//	if (m_rot.z >= 0)
-	//	{
-	//		m_rot.z -= (m_SecZrot / 10);
-	//	}
-	//	if (m_rot.z <= 0)
-	//	{
-	//		m_rot.z += (m_SecZrot / 10);
-	//	}
-	//}
 
 	return true;
 }
@@ -430,12 +427,12 @@ void CPlayerX::MotionInit()
 //==========================================================================================
 void CPlayerX::SetNextMotion(int nNextMotionNum)
 {
-	m_CurMotion = nNextMotionNum;
-	m_CurKey = 0;
+	m_NextMotion = nNextMotionNum;
 	m_NowFrame = 0;
-
-	SetNextKey();
+	m_bBlend = true;
+	MotionBlending();
 }
+
 //==========================================================================================
 //次のキーのモーション処理
 //==========================================================================================
@@ -466,7 +463,7 @@ void CPlayerX::SetNextKey()
 	{
 		//現在の向きと位置の情報
 		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;
-		NowRot = m_apModelParts[nCntParts]->GetRot();
+		NowRot = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].rot;
 		
 		//次のキーの情報
 		NextPos = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].pos;
@@ -509,7 +506,6 @@ void CPlayerX::SetNextKey()
 		m_apModelParts[nCntParts]->SetRot(DigitRot);
 	}
 
-
 	++m_NowFrame;
 
 	if (m_NowFrame >= m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
@@ -518,27 +514,120 @@ void CPlayerX::SetNextKey()
 		m_NowFrame = 0;
 		if (m_CurKey >= m_aMotion[nNowMotion].nKeyNum)
 		{
-			m_CurKey = 0;
 			if (!m_aMotion[nNowMotion].bLoop)
 			{	
 				if (m_CurMotion == MOTION_TRANS_JET_TO_ROBO||
 					m_CurMotion == MOTION_TRANS_ROBO_TO_JET||
-					m_CurMotion == MOTION_ROBO_SHOT)
+					m_CurMotion == MOTION_ROBO_SHOT || 
+					m_CurMotion == MOTION_ROBO_SLASH)
 				{
 					m_bMotion = false;
-
 				}
 				if (m_bTransformed)
 				{
-					m_CurMotion = MOTION_ROBO_NUTO;
+					SetNextMotion(MOTION_ROBO_NUTO);
 				}
 				else
 				{
-					m_CurMotion = MOTION_JET_NUTO;
+					SetNextMotion(MOTION_JET_NUTO);
 				}			
+			}
+			else
+			{
+				m_CurKey = 0;
 			}
 		}
 	}
+}
+//==========================================================================================
+//モーション切り替え時のブレンド処理
+//==========================================================================================
+bool CPlayerX::MotionBlending()
+{
+	if (!m_bBlend){
+		return false;
+	}
+
+	//現在の位置・角度
+	D3DXVECTOR3 NowPos = {};
+	D3DXVECTOR3 NowRot = {};
+
+	//次の位置・角度
+	D3DXVECTOR3 NextPos = {};
+	D3DXVECTOR3 NextRot = {};
+
+	//動きの差分を求める用
+	D3DXVECTOR3 DifPos = {};
+	D3DXVECTOR3 DifRot = {};
+
+	//計算用
+	D3DXVECTOR3 DigitPos = {};
+	D3DXVECTOR3 DigitRot = {};
+
+	int nLastKey = m_CurKey;
+	int nNowMotion = m_CurMotion;
+
+	float fRatioFrame = ((float)m_NowFrame / (float)m_aMotion[m_NextMotion].aKetSet[0].nFrame);
+
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; ++nCntParts)
+	{
+		//現在の向きと位置の情報
+		NowPos = m_aMotion[nNowMotion].aKetSet[nLastKey].aKey[nCntParts].pos;
+		NowRot = m_aMotion[nNowMotion].aKetSet[nLastKey].aKey[nCntParts].rot;
+
+		//次のキーの情報
+		NextPos = m_aMotion[m_NextMotion].aKetSet[0].aKey[nCntParts].pos;
+		NextRot = m_aMotion[m_NextMotion].aKetSet[0].aKey[nCntParts].rot;
+
+		//差分を求める
+		DifPos = NextPos - NowPos;
+		DifRot = NextRot - NowRot;
+
+		//-3.14～3.14の間を超える場合の修正
+		if (DifRot.x >= D3DX_PI)
+		{
+			DifRot.x -= D3DX_PI * 2;
+		}
+		if (DifRot.y >= D3DX_PI)
+		{
+			DifRot.y -= D3DX_PI * 2;
+		}
+		if (DifRot.z >= D3DX_PI)
+		{
+			DifRot.z -= D3DX_PI * 2;
+		}
+		if (DifRot.x <= -D3DX_PI)
+		{
+			DifRot.x += D3DX_PI * 2;
+		}
+		if (DifRot.y <= -D3DX_PI)
+		{
+			DifRot.y += D3DX_PI * 2;
+		}
+		if (DifRot.z <= -D3DX_PI)
+		{
+			DifRot.z += D3DX_PI * 2;
+		}
+
+		DigitPos = DifPos * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultPos() + NowPos;
+		DigitRot = DifRot * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultRot() + NowRot;
+
+		m_apModelParts[nCntParts]->SetPos(DigitPos);
+		m_apModelParts[nCntParts]->SetRot(DigitRot);
+	}
+
+	++m_NowFrame;
+
+	if (m_NowFrame >= m_aMotion[m_NextMotion].aKetSet[0].nFrame)
+	{
+		m_CurKey = 0;
+		m_NowFrame = 0;
+		m_CurMotion = m_NextMotion;
+		m_bBlend = false;
+		SetNextKey();
+	} 
+
+	return m_bBlend;
 }
 
 //==========================================================================================
@@ -787,12 +876,9 @@ void CPlayerX::ReticleController()
 
 D3DXVECTOR3 CPlayerX::CameraPosDigit()
 {
-	//D3DXVECTOR3 CamPos = { 0.0f,0.0f,0.0f };
 
 	D3DXVECTOR3 CamPos = m_pos;
 
-	//CamPos.x = (m_pReticle->GetPos().x + m_pos.x) * 0.5f;
-	//CamPos.y = (m_pReticle->GetPos().y + m_pos.y) * 0.5f;
 	CamPos.z = m_pos.z;
 	return CamPos;
 }

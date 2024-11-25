@@ -164,6 +164,7 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="manager.h" />
+    <ClInclude Include="map_edit.h" />
     <ClInclude Include="mesh_Boss_Terra.h" />
     <ClInclude Include="mesh_cylinder.h" />
     <ClInclude Include="modelparts.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manager.cpp" />
+    <ClCompile Include="map_edit.cpp" />
     <ClCompile Include="mesh_Boss_Terra.cpp" />
     <ClCompile Include="mesh_cylinder.cpp" />
     <ClCompile Include="modelparts.cpp" />
