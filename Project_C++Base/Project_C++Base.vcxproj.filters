@@ -219,6 +219,9 @@
     <ClCompile Include="map_edit.cpp">
       <Filter>ソース ファイル\Scene\Edit</Filter>
     </ClCompile>
+    <ClCompile Include="fog.cpp">
+      <Filter>ソース ファイル\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -355,6 +358,9 @@
     </ClInclude>
     <ClInclude Include="map_edit.h">
       <Filter>ヘッダー ファイル\Scene\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="fog.h">
+      <Filter>ヘッダー ファイル\System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

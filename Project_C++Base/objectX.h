@@ -30,6 +30,7 @@ public:
 	void AddRot(D3DXVECTOR3 rot) { m_rot += rot; };		//角度移動
 	void SetRot(D3DXVECTOR3 rot) { m_rot = rot; };		//角度移動
 	void AddSize(D3DXVECTOR3 size) { m_size += size; };
+	void SetSize(D3DXVECTOR3 size) { m_size = size; };
 	LPD3DXMESH GetMesh() { return m_pMesh; };			//メッシュの取得
 	D3DXVECTOR3* GetRadius() { return &m_radius; };		//モデルの半径取得
 

@@ -34,7 +34,6 @@ CMeshGround::~CMeshGround()
 void CMeshGround::Init()
 {
 	CObject::SetType(TYPE_3D_MESHOBJECT);
-	float afgrfdse = this->GetModelMax().z;
 	CObjectX::Init();
 }
 

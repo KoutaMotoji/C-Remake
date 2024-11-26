@@ -9,10 +9,11 @@
 
 #include "scene.h"
 #include "objectX.h"
+#include "mesh_obstacle.h"
 
 #define MAX_EDITOBJ	(1024)
 
-constexpr int MAX_OBJNUM = 4;
+constexpr int MAX_OBJNUM = 5;
 
 class CMapEdit : public CScene
 {
@@ -20,6 +21,8 @@ public:
 	typedef struct
 	{
 		D3DXVECTOR3 pos;
+		D3DXVECTOR3 rot;
+		D3DXVECTOR3 scale;
 		int SelType;
 	}SetInfo;
 	enum
@@ -43,6 +46,7 @@ public:
 	void LoadFile();	//ファイルから読み込んで配置(一括)
 
 	D3DXVECTOR3 GetThisPos() { return m_thisPos; };
+	static void SetLoadMap();
 private:
 	void SaveFile();	//配置情報を保存
 	void EditObj();		//オブジェクトを配置
@@ -50,18 +54,25 @@ private:
 	void SelectObject();
 	void SetObject();	//Enterを押した時のオブジェクト生成
 
+	void SetEditPos();
+	void SetEditRot();
+	void SetEditScale();
 
 	CObjectX* m_SelectObject;
 	CObjectX* m_LastObj;
 	const float MOVE_SCALE;
+	float m_CamDis,m_SaveDis;
 
-	D3DXVECTOR3 m_thisPos;
+	D3DXVECTOR3 m_thisPos,m_thisRot,m_thisScale;
 	int m_thisType;
 	int m_MaxObj;
 	SetInfo ObjInfo[MAX_EDITOBJ];
 
 	//デバッグ表示用フォント
 	LPD3DXFONT m_pFont;
+	void InitFont();
+	void UninitFont();
+	void DrawFont();
 };
 
 #endif

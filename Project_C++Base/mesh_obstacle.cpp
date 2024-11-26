@@ -10,6 +10,17 @@
 #include "manager.h"
 #include "game.h"
 
+
+namespace {
+	const char* modelName[MAX_MODELTYPE]{
+		"data\\MODEL\\gate000.x",
+		"data\\MODEL\\statue000.x",
+		"data\\MODEL\\Building000.x",
+		"data\\MODEL\\Building001.x",	
+		"data\\MODEL\\tower.x"
+	};
+};
+
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
@@ -66,24 +77,8 @@ void CMeshObstacle::Draw()
 CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos,int Type)
 {
 	CMeshObstacle* enemy = new CMeshObstacle;
-	switch (Type)
-	{
-	case 0:
-		enemy->BindModel("data\\MODEL\\gate000.x");
-		break;
-	case 1:
-		enemy->BindModel("data\\MODEL\\statue000.x");
-		break;
-	case 2:
-		enemy->BindModel("data\\MODEL\\Building000.x");
-		break;
-	case 3:
-		enemy->BindModel("data\\MODEL\\Building001.x");
-		break;
-	default:
-		break;
-	}
 
+	enemy->BindModel(modelName[Type]);
 
 	enemy->SetModelParam(pos);
 	enemy->Init();
@@ -91,3 +86,19 @@ CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos,int Type)
 	return enemy;
 }
 
+//==========================================================================================
+//生成処理(配置ツール用オーバーロード)
+//==========================================================================================
+CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, int Type)
+{
+	CMeshObstacle* enemy = new CMeshObstacle;
+
+	enemy->BindModel(modelName[Type]);
+
+	enemy->SetModelParam(pos);
+	enemy->SetRot(rot);
+	enemy->SetSize(scale);
+	enemy->Init();
+
+	return enemy;
+}

@@ -83,6 +83,9 @@ void CKeyboard::Update()
 		for (nCntKey = 0; nCntKey < NUM_KEY_MAX; nCntKey++)
 		{
 			m_aKeyStateTrigger[nCntKey] = (m_aKeyState[nCntKey] ^ aKeyState[nCntKey]) & aKeyState[nCntKey];
+			m_aKeyStateRelease[nCntKey] = (m_aKeyState[nCntKey] ^ aKeyState[nCntKey]) & ~aKeyState[nCntKey];
+			m_aKeyStateRepeat[nCntKey]  = (m_aKeyState[nCntKey] & aKeyState[nCntKey]);
+
 			m_aKeyState[nCntKey] = aKeyState[nCntKey];
 		}
 	}
@@ -106,4 +109,20 @@ bool CKeyboard::GetPress(int nKey)
 bool CKeyboard::GetTrigger(int nKey)
 {
 	return (m_aKeyStateTrigger[nKey] & 0x80) != 0;
+}
+
+//==========================================================================================
+//キーボードのリリース情報を取得
+//==========================================================================================
+bool CKeyboard::GetRelease(int nKey)
+{
+	return (m_aKeyStateRelease[nKey] & 0x80) != 0;
+}
+
+//==========================================================================================
+//キーボードのリピート情報を取得
+//==========================================================================================
+bool CKeyboard::GetRepeat(int nKey)
+{
+	return (m_aKeyStateRepeat[nKey] & 0x80) != 0;
 }

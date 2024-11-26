@@ -7,6 +7,7 @@
 
 #include "scene.h"
 
+#include "map_edit.h"
 #include "object.h"
 #include "game.h"
 #include "title.h"
@@ -87,9 +88,9 @@ CScene* CScene::Create(CScene::MODE mode)
 		return scene;
 		break;
 	case MODE_MAPEDIT:
-		////scene = new CMapEdit();
-		//scene->m_mode = mode;
-		//return scene;
+		scene = new CMapEdit();
+		scene->m_mode = mode;
+		return scene;
 		break;
 	}
 }

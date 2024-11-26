@@ -12,16 +12,19 @@
 #include "playerX.h"
 
 #include "mesh_obstacle.h"
+#include "mesh_ground.h"
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CMapEdit::CMapEdit():m_MaxObj(0),MOVE_SCALE(20.0f)
+CMapEdit::CMapEdit():m_MaxObj(0),MOVE_SCALE(20.0f), m_CamDis(3000.0f), m_SaveDis(3000.0f)
 {
-	for (int i = 0; i < MAX_EDITOBJ; i++)
+	for (int i = 0; i < MAX_EDITOBJ; ++i)
 	{
 		ObjInfo[i].pos = { 0.0f,0.0f,0.0f };
-		ObjInfo[i].SelType = Sel_MAX;
+		ObjInfo[i].rot = { 0.0f,0.0f,0.0f };
+		ObjInfo[i].scale = { 1.0f,1.0f,1.0f };
+		ObjInfo[i].SelType = 0;
 	}
 	m_SelectObject = nullptr;
 }
@@ -40,10 +43,21 @@ CMapEdit::~CMapEdit()
 HRESULT CMapEdit::Init()
 {
 	CScene::Init();
+	InitFont();
 	LoadFile();
+	CManager::GetInstance()->GetCamera()->SetCameraDistance(m_CamDis);
+	
+
 	m_thisPos = { 0.0f,0.0f,0.0f };
+	m_thisRot = { 0.0f,0.0f,0.0f };
+	m_thisScale = { 1.0f,1.0f,1.0f };
 	m_thisType = Sel_3DBlock;
 	SelectObject();
+
+	CMeshGround::Create({ 0.0f,-1000.0f,0.0f });
+	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 });
+	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 });
+
 	return S_OK;
 }
 
@@ -60,6 +74,7 @@ void CMapEdit::Uninit()
 	{
 		m_LastObj->Release();
 	}
+	UninitFont();
 	CScene::Uninit();
 }
 
@@ -77,11 +92,22 @@ void CMapEdit::Update()
 	{
 		assert(!(CameraPos = CManager::GetInstance()->GetCamera()->GetPlayerPos()));
 	}
-
+	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_UPARROW) == true)
+	{
+		m_CamDis -= 50.0f;
+		m_SaveDis = m_CamDis;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_DOWNARROW) == true)
+	{
+		m_CamDis += 50.0f;
+		m_SaveDis = m_CamDis;
+	}
 	CameraPos = m_thisPos;
+	CameraPos.y = (m_SelectObject->GetModelMin().y + m_SelectObject->GetModelMax().y) * 0.5f + m_thisPos.y;
 	EditObj();
 	CManager::GetInstance()->GetCamera()->SetPlayerPos(CameraPos);
 
+	DrawFont();
 	CScene::Update();
 }
 
@@ -98,27 +124,13 @@ void CMapEdit::Draw()
 //==========================================================================================
 void CMapEdit::EditObj()
 {
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_UPARROW) == true)
-	{
-		m_thisPos.y += MOVE_SCALE;
-	}
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_DOWNARROW) == true)
-	{
-		m_thisPos.y -= MOVE_SCALE;
-	}
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_LEFTARROW) == true)
-	{
-		m_thisPos.x -= MOVE_SCALE;
-	}
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_RIGHTARROW) == true)
-	{
-		m_thisPos.x += MOVE_SCALE;
-	}
+	SetEditPos();
+	SetEditRot();
+	SetEditScale();
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_RETURN) == true)
 	{
 		SetObject();
 	}
-	m_SelectObject->SetPos(m_thisPos);
 	SelectObjType();
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_F1) == true)
 	{
@@ -153,6 +165,14 @@ void CMapEdit::SaveFile()
 			fprintf(pFile, "%.2f,", ObjInfo[i].pos.x);
 			fprintf(pFile, "%.2f,", ObjInfo[i].pos.y);
 			fprintf(pFile, "%.2f\n", ObjInfo[i].pos.z);
+
+			fprintf(pFile, "%.2f,", ObjInfo[i].rot.x);
+			fprintf(pFile, "%.2f,", ObjInfo[i].rot.y);
+			fprintf(pFile, "%.2f\n", ObjInfo[i].rot.z);
+
+			fprintf(pFile, "%.2f,", ObjInfo[i].scale.x);
+			fprintf(pFile, "%.2f,", ObjInfo[i].scale.y);
+			fprintf(pFile, "%.2f\n", ObjInfo[i].scale.z);
 		}
 		fclose(pFile);
 	}
@@ -171,24 +191,37 @@ void CMapEdit::LoadFile()
 		fscanf(pFile, "%d\n", &nGetCnt);
 		m_MaxObj = nGetCnt;
 		D3DXVECTOR3 GetPos;
+		D3DXVECTOR3 GetRot;
+		D3DXVECTOR3 GetScale;
+
 		int nGetType;
 		for (int i = 0; i < nGetCnt; ++i)
 		{
-
 			fscanf(pFile, "%d\n", &nGetType);
 			fscanf(pFile, "%f,", &GetPos.x);
 			fscanf(pFile, "%f,", &GetPos.y);
 			fscanf(pFile, "%f\n", &GetPos.z);
+
+			fscanf(pFile, "%f,", &GetRot.x);
+			fscanf(pFile, "%f,", &GetRot.y);
+			fscanf(pFile, "%f\n", &GetRot.z);
+
+			fscanf(pFile, "%f,", &GetScale.x);
+			fscanf(pFile, "%f,", &GetScale.y);
+			fscanf(pFile, "%f\n", &GetScale.z);
+
 			ObjInfo[i].pos = GetPos;
+			ObjInfo[i].rot = GetRot;
+			ObjInfo[i].scale = GetScale;
+
 			ObjInfo[i].SelType = nGetType;
+		}
+		for (int j = 0; j < m_MaxObj; ++j)
+		{
+			CMeshObstacle::Create(ObjInfo[j].pos, ObjInfo[j].rot, ObjInfo[j].scale,ObjInfo[j].SelType);
 		}
 		fclose(pFile);
 	}
-	for (int j = 0; j < m_MaxObj; ++j)
-	{
-		CMeshObstacle::Create(ObjInfo[j].pos, ObjInfo[j].SelType);
-	}
-
 }
 //==========================================================================================
 //オブジェクトの種類を選択する処理
@@ -200,15 +233,17 @@ void CMapEdit::SelectObject()
 		m_SelectObject->Release();
 	}
 
-	m_SelectObject = CMeshObstacle::Create(m_thisPos, m_thisType);
+	m_SelectObject = CMeshObstacle::Create(m_thisPos,m_thisRot,m_thisScale, m_thisType);
 }
 //==========================================================================================
 //オブジェクトを設置する処理
 //==========================================================================================
 void CMapEdit::SetObject()
 {
-	CMeshObstacle::Create(m_thisPos, m_thisType);
+	CMeshObstacle::Create(m_thisPos, m_thisRot, m_thisScale, m_thisType);
 	ObjInfo[m_MaxObj].pos = m_thisPos;
+	ObjInfo[m_MaxObj].rot = m_thisRot;
+	ObjInfo[m_MaxObj].scale = m_thisScale;
 	ObjInfo[m_MaxObj].SelType = m_thisType;
 	++m_MaxObj;
 }
@@ -218,22 +253,277 @@ void CMapEdit::SetObject()
 //==========================================================================================
 void CMapEdit::SelectObjType()
 {
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_1) == true)
-	{
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_1) == true)	{
 		--m_thisType;
-		if (m_thisType < 0)
-		{
+		if (m_thisType < 0)	{
 			m_thisType = MAX_OBJNUM - 1;
 		}
 		SelectObject();
 	}
-	else if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_2) == true)
-	{
+	else if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_2) == true)	{
 		++m_thisType;
-		if (m_thisType > MAX_OBJNUM - 1)
-		{
+		if (m_thisType > MAX_OBJNUM - 1)	{
 			m_thisType = 0;
 		}
 		SelectObject();
+	}
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//
+//==========================================================================================
+//オブジェクトの位置を変える処理
+//==========================================================================================
+void CMapEdit::SetEditPos()
+{
+	float ADD_Move = MOVE_SCALE * 4;
+
+	if (CManager::GetInstance()->GetKeyboard()->GetRepeat(DIK_LSHIFT) == true)
+	{
+		if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_W) == true)
+		{
+			m_thisPos.z += ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_S) == true)
+		{
+			m_thisPos.z -= ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true)
+		{
+			m_thisPos.x -= ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_D) == true)
+		{
+			m_thisPos.x += ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_E) == true)
+		{
+			m_thisPos.y -= ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_Q) == true)
+		{
+			m_thisPos.y += ADD_Move;
+		}
+	}
+	else
+	{
+
+		if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_W) == true)
+		{
+			m_thisPos.z += ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_S) == true)
+		{
+			m_thisPos.z -= ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_A) == true)
+		{
+			m_thisPos.x -= ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_D) == true)
+		{
+			m_thisPos.x += ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_E) == true)
+		{
+			m_thisPos.y -= ADD_Move;
+		}
+		if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_Q) == true)
+		{
+			m_thisPos.y += ADD_Move;
+		}
+	}
+	m_SelectObject->SetPos(m_thisPos);
+}
+
+//==========================================================================================
+//オブジェクトの向きを変える処理
+//==========================================================================================
+void CMapEdit::SetEditRot()
+{
+	float ADD_Rot = D3DX_PI * 0.125f;
+
+	if (CManager::GetInstance()->GetKeyboard()->GetRepeat(DIK_LSHIFT) == true)
+	{
+		ADD_Rot *= 4;
+	}
+
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_Y) == true)
+	{
+		m_thisRot.y += ADD_Rot;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_H) == true)
+	{
+		m_thisRot.y -= ADD_Rot;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_N) == true)
+	{
+		m_thisRot.y = 0;
+	}
+
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_T) == true)
+	{
+		m_thisRot.x -= ADD_Rot;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_G) == true)
+	{
+		m_thisRot.x += ADD_Rot;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_B) == true)
+	{
+		m_thisRot.x = 0;
+	}
+
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_U) == true)
+	{
+		m_thisRot.z += ADD_Rot;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_J) == true)
+	{
+		m_thisRot.z -= ADD_Rot;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_M) == true)
+	{
+		m_thisRot.z = 0;
+	}
+	m_SelectObject->SetRot(m_thisRot);
+
+}
+
+//==========================================================================================
+//オブジェクトの大きさを変える処理
+//==========================================================================================
+void CMapEdit::SetEditScale()
+{
+	float ADD_SIZE = 0.05f;
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_C) == true)
+	{
+		m_thisScale += {ADD_SIZE, ADD_SIZE, ADD_SIZE};
+		m_CamDis += 150.0f;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_Z) == true)
+	{
+		m_thisScale -= {ADD_SIZE, ADD_SIZE, ADD_SIZE};
+		m_CamDis -= 150.0f;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_X) == true)
+	{
+		m_thisScale = {1.0f, 1.0f, 1.0f };
+		m_CamDis = m_SaveDis;
+	}
+	m_SelectObject->SetSize(m_thisScale);
+	CManager::GetInstance()->GetCamera()->SetCameraDistance(m_CamDis);
+
+}
+//
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//
+//==========================================================================================
+//デバッグ表示用初期化処理
+//==========================================================================================
+void CMapEdit::InitFont()
+{
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();		//デバイスへのポインタを取得
+
+	//デバッグ表示用フォントの生成
+	D3DXCreateFont(pDevice, 18, 0, 0, 0, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Terminal", &m_pFont);
+}
+
+//==========================================================================================
+//デバッグ表示用終了処理
+//==========================================================================================
+void CMapEdit::UninitFont()
+{
+	//デバッグ表示用フォントの廃棄
+	if (m_pFont != NULL)
+	{
+		m_pFont->Release();
+		m_pFont = NULL;
+	}
+
+}
+//==========================================================================================
+//デバッグ表示用描画処理
+//==========================================================================================
+void CMapEdit::DrawFont()
+{
+	RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	char str[256] = {};
+
+	sprintf((char*)str, "現在のオブジェクトの総数：%d\n"
+		"現在のオブジェクトの位置：%f,%f,%f\n"
+		"現在のオブジェクトの回転：%f,%f,%f\n"
+		"現在のオブジェクトのスケール：%f\n"
+		"現在のオブジェクトの種類：%d",
+		m_MaxObj,
+		m_thisPos.x, m_thisPos.y, m_thisPos.z, 
+		m_thisRot.x, m_thisRot.y, m_thisRot.z,
+		m_thisScale.x,
+		m_thisType);
+
+	 //テキストの描画
+	m_pFont->DrawText(NULL, 
+		&str[0],
+		-1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+
+	memset(&str[0], NULL, sizeof(str));
+
+}
+//
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//==========================================================================================
+//外部から設置する処理
+//==========================================================================================
+void CMapEdit::SetLoadMap()
+{
+	typedef struct
+	{
+		D3DXVECTOR3 pos;
+		D3DXVECTOR3 rot;
+		D3DXVECTOR3 scale;
+		int SelType;
+	}SetInfo;
+	SetInfo ObjInfo[1024] = {};
+	int MaxObj = 0;
+	FILE* pFile;
+	pFile = fopen("data\\TEXT\\Data001.txt", "r");
+
+	if (pFile != nullptr)
+	{
+		int nGetCnt = 0;
+		fscanf(pFile, "%d\n", &nGetCnt);
+		MaxObj = nGetCnt;
+		D3DXVECTOR3 GetPos;
+		D3DXVECTOR3 GetRot;
+		D3DXVECTOR3 GetScale;
+
+		int nGetType;
+		for (int i = 0; i < nGetCnt; ++i)
+		{
+			fscanf(pFile, "%d\n", &nGetType);
+			fscanf(pFile, "%f,", &GetPos.x);
+			fscanf(pFile, "%f,", &GetPos.y);
+			fscanf(pFile, "%f\n", &GetPos.z);
+
+			fscanf(pFile, "%f,", &GetRot.x);
+			fscanf(pFile, "%f,", &GetRot.y);
+			fscanf(pFile, "%f\n", &GetRot.z);
+
+			fscanf(pFile, "%f,", &GetScale.x);
+			fscanf(pFile, "%f,", &GetScale.y);
+			fscanf(pFile, "%f\n", &GetScale.z);
+
+			ObjInfo[i].pos = GetPos;
+			ObjInfo[i].rot = GetRot;
+			ObjInfo[i].scale = GetScale;
+
+			ObjInfo[i].SelType = nGetType;
+		}
+		for (int j = 0; j < MaxObj; ++j)
+		{
+			CMeshObstacle::Create(ObjInfo[j].pos, ObjInfo[j].rot, ObjInfo[j].scale, ObjInfo[j].SelType);
+		}
+		fclose(pFile);
 	}
 }

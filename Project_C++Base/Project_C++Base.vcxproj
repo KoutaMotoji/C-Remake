@@ -156,6 +156,7 @@
     <ClInclude Include="EDIT_particle.h" />
     <ClInclude Include="eff_explosion.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="fog.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gauge_Boss_Life.h" />
     <ClInclude Include="input.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="EDIT_particle.cpp" />
     <ClCompile Include="eff_explosion.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="fog.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gauge_Boss_Life.cpp" />
     <ClCompile Include="input.cpp" />

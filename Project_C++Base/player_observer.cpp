@@ -30,3 +30,11 @@ void CPlayerObserver::PlayerSearch()
 		}
 	}
 }
+
+void CPlayerObserver::PlayerObsDestroy()
+{
+	if (pPlayer != nullptr)
+	{
+		pPlayer = nullptr;
+	}
+}

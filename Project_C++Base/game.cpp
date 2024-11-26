@@ -15,7 +15,9 @@
 #include "tree_billboard.h"
 #include "boss_reticle.h"
 
+#include "fog.h"
 #include "game.h"
+#include "map_edit.h"
 #include "player_observer.h"
 #include "mesh_ground.h"
 
@@ -48,7 +50,10 @@ CGame::~CGame()
 HRESULT CGame::Init()
 {
 	CScene::Init();
+
+	CFog::SetFogLinear(4500.0f,15000.0f);
 	CPlayerX::Create({ 0.0f,0.0f,0.0f });
+	CPlayerObserver::PlayerSearch();
 
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
 	//CSkyBg::Create({ 0.0f,-1000.0f,0.0f });
@@ -60,11 +65,10 @@ HRESULT CGame::Init()
 	CMeshObstacle::Create({ 500.0f,-1000.0f,-300.0f }, 1);
 	CMeshObstacle::Create({ 1200.0f,-1000.0f,3700.0f }, 2);
 	CMeshObstacle::Create({ -900.0f,-1000.0f,-1200.0f }, 3);
-
+	CMapEdit::SetLoadMap();
 	MakeRandTree();
 
 	//CBossTerra::Create({ 0.0f,300.0f,2000.0f });
-	CPlayerObserver::PlayerSearch();
 
 	LoadMapData();
 	SetBGObject();
@@ -77,7 +81,8 @@ HRESULT CGame::Init()
 //==========================================================================================
 void CGame::Uninit()
 {
-	
+	CFog::FinishFog();
+	CPlayerObserver::PlayerObsDestroy();
 
 	CScene::Uninit();
 }
@@ -96,6 +101,7 @@ void CGame::Update()
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_F3))
 	{
 		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_MAPEDIT);
+		return;
 	}
 #endif // _DEBUG
 	CScene::Update();

@@ -876,7 +876,6 @@ void CPlayerX::ReticleController()
 
 D3DXVECTOR3 CPlayerX::CameraPosDigit()
 {
-
 	D3DXVECTOR3 CamPos = m_pos;
 
 	CamPos.z = m_pos.z;
