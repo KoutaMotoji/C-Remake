@@ -1,25 +1,19 @@
 //===============================================================================
 //
-//  C++使った3D(result.cpp)
+//  C++使った2D(enemy_basic.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
+#include "t_base.h"
+#include "playerX.h"
 
 #include "manager.h"
-
-#include "t_player.h"
-#include "t_starter.h"
-#include "t_base.h"
-#include "mesh_cylinder.h"
-#include "sky_bg.h"
-
-#include "title.h"
-#include "fade.h"
+#include "game.h"
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTitle::CTitle()
+CTitleBase::CTitleBase()
 {
 
 }
@@ -27,7 +21,7 @@ CTitle::CTitle()
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CTitle::~CTitle()
+CTitleBase::~CTitleBase()
 {
 
 }
@@ -35,49 +29,46 @@ CTitle::~CTitle()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-HRESULT CTitle::Init()
+void CTitleBase::Init()
 {
-	CScene::Init();
-	CTitleBase::Create({ -400.0f,-120.0f,100.0f });
-	CTitlePlayer::Create({ 0.0f, 0.0f, 0.0f});
-	CStarter::Create({ 0.0f, -70.0f, 0.0f });
-	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
-	CSkyBg::Create({ 0.0f,-200.0f,0.0f });
-
-	return S_OK;
+	CObject::SetType(TYPE_3D_TITLEOBJ);
+	CObjectX::Init();
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CTitle::Uninit()
+void CTitleBase::Uninit()
 {
-
-	CScene::Uninit();
+	CObjectX::Uninit();
 }
-
 
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CTitle::Update()
+void CTitleBase::Update()
 {
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_R) || CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A))
-	{
-		//if (!(CManager::GetInstance()->GetFade()->GetUse()))
-		//{
-
-		//}
-		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
-
-	}
-	CScene::Update();
+	CObjectX::Update();
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CTitle::Draw()
+void CTitleBase::Draw()
 {
-	CScene::Draw();
+	CObjectX::Draw();
+}
+
+//==========================================================================================
+//生成処理
+//==========================================================================================
+CTitleBase* CTitleBase::Create(D3DXVECTOR3 pos)
+{
+	CTitleBase* enemy = new CTitleBase;
+
+	enemy->BindModel("data\\MODEL\\basement.x");
+	enemy->SetModelParam(pos);
+	enemy->Init();
+	enemy->SetRot({ 0.0f,D3DX_PI,0.0f });
+	return enemy;
 }

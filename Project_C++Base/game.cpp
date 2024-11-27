@@ -61,10 +61,6 @@ HRESULT CGame::Init()
 	CMeshGround::Create({ 0.0f,-1000.0f,5940*2 });
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 });
 
-	CMeshObstacle::Create({-200.0f,-1000.0f,700.0f}, 0);
-	CMeshObstacle::Create({ 500.0f,-1000.0f,-300.0f }, 1);
-	CMeshObstacle::Create({ 1200.0f,-1000.0f,3700.0f }, 2);
-	CMeshObstacle::Create({ -900.0f,-1000.0f,-1200.0f }, 3);
 	CMapEdit::SetLoadMap();
 	MakeRandTree();
 

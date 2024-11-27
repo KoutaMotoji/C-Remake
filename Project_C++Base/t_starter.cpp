@@ -4,15 +4,14 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "t_player.h"
+#include "t_starter.h"
 
-const float CTitlePlayer::MOVE_SPEED = 0.55f;
-
+#include "game.h"
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTitlePlayer::CTitlePlayer()
+CStarter::CStarter()
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
@@ -23,7 +22,7 @@ CTitlePlayer::CTitlePlayer()
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CTitlePlayer::~CTitlePlayer()
+CStarter::~CStarter()
 {
 
 }
@@ -31,18 +30,18 @@ CTitlePlayer::~CTitlePlayer()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CTitlePlayer::Init()
+void CStarter::Init()
 {
-	ModelDataLoad();
-	CObject::SetType(TYPE_3D_PLAYER);
+	MotionInit();
+	CManager::GetInstance()->GetCamera()->SetCameraDistance(3500.0f);
 
-	//CManager::GetInstance()->GetCamera()->SetRotz(D3DX_PI);
+	CObject::SetType(TYPE_3D_TITLEOBJ);
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CTitlePlayer::Uninit()
+void CStarter::Uninit()
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
@@ -53,27 +52,22 @@ void CTitlePlayer::Uninit()
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CTitlePlayer::Update()
+void CStarter::Update()
 {
-	FloorCollision();
-
-	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_F) == true)
+	SetNextKey();
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_RETURN) == true ||
+		CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A) == true)
 	{
-		m_move.z -= 0.2f;
+		SetNextMotion(MOTION_START);
 	}
+	CManager::GetInstance()->GetCamera()->SetPlayerPos(m_pos);
 
-
-	m_pos += m_move;
-	//移動量を更新
-	m_move.x += (0.0f - m_move.x) * 0.017f;
-	m_move.y += (0.0f - m_move.y) * 0.017f;
-	m_move.z += (0.0f - m_move.z) * 0.017f;
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CTitlePlayer::Draw()
+void CStarter::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice;
 	//デバイスの取得
@@ -111,76 +105,142 @@ void CTitlePlayer::Draw()
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtxWorld);
-	for (int i = 0; i < MAX_MODELPARTS; i++)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
-		m_apModelParts[i]->Draw();	
+		m_apModelParts[i]->Draw();
 	}
 }
 
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CTitlePlayer* CTitlePlayer::Create(D3DXVECTOR3 pos)
+CStarter* CStarter::Create(D3DXVECTOR3 pos)
 {
-	CTitlePlayer* player = new CTitlePlayer;
+	CStarter* player = new CStarter;
 	player->Init();
 
 	player->m_pos = pos;
-	player->m_move = { 0.0f,0.0f,0.0f };
 	player->m_rot = { 0.0f,0.0f,0.0f };
 	player->m_size = { 1.0f,1.0f,1.0f };
-	player->m_OldPos = pos;
 	return player;
 }
 
 //==========================================================================================
-//移動処理
+//モーションの初期化処理
 //==========================================================================================
-bool CTitlePlayer::PMove(float fCamRotZ)
+void CStarter::MotionInit()
 {
-	//m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2, 0.0f};
-
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
-	//	CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
-	//{
-
-	//}
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
-	//	CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
-	//{
-
-	//}
-	//if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DLEFT) == true)
-	//{//Aキーが押された
-
-	//}
-	//else if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_D) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DRIGHT) == true)
-	//{//Dキーが押された
-
-	//}
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickVecL() > 0)
-	//{
-	//	m_vecAxis = { abs(m_move.y),abs(m_move.x),0.0f };
-	//	D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
-
-	//}
-
-	return true;
+	MotionDataLoad();
+	m_CurMotion = MOTION_NORMAL;
+	m_CurKey = 0;
+	m_NowFrame = 0;
 }
 
 //==========================================================================================
-//床当たり判定
+//次のモーションに移行する処理
 //==========================================================================================
-void CTitlePlayer::FloorCollision()
+void CStarter::SetNextMotion(int nNextMotionNum)
 {
-
+	m_CurMotion = nNextMotionNum;
+	m_CurKey = 0;
+	m_NowFrame = 0;
+	SetNextKey();
 }
 
+//==========================================================================================
+//次のキーのモーション処理
+//==========================================================================================
+void CStarter::SetNextKey()
+{
+	//現在の位置・角度
+	D3DXVECTOR3 NowPos = {};
+	D3DXVECTOR3 NowRot = {};
+
+	//次の位置・角度
+	D3DXVECTOR3 NextPos = {};
+	D3DXVECTOR3 NextRot = {};
+
+	//動きの差分を求める用
+	D3DXVECTOR3 DifPos = {};
+	D3DXVECTOR3 DifRot = {};
+
+	//計算用
+	D3DXVECTOR3 DigitPos = {};
+	D3DXVECTOR3 DigitRot = {};
+
+	int nNowKey = m_CurKey;
+	int nNowMotion = m_CurMotion;
+	int nNextKey = (m_CurKey + 1) % m_aMotion[nNowMotion].nKeyNum;
+	float fRatioFrame = (float)m_NowFrame / (float)m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame;
+
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; ++nCntParts)
+	{
+		//現在の向きと位置の情報
+		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;
+		NowRot = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].rot;
+
+		//次のキーの情報
+		NextPos = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].pos;
+		NextRot = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].rot;
+
+		//差分を求める
+		DifPos = NextPos - NowPos;
+		DifRot = NextRot - NowRot;
+
+		//-3.14～3.14の間を超える場合の修正
+		if (DifRot.x >= D3DX_PI)
+		{
+			DifRot.x -= D3DX_PI * 2;
+		}
+		if (DifRot.y >= D3DX_PI)
+		{
+			DifRot.y -= D3DX_PI * 2;
+		}
+		if (DifRot.z >= D3DX_PI)
+		{
+			DifRot.z -= D3DX_PI * 2;
+		}
+		if (DifRot.x <= -D3DX_PI)
+		{
+			DifRot.x += D3DX_PI * 2;
+		}
+		if (DifRot.y <= -D3DX_PI)
+		{
+			DifRot.y += D3DX_PI * 2;
+		}
+		if (DifRot.z <= -D3DX_PI)
+		{
+			DifRot.z += D3DX_PI * 2;
+		}
+
+		DigitPos = DifPos * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultPos() + NowPos;
+		DigitRot = DifRot * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultRot() + NowRot;
+
+		m_apModelParts[nCntParts]->SetPos(DigitPos);
+		m_apModelParts[nCntParts]->SetRot(DigitRot);
+	}
+
+	++m_NowFrame;
+
+	if (m_NowFrame >= m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
+	{
+		++m_CurKey;
+		m_NowFrame = 0;
+		if (m_CurKey >= m_aMotion[nNowMotion].nKeyNum)
+		{
+			m_CurKey = 0;
+			if (!m_aMotion[nNowMotion].bLoop)
+			{
+				SetNextMotion(MOTION_USED);
+			}
+		}
+	}
+}
 
 //==========================================================================================
 //モーションをファイルから読み込み
 //==========================================================================================
-void CTitlePlayer::ModelDataLoad()
+void CStarter::MotionDataLoad()
 {
 	char LoadData[128];
 	char ModelPath[128];
@@ -199,7 +259,7 @@ void CTitlePlayer::ModelDataLoad()
 	int nIndex = 0;
 	int nModelCnt = 0;
 
-	pFile = fopen("data\\TEXT\\motion_title_player.txt", "r");
+	pFile = fopen("data\\TEXT\\motion_Starter.txt", "r");
 
 	if (pFile != nullptr)
 	{
@@ -308,6 +368,102 @@ void CTitlePlayer::ModelDataLoad()
 						++nModelCnt;
 					}
 				}
+			}
+
+			//モーションの読み込み開始
+			if (!strcmp(LoadData, "MOTIONSET"))
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", LoadData);
+
+					if (!strcmp(LoadData, "END_MOTIONSET"))//読み込みを終了
+					{
+						break;
+					}
+					//ループの判断
+					else if (!strcmp(LoadData, "LOOP"))
+					{
+						fscanf(pFile, "%s", LoadData);
+						fscanf(pFile, "%d", &m_aMotion[nMotionCnt].bLoop);
+					}
+
+					//全体のキー数の読み込み
+					else  if (!strcmp(LoadData, "NUM_KEY"))
+					{
+						fscanf(pFile, "%s", LoadData);
+						fscanf(pFile, "%d", &m_aMotion[nMotionCnt].nKeyNum);
+					}
+
+					//各キーを読み込み
+					if (!strcmp(LoadData, "KEYSET"))
+					{
+						while (1)
+						{
+							fscanf(pFile, "%s", LoadData);
+
+							if (LoadData[0] == '#')
+							{//文字飛ばし
+								fgets(LoadData, 100, pFile);
+								continue;
+							}
+
+							if (!strcmp(LoadData, "END_KEYSET"))
+							{
+								//読み込みを終了
+								break;
+							}
+
+							//現在のキーのフレーム数を読み込み
+							else if (!strcmp(LoadData, "FRAME"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%d", &m_aMotion[nMotionCnt].aKetSet[nKeySet].nFrame);
+							}
+
+							//現在のキーの読み込み
+							if (!strcmp(LoadData, "KEY"))
+							{
+								while (1)
+								{
+									fscanf(pFile, "%s", LoadData);
+
+									if (!strcmp(LoadData, "END_KEY"))
+									{
+										// 読み込みを終了
+										break;
+									}
+
+									//各パーツのモーションpos値
+									else if (!strcmp(LoadData, "POS"))
+									{
+										fscanf(pFile, "%s", LoadData);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.x);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.y);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.z);
+									}
+
+									//各パーツのモーションrot値
+									else if (!strcmp(LoadData, "ROT"))
+									{
+										fscanf(pFile, "%s", LoadData);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.x);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.y);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.z);
+									}
+								}
+								//キー番号を進める
+								++nKey;
+							}
+						}
+						//キー番号を初期化、キーセット番号を進める
+						nKey = 0;
+						++nKeySet;
+					}
+				}
+				//キーセット番号を初期化、モーション番号を進める
+				nKeySet = 0;
+				++nMotionCnt;
 			}
 		}
 	}

@@ -63,10 +63,10 @@ HRESULT CFade::Init()
 	pVtx[3].rhw = 1.0f;
 
 	//頂点カラーの設定
-	pVtx[0].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
-	pVtx[1].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
-	pVtx[2].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
-	pVtx[3].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
+	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
+	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
+	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
+	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
 
 	//頂点バッファのアンロック
 	m_pVtxBuffFade->Unlock();
@@ -130,10 +130,10 @@ void CFade::Update()
 	pVtx[3].pos = { SCREEN_WIDTH,SCREEN_HEIGHT,0.0f };
 
 	//頂点カラーの設定
-	pVtx[0].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
-	pVtx[1].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
-	pVtx[2].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
-	pVtx[3].col = D3DCOLOR_RGBA(0, 0, 0, m_nAlpha);
+	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
+	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
+	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
+	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, m_nAlpha);
 
 	//頂点バッファのアンロック
 	m_pVtxBuffFade->Unlock();

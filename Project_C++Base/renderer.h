@@ -7,6 +7,8 @@
 #ifndef _RENDERER_H_
 #define _RENDERER_H_
 
+#include "scene.h"
+
 class CRenderer
 {
 public:
@@ -15,7 +17,7 @@ public:
 	HRESULT Init(HWND hWnd, BOOL bWindow);
 	void Uninit();
 	void Update();
-	void Draw();
+	void Draw(CScene* pScene);
 	LPDIRECT3DDEVICE9 GetDevice();
 private:
 	LPDIRECT3D9 m_pD3D;

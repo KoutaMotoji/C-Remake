@@ -9,7 +9,7 @@
 #include "playerX.h"
 #include <random>
 
-CCamera::CCamera():m_nShakeFlame(0),m_fShalePower(0.0f)
+CCamera::CCamera():m_nShakeFlame(0),m_fShalePower(0.0f), m_camHeight(1000.0f)
 {
 
 }
@@ -46,7 +46,7 @@ void CCamera::Update(void)
 
 	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_LEFTARROW) == true)
 	{
-		m_fRotZ += 0.05f;
+		m_fRotZ += 0.02f;
 		if (m_fRotZ > D3DX_PI)
 		{
 			m_fRotZ = -D3DX_PI;
@@ -55,7 +55,7 @@ void CCamera::Update(void)
 
 	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_RIGHTARROW) == true)
 	{
-		m_fRotZ -= 0.05f;
+		m_fRotZ -= 0.02f;
 		if (m_fRotZ < -1 * D3DX_PI)
 		{
 			m_fRotZ = D3DX_PI;
@@ -66,7 +66,7 @@ void CCamera::Update(void)
 	float m_Dis = ( m_camDistance);
 	m_posV.x = sinf(D3DX_PI + m_fRotZ) * sqrtf(m_Dis * m_Dis + (m_Dis * 0.1f) * (m_Dis * 0.1f)) / 2.0f + m_PlayerPos.x;
 	m_posV.z = cosf(D3DX_PI + m_fRotZ) * sqrtf(m_Dis * m_Dis + (m_Dis * 0.1f) * (m_Dis * 0.1f)) / 2.0f + m_PlayerPos.z;
-	m_posV.y = m_PlayerPos.y + 50.0f;
+	m_posV.y = m_PlayerPos.y + m_camHeight;
 
 	m_posR.x = m_PlayerPos.x;
 	m_posR.z = m_PlayerPos.z;

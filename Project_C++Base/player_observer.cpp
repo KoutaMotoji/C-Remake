@@ -38,3 +38,21 @@ void CPlayerObserver::PlayerObsDestroy()
 		pPlayer = nullptr;
 	}
 }
+
+D3DXVECTOR3 CPlayerObserver::GetPlayerPos()
+{
+	if (pPlayer != nullptr)
+	{
+		return pPlayer->GetPos();
+	}
+	return { 0.0f,0.0f,0.0f };
+}
+
+CPlayerX* CPlayerObserver::GetPlayer()
+{
+	if (pPlayer != nullptr)
+	{
+		return pPlayer;
+	}
+	return nullptr;
+}

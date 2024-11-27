@@ -40,7 +40,8 @@ public:
 		TYPE_3D_MESHOBJECT,
 		TYPE_3D_OBSTACLE,
 		TYPE_3D_BOSSTERRA,
-		TYPE_3D_MADEMESH
+		TYPE_3D_MADEMESH,
+		TYPE_3D_TITLEOBJ
 	}TYPE;
 
 	CObject(int nPriority = 3);		//コンストラクタ

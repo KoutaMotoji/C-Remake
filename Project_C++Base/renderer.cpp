@@ -155,7 +155,7 @@ void CRenderer::Update(void)
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CRenderer::Draw(void)
+void CRenderer::Draw(CScene* pScene)
 {
 	//画面クリア(バックバッファ＆Zバッファのクリア)
 	m_D3DDevice->Clear(0, NULL,
@@ -170,7 +170,7 @@ void CRenderer::Draw(void)
 		CManager::GetInstance()->GetCamera()->SetCamera();
 
 		//ポリゴンの描画処理
-		CObject::DrawAll();
+		pScene->Draw();
 
 		CManager::GetInstance()->GetFade()->Draw();
 

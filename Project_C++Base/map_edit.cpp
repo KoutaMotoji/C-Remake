@@ -14,6 +14,17 @@
 #include "mesh_obstacle.h"
 #include "mesh_ground.h"
 
+namespace
+{
+	const char* typeName[MAX_OBJNUM] = {
+		"ゲート",
+		"デカ柱",
+		"ビル１",
+		"ビル２",
+		"電波塔"
+	};
+}
+
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
@@ -117,6 +128,7 @@ void CMapEdit::Update()
 void CMapEdit::Draw()
 {
 	CScene::Draw();
+	DrawFont();
 }
 
 //==========================================================================================
@@ -386,6 +398,32 @@ void CMapEdit::SetEditRot()
 	{
 		m_thisRot.z = 0;
 	}
+
+	if (m_thisRot.x < -D3DX_PI)
+	{
+		m_thisRot.x += D3DX_PI * 2;
+	}
+	else if (m_thisRot.x > D3DX_PI)
+	{
+		m_thisRot.x -= D3DX_PI * 2;
+	}
+	if (m_thisRot.y < -D3DX_PI)
+	{
+		m_thisRot.y += D3DX_PI * 2;
+	}
+	else if (m_thisRot.y > D3DX_PI)
+	{
+		m_thisRot.y -= D3DX_PI * 2;
+	}
+	if (m_thisRot.z < -D3DX_PI)
+	{
+		m_thisRot.z += D3DX_PI * 2;
+	}
+	else if (m_thisRot.z > D3DX_PI)
+	{
+		m_thisRot.z -= D3DX_PI * 2;
+	}
+
 	m_SelectObject->SetRot(m_thisRot);
 
 }
@@ -426,7 +464,7 @@ void CMapEdit::InitFont()
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();		//デバイスへのポインタを取得
 
 	//デバッグ表示用フォントの生成
-	D3DXCreateFont(pDevice, 18, 0, 0, 0, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Terminal", &m_pFont);
+	D3DXCreateFont(pDevice, 20, 0, 0, 0, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "HGPｺﾞｼｯｸE", &m_pFont);
 }
 
 //==========================================================================================
@@ -440,7 +478,6 @@ void CMapEdit::UninitFont()
 		m_pFont->Release();
 		m_pFont = NULL;
 	}
-
 }
 //==========================================================================================
 //デバッグ表示用描画処理
@@ -448,25 +485,28 @@ void CMapEdit::UninitFont()
 void CMapEdit::DrawFont()
 {
 	RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-	char str[256] = {};
+	char str[1024] = {};
 
-	sprintf((char*)str, "現在のオブジェクトの総数：%d\n"
-		"現在のオブジェクトの位置：%f,%f,%f\n"
-		"現在のオブジェクトの回転：%f,%f,%f\n"
-		"現在のオブジェクトのスケール：%f\n"
-		"現在のオブジェクトの種類：%d",
+	sprintf(&str[0], "現在のオブジェクトの総数：%d\n"
+		"現在のオブジェクトの位置：< %.2f,%.2f,%.2f >\n"
+		"現在のオブジェクトの回転：< %.2f,%.2f,%.2f >\n"
+		"現在のオブジェクトのスケール：< %.2f >\n"
+		"現在のオブジェクトの種類：< %s >",
 		m_MaxObj,
 		m_thisPos.x, m_thisPos.y, m_thisPos.z, 
 		m_thisRot.x, m_thisRot.y, m_thisRot.z,
 		m_thisScale.x,
-		m_thisType);
+		typeName[m_thisType]);
 
 	 //テキストの描画
 	m_pFont->DrawText(NULL, 
 		&str[0],
-		-1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+		-1, 
+		&rect, 
+		DT_LEFT, 
+		D3DCOLOR_RGBA(255, 255, 255, 255));
 
-	memset(&str[0], NULL, sizeof(str));
+	//memset(&str[0], NULL, sizeof(str));
 
 }
 //

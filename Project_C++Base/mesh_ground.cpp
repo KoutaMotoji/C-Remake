@@ -50,13 +50,16 @@ void CMeshGround::Uninit()
 //==========================================================================================
 void CMeshGround::Update()
 {
-	if (CPlayerObserver::GetPlayerPos().z  - this->GetPos().z > this->GetModelMax().z * 1.5f)
+	if (CManager::GetInstance()->GetScene()->GetSceneMode() == CScene::MODE_GAME)
 	{
-		D3DXVECTOR3 newPos = CObjectX::GetPos();
-		newPos.z += CObjectX::GetModelMax().z * 6 - 20.0f;
-		Create(newPos);
-		this->Release();
-		return;
+		if (CPlayerObserver::GetPlayerPos().z - this->GetPos().z > this->GetModelMax().z * 1.5f)
+		{
+			D3DXVECTOR3 newPos = CObjectX::GetPos();
+			newPos.z += CObjectX::GetModelMax().z * 6 - 20.0f;
+			Create(newPos);
+			this->Release();
+			return;
+		}
 	}
 	CObjectX::Update();
 }

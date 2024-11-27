@@ -17,8 +17,8 @@ public:
 	CPlayerObserver();
 	static void PlayerSearch();
 	static void PlayerObsDestroy();
-	static D3DXVECTOR3 GetPlayerPos() { return pPlayer->GetPos(); }
-	static CPlayerX* GetPlayer() { return pPlayer; }
+	static D3DXVECTOR3 GetPlayerPos();
+	static CPlayerX* GetPlayer();
 private:
 	static CPlayerX* pPlayer;
 };

@@ -222,6 +222,12 @@
     <ClCompile Include="fog.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
+    <ClCompile Include="t_starter.cpp">
+      <Filter>ソース ファイル\3D\TitleObj</Filter>
+    </ClCompile>
+    <ClCompile Include="t_base.cpp">
+      <Filter>ソース ファイル\3D\TitleObj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -361,6 +367,12 @@
     </ClInclude>
     <ClInclude Include="fog.h">
       <Filter>ヘッダー ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="t_starter.h">
+      <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
+    </ClInclude>
+    <ClInclude Include="t_base.h">
+      <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

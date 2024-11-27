@@ -29,6 +29,9 @@ public:
 	void SetRotz(float rot) { m_fRotZ = rot; };
 	void AddRotz(float rot) { m_fRotZ += rot; };
 
+	void SetCameraHeigjt(float Height) { m_camHeight = Height; };
+	void AddCameraHeigjt(float Height) { m_camHeight += Height; };
+
 	void SetShake(int nFlame, float fShake);
 	void SetCamDefault() {
 		m_posV = D3DXVECTOR3(0.0f, 100.0f, -300.0f);
@@ -45,6 +48,7 @@ private:
 	D3DXMATRIX m_mtxProjection, m_mtxView;
 	float m_fRotZ;
 	float m_camDistance;
+	float m_camHeight;
 	int m_nShakeFlame;
 	float m_fShalePower;
 };
