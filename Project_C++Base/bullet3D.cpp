@@ -114,7 +114,7 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 
 	bullet->SetPolygonParam(pos, Radius, Radius,col);
 	bullet->Init();
-	bullet->m_move = move * 30;
+	bullet->m_move = move * 70;
 	bullet->m_col = col;
 	bullet->m_nLife = nLife ;
 	bullet->Poly_Size = Radius;
@@ -165,7 +165,7 @@ bool CBullet3D::MeshCollision()
 						D3DXVec3Normalize(&dir, &m_move);
 
 						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						float ChedkDis = 20.0f;
+						float ChedkDis = 50.0f;
 
 						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
 						{

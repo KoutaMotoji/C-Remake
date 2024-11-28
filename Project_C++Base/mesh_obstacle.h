@@ -10,7 +10,7 @@
 #include "main.h"
 #include "objectX.h"
 
-constexpr int MAX_MODELTYPE = 5;
+constexpr int MAX_MODELTYPE = 7;
 
 class CMeshObstacle :public CObjectX
 {

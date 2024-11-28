@@ -55,12 +55,6 @@ void CTitlePlayer::Uninit()
 //==========================================================================================
 void CTitlePlayer::Update()
 {
-	FloorCollision();
-
-	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_F) == true)
-	{
-		m_move.z -= 0.2f;
-	}
 
 
 	m_pos += m_move;

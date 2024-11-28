@@ -32,6 +32,7 @@ public:
 	void Draw()override;		//•`‰æ
 
 	bool PMove(float fCamRotZ);
+	void AddMove(D3DXVECTOR3 move) { m_move += move; }
 	static CTitlePlayer* Create(D3DXVECTOR3 pos);
 
 	D3DXVECTOR3 GetPos() { return m_pos; };

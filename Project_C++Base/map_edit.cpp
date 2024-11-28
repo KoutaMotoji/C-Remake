@@ -21,8 +21,12 @@ namespace
 		"ƒfƒJ’Œ",
 		"ƒrƒ‹‚P",
 		"ƒrƒ‹‚Q",
-		"“d”g“ƒ"
+		"“d”g“ƒ",
+		"‹´",
+		"‚»‚ê‚Á‚Û‚¢‚à‚Ì"
+
 	};
+	int SizeDownScale = 150.0f;
 }
 
 //==========================================================================================
@@ -57,17 +61,19 @@ HRESULT CMapEdit::Init()
 	InitFont();
 	LoadFile();
 	CManager::GetInstance()->GetCamera()->SetCameraDistance(m_CamDis);
-	
 
 	m_thisPos = { 0.0f,0.0f,0.0f };
 	m_thisRot = { 0.0f,0.0f,0.0f };
 	m_thisScale = { 1.0f,1.0f,1.0f };
 	m_thisType = Sel_3DBlock;
+
 	SelectObject();
 
-	CMeshGround::Create({ 0.0f,-1000.0f,0.0f });
-	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 });
-	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 });
+	for (int i = 0; i < 10; ++i)
+	{
+		CMeshGround::Create({ 0.0f,-1000.0f,(float)(5940 * 2 * i )});
+	}
+
 
 	return S_OK;
 }
@@ -434,15 +440,16 @@ void CMapEdit::SetEditRot()
 void CMapEdit::SetEditScale()
 {
 	float ADD_SIZE = 0.05f;
+
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_C) == true)
 	{
 		m_thisScale += {ADD_SIZE, ADD_SIZE, ADD_SIZE};
-		m_CamDis += 150.0f;
+		m_CamDis += SizeDownScale;
 	}
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_Z) == true)
 	{
 		m_thisScale -= {ADD_SIZE, ADD_SIZE, ADD_SIZE};
-		m_CamDis -= 150.0f;
+		m_CamDis -= SizeDownScale;
 	}
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_X) == true)
 	{

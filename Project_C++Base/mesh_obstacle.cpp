@@ -5,8 +5,7 @@
 // 
 //===============================================================================
 #include "mesh_obstacle.h"
-#include "playerX.h"
-
+#include "player_observer.h"
 #include "manager.h"
 #include "game.h"
 
@@ -17,7 +16,10 @@ namespace {
 		"data\\MODEL\\statue000.x",
 		"data\\MODEL\\Building000.x",
 		"data\\MODEL\\Building001.x",	
-		"data\\MODEL\\tower.x"
+		"data\\MODEL\\tower.x",
+		"data\\MODEL\\brighe.x",
+		"data\\MODEL\\pail.x"
+
 	};
 };
 
@@ -59,7 +61,7 @@ void CMeshObstacle::Uninit()
 //==========================================================================================
 void CMeshObstacle::Update()
 {
-	D3DXVECTOR3 pos = CObjectX::GetPos();
+	
 	CObjectX::Update();
 }
 
@@ -68,7 +70,10 @@ void CMeshObstacle::Update()
 //==========================================================================================
 void CMeshObstacle::Draw()
 {
-	CObjectX::Draw();
+	if (CPlayerObserver::GetPlayerPos().z < CObjectX::GetPos().z + 10000)
+	{
+		CObjectX::Draw();
+	}
 }
 
 //==========================================================================================

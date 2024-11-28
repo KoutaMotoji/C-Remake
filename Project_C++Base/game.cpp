@@ -65,6 +65,8 @@ HRESULT CGame::Init()
 	MakeRandTree();
 
 	//CBossTerra::Create({ 0.0f,300.0f,2000.0f });
+	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(50.0f);
+	CManager::GetInstance()->GetCamera()->DefuseFreeCam();
 
 	LoadMapData();
 	SetBGObject();

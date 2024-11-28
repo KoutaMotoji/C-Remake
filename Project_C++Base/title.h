@@ -8,6 +8,8 @@
 #define _TITLE_H_
 
 #include "scene.h"
+#include "t_player.h"
+
 
 class CTitle : public CScene
 {
@@ -19,6 +21,10 @@ public:
 	void Update()override;
 	void Draw()override;
 private:
+	void UpdateAnim();
+	int m_AnimTimer;
+	bool m_bNowAnim;
+	CTitlePlayer* m_tPl;
 };
 
 #endif

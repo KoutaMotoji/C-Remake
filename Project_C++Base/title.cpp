@@ -7,21 +7,30 @@
 
 #include "manager.h"
 
-#include "t_player.h"
 #include "t_starter.h"
 #include "t_base.h"
+#include "t_anim_border.h"
 #include "mesh_cylinder.h"
 #include "sky_bg.h"
 
 #include "title.h"
 #include "fade.h"
+#include "fog.h"
+
+namespace AnimPoint
+{
+	int SECTION_ZOOM_PLAYER = 120;
+	int SECTION_LOOK = 90;
+	int SECTION_LOOK_ANOTHOR = 260;
+	int SECTION_SCENE_CHANGE = 420;
+}
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTitle::CTitle()
+CTitle::CTitle(): m_bNowAnim(false), m_AnimTimer(0)
 {
-
+	m_tPl = nullptr;
 }
 
 //==========================================================================================
@@ -39,10 +48,13 @@ HRESULT CTitle::Init()
 {
 	CScene::Init();
 	CTitleBase::Create({ -400.0f,-120.0f,100.0f });
-	CTitlePlayer::Create({ 0.0f, 0.0f, 0.0f});
+	m_tPl = CTitlePlayer::Create({ 0.0f, 0.0f, 0.0f});
 	CStarter::Create({ 0.0f, -70.0f, 0.0f });
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
 	CSkyBg::Create({ 0.0f,-200.0f,0.0f });
+
+	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(600.0f);
+	CFog::SetFogLinear(2000.0f, 15000.0f);
 
 	return S_OK;
 }
@@ -52,7 +64,7 @@ HRESULT CTitle::Init()
 //==========================================================================================
 void CTitle::Uninit()
 {
-
+	CFog::FinishFog();
 	CScene::Uninit();
 }
 
@@ -62,14 +74,21 @@ void CTitle::Uninit()
 //==========================================================================================
 void CTitle::Update()
 {
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_R) || CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A))
+	if (!m_bNowAnim)
 	{
-		//if (!(CManager::GetInstance()->GetFade()->GetUse()))
-		//{
-
-		//}
-		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
-
+		CManager::GetInstance()->GetCamera()->AddRotz(0.003f);
+		if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN)||
+			CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A) == true)
+		{
+			CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f, 0.0f, -300.0f }, { 0.0f, 30.0f, 0.0f }, AnimPoint::SECTION_ZOOM_PLAYER);
+			m_bNowAnim = true;
+			CTAnimBorder::Create(0);
+			CTAnimBorder::Create(1);
+		}
+	}
+	else
+	{
+		UpdateAnim();
 	}
 	CScene::Update();
 }
@@ -80,4 +99,27 @@ void CTitle::Update()
 void CTitle::Draw()
 {
 	CScene::Draw();
+}
+
+//==========================================================================================
+//タイトルアニメーション処理
+//==========================================================================================
+void CTitle::UpdateAnim()
+{
+	using namespace AnimPoint;
+
+	++m_AnimTimer;
+
+	if (m_AnimTimer == SECTION_LOOK_ANOTHOR)
+	{
+		CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f, 60.0f, 160.0f }, { 0.0f, 10.0f, -500.0f }, SECTION_LOOK);
+	}
+	if (m_AnimTimer > SECTION_LOOK_ANOTHOR + SECTION_LOOK)
+	{
+		m_tPl->AddMove({ 0.0f,0.0f,-0.45f });
+	}
+	if(m_AnimTimer == SECTION_SCENE_CHANGE)
+	{
+		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
+	}
 }

@@ -228,6 +228,9 @@
     <ClCompile Include="t_base.cpp">
       <Filter>ソース ファイル\3D\TitleObj</Filter>
     </ClCompile>
+    <ClCompile Include="t_anim_border.cpp">
+      <Filter>ソース ファイル\3D\TitleObj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -372,6 +375,9 @@
       <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
     </ClInclude>
     <ClInclude Include="t_base.h">
+      <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
+    </ClInclude>
+    <ClInclude Include="t_anim_border.h">
       <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
     </ClInclude>
   </ItemGroup>

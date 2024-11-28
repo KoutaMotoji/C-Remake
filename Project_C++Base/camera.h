@@ -26,6 +26,9 @@ public:
 	D3DXVECTOR3& GetPlayerPos();
 	void SetPlayerPos(D3DXVECTOR3 pos);
 	float GetRotZ();
+
+	void SetFreeCam(D3DXVECTOR3 destPosV, D3DXVECTOR3 destPosR, int Frame);
+	void DefuseFreeCam() { m_bFreeCam = false; }
 	void SetRotz(float rot) { m_fRotZ = rot; };
 	void AddRotz(float rot) { m_fRotZ += rot; };
 
@@ -44,6 +47,9 @@ public:
 	};
 
 private:
+	void UpdateNormalCam();
+	void UpdateFreeCam();
+
 	D3DXVECTOR3 m_posV, m_posR, m_posU,m_rot,m_PlayerPos;
 	D3DXMATRIX m_mtxProjection, m_mtxView;
 	float m_fRotZ;
@@ -51,6 +57,11 @@ private:
 	float m_camHeight;
 	int m_nShakeFlame;
 	float m_fShalePower;
+
+
+	D3DXVECTOR3 m_DestPosV, m_DestPosR,m_LastPosV,m_LastPosR;
+	int m_DestFrame,m_NowFrame;
+	bool m_bFreeCam;
 };
 
 #endif 

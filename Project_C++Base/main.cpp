@@ -79,7 +79,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 
 #endif // _RELEASE
 
-
 	DWORD dwCurrentTime;		//現在時刻
 	DWORD dwExecLastTime;		//現在時刻を取得
 	DWORD dwFrameCount;			//フレームカウント

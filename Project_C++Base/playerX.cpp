@@ -132,29 +132,21 @@ void CPlayerX::Update()
 		digitRot.y = (m_pReticle->GetPos().y - posMtx.y) * 0.2f;
 		digitRot.z = (m_pReticle->GetPos().z - posMtx.z) * 0.2f;
 		D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
-		D3DXVECTOR3 addZpos = { 0.0f,0.0f,40.0f };
+		D3DXVECTOR3 addZpos = { 0.0f,0.0f,200.0f };
 		D3DXVec3Normalize(&SetdigitedRot, &digitRot);
 		SetdigitedRot.z;
 		if (m_bTransformed)
 		{
 			SetNextMotion(MOTION_ROBO_SHOT);
 			m_bMotion = true;
-			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot , { 1.0f,0.0f,0.2f,1.0f }, 150,25,35);
+			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot , { 1.0f,0.0f,0.2f,1.0f }, 150,38,35);
 		}
 		else
 		{
-			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120,18,22);
+			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120,32,22);
 		}
 	}
-	if (CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_RIGHT_SHOULDER) == true)
-	{
-		m_move.z -= 5.0f;
-	}
-	else if (CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_RIGHT_TRIGGER) == true)
-	{
-		m_move.z += 5.0f;
-	}
-	m_move.z += 3.0f;
+	m_move.z += 5.5f;
 
 	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
 
@@ -521,6 +513,7 @@ void CPlayerX::SetNextKey()
 					m_CurMotion == MOTION_ROBO_SHOT || 
 					m_CurMotion == MOTION_ROBO_SLASH)
 				{
+					--m_CurKey;
 					m_bMotion = false;
 				}
 				if (m_bTransformed)

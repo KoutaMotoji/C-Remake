@@ -192,6 +192,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="tree_billboard.h" />
+    <ClInclude Include="t_anim_border.h" />
     <ClInclude Include="t_base.h" />
     <ClInclude Include="t_player.h" />
     <ClInclude Include="t_starter.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tree_billboard.cpp" />
+    <ClCompile Include="t_anim_border.cpp" />
     <ClCompile Include="t_base.cpp" />
     <ClCompile Include="t_player.cpp" />
     <ClCompile Include="t_starter.cpp" />

@@ -55,10 +55,13 @@ void CStarter::Uninit()
 void CStarter::Update()
 {
 	SetNextKey();
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_RETURN) == true ||
-		CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A) == true)
+	if (m_CurMotion < MOTION_START)
 	{
-		SetNextMotion(MOTION_START);
+		if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_RETURN) == true ||
+			CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A) == true)
+		{
+			SetNextMotion(MOTION_START);
+		}
 	}
 	CManager::GetInstance()->GetCamera()->SetPlayerPos(m_pos);
 
