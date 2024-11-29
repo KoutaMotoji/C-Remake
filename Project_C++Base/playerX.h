@@ -34,10 +34,11 @@ public:
 	bool PMove(float fCamRotZ);
 	static CPlayerX* Create(D3DXVECTOR3 pos);
 	int GetPLife() { return m_nLife; };
-	int GetPStamina() { return m_nStamina; };
 	void StaminaAdd(int value);				//スタミナ回復
 
 	D3DXVECTOR3 GetPos() { return m_pos; };
+	D3DXVECTOR3 GetMove() { return m_move; };
+
 private:
 	D3DXVECTOR3 m_pos,m_rot,m_size;	//座標・回転・大きさ
 	D3DXVECTOR3 m_move;				//移動量
@@ -56,7 +57,6 @@ private:
 	float fGravity;							//重力
 	float m_fWeaponRadius;
 	int m_nLife;			//体力
-	int m_nStamina;			//スタミナ
 	static const int MAX_LIFE;
 	static const int MAX_STAMINA;
 	bool bStop;				//デバッグ用移動量無効

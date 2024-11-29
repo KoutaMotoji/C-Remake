@@ -13,7 +13,7 @@
 namespace {
 	float Poly_Radius = 300.0f;
 }
-constexpr float REPLACEMENT_CHECKDIS = 500;
+constexpr float REPLACEMENT_CHECKDIS = 1000;
 constexpr float REPLACEMENT_SETDIS = 10000;
 
 

@@ -127,40 +127,7 @@ CTitlePlayer* CTitlePlayer::Create(D3DXVECTOR3 pos)
 	return player;
 }
 
-//==========================================================================================
-//移動処理
-//==========================================================================================
-bool CTitlePlayer::PMove(float fCamRotZ)
-{
-	//m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2, 0.0f};
 
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
-	//	CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
-	//{
-
-	//}
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
-	//	CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
-	//{
-
-	//}
-	//if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DLEFT) == true)
-	//{//Aキーが押された
-
-	//}
-	//else if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_D) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DRIGHT) == true)
-	//{//Dキーが押された
-
-	//}
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickVecL() > 0)
-	//{
-	//	m_vecAxis = { abs(m_move.y),abs(m_move.x),0.0f };
-	//	D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
-
-	//}
-
-	return true;
-}
 
 //==========================================================================================
 //床当たり判定

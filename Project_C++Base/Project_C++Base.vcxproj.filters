@@ -85,6 +85,12 @@
     <Filter Include="ヘッダー ファイル\3D\Model\StageObj">
       <UniqueIdentifier>{50ec65da-f62f-4164-9241-f8429618b7fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D\TitleObj\UI">
+      <UniqueIdentifier>{23c83ad8-23b5-4462-9be9-72ad08848d41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\TitleObj\UI">
+      <UniqueIdentifier>{bb74f040-d351-47c6-94ab-f88e40e8ad6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -230,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="t_anim_border.cpp">
       <Filter>ソース ファイル\3D\TitleObj</Filter>
+    </ClCompile>
+    <ClCompile Include="t_UI.cpp">
+      <Filter>ソース ファイル\3D\TitleObj\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="t_anim_border.h">
       <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
+    </ClInclude>
+    <ClInclude Include="t_UI.h">
+      <Filter>ヘッダー ファイル\3D\TitleObj\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

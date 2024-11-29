@@ -10,6 +10,7 @@
 #include "t_starter.h"
 #include "t_base.h"
 #include "t_anim_border.h"
+#include "t_UI.h"
 #include "mesh_cylinder.h"
 #include "sky_bg.h"
 
@@ -23,6 +24,15 @@ namespace AnimPoint
 	int SECTION_LOOK = 90;
 	int SECTION_LOOK_ANOTHOR = 260;
 	int SECTION_SCENE_CHANGE = 420;
+}
+
+namespace UIState
+{
+	D3DXVECTOR3 LogoPos = {320.0f,150.0f, 0.0f};
+	D3DXVECTOR2 LogoSize = { 600.0f,300.0f };
+
+	D3DXVECTOR3 ButtonPos = {SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT - 120.0f, 0.0f};
+	D3DXVECTOR2 ButtonSize = { 400.0f,100.0f };
 }
 
 //==========================================================================================
@@ -46,6 +56,7 @@ CTitle::~CTitle()
 //==========================================================================================
 HRESULT CTitle::Init()
 {
+	using namespace UIState;
 	CScene::Init();
 	CTitleBase::Create({ -400.0f,-120.0f,100.0f });
 	m_tPl = CTitlePlayer::Create({ 0.0f, 0.0f, 0.0f});
@@ -55,6 +66,10 @@ HRESULT CTitle::Init()
 
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(600.0f);
 	CFog::SetFogLinear(2000.0f, 15000.0f);
+
+	CTitleUI::Create(LogoPos, 0, LogoSize);
+	CTitleUI::Create(ButtonPos, 1, ButtonSize);
+
 
 	return S_OK;
 }
@@ -68,7 +83,6 @@ void CTitle::Uninit()
 	CScene::Uninit();
 }
 
-
 //==========================================================================================
 //XVˆ—
 //==========================================================================================
@@ -76,7 +90,7 @@ void CTitle::Update()
 {
 	if (!m_bNowAnim)
 	{
-		CManager::GetInstance()->GetCamera()->AddRotz(0.003f);
+		CManager::GetInstance()->GetCamera()->AddRotz(0.005f);
 		if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN)||
 			CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A) == true)
 		{

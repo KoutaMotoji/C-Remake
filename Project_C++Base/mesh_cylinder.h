@@ -33,11 +33,6 @@ private:
 	//テクスチャ
 	LPDIRECT3DTEXTURE9 m_apTexMeshCylinder;
 
-	////頂点情報のポインタ
-	//LPDIRECT3DVERTEXBUFFER9 m_pVtxBuffMeshCylinder;
-	////インデックスバッファへのポインタ
-	//LPDIRECT3DINDEXBUFFER9 m_pIdxBuffMeshCylinder;
-
 	static const int MAX_VTX;
 	static const int MAX_CORNER;
 	static const int MAX_INDEX;

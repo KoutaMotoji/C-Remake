@@ -48,6 +48,15 @@ D3DXVECTOR3 CPlayerObserver::GetPlayerPos()
 	return { 0.0f,0.0f,0.0f };
 }
 
+D3DXVECTOR3 CPlayerObserver::GetPlayerMove()
+{
+	if (pPlayer != nullptr)
+	{
+		return pPlayer->GetMove();
+	}
+	return { 0.0f,0.0f,0.0f };
+}
+
 CPlayerX* CPlayerObserver::GetPlayer()
 {
 	if (pPlayer != nullptr)

@@ -193,7 +193,7 @@ bool CBullet3D::MeshCollision()
 							pCollision = nullptr;
 							if (!pTest->GetDamageState() && !pTest->GetDeadState())
 							{
-								pTest->Damaged(20);
+								pTest->Damaged(40);
 							}
 							return true;
 						}

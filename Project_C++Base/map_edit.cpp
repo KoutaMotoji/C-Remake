@@ -23,7 +23,8 @@ namespace
 		"ビル２",
 		"電波塔",
 		"橋",
-		"それっぽいもの"
+		"それっぽいもの",
+		"ボス出現ポイント"
 
 	};
 	int SizeDownScale = 150.0f;
@@ -65,7 +66,7 @@ HRESULT CMapEdit::Init()
 	m_thisPos = { 0.0f,0.0f,0.0f };
 	m_thisRot = { 0.0f,0.0f,0.0f };
 	m_thisScale = { 1.0f,1.0f,1.0f };
-	m_thisType = Sel_3DBlock;
+	m_thisType = 0;
 
 	SelectObject();
 

@@ -43,6 +43,7 @@ protected:
 private:
 	CBossReticle* m_Reticle[2];
 	CGaugeBoss* m_Gauge;
+	D3DXVECTOR3 m_move;
 	int m_nLife;
 	bool m_bMove;
 	bool m_bDead;

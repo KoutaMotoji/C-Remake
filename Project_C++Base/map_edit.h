@@ -13,7 +13,7 @@
 
 #define MAX_EDITOBJ	(1024)
 
-constexpr int MAX_OBJNUM = 7;
+static constexpr int MAX_OBJNUM = 8;
 
 class CMapEdit : public CScene
 {
@@ -25,18 +25,7 @@ public:
 		D3DXVECTOR3 scale;
 		int SelType;
 	}SetInfo;
-	enum
-	{
-		Sel_3DBlock = 0,
-		Sel_3DBlock2,
-		Sel_3DEnemy,
-		Sel_3DEnemy2,
-		Sel_Start,
-		Sel_Goal,
-		Sel_Ground,
-		Sel_3DEnemy3,
-		Sel_MAX
-	};
+
 	CMapEdit();
 	~CMapEdit()override;
 	HRESULT Init()override;

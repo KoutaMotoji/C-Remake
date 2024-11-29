@@ -8218,7 +8218,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Documents\\Visual Studio 2019\\C-Remake\\Project_C++Base\\data\\TEXTURE\\field.jpg";
+    "data\\TEXTURE\\field.jpg";
    }
   }
  }

@@ -56,7 +56,6 @@ HRESULT CGame::Init()
 	CPlayerObserver::PlayerSearch();
 
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
-	//CSkyBg::Create({ 0.0f,-1000.0f,0.0f });
 	CMeshGround::Create({ 0.0f,-1000.0f,0.0f });
 	CMeshGround::Create({ 0.0f,-1000.0f,5940*2 });
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 });
@@ -64,7 +63,6 @@ HRESULT CGame::Init()
 	CMapEdit::SetLoadMap();
 	MakeRandTree();
 
-	//CBossTerra::Create({ 0.0f,300.0f,2000.0f });
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(50.0f);
 	CManager::GetInstance()->GetCamera()->DefuseFreeCam();
 

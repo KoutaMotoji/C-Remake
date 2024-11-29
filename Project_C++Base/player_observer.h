@@ -19,6 +19,7 @@ public:
 	static void PlayerObsDestroy();
 	static D3DXVECTOR3 GetPlayerPos();
 	static CPlayerX* GetPlayer();
+	static D3DXVECTOR3 GetPlayerMove();
 private:
 	static CPlayerX* pPlayer;
 };

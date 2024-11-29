@@ -6,6 +6,8 @@
 //===============================================================================
 #include "mesh_obstacle.h"
 #include "player_observer.h"
+#include "mesh_Boss_Terra.h"
+
 #include "manager.h"
 #include "game.h"
 
@@ -18,7 +20,8 @@ namespace {
 		"data\\MODEL\\Building001.x",	
 		"data\\MODEL\\tower.x",
 		"data\\MODEL\\brighe.x",
-		"data\\MODEL\\pail.x"
+		"data\\MODEL\\pail.x",
+		"data\\MODEL\\boss_spawner.x"
 
 	};
 };
@@ -61,7 +64,11 @@ void CMeshObstacle::Uninit()
 //==========================================================================================
 void CMeshObstacle::Update()
 {
-	
+	if (PlayerDistanceCheck())
+	{
+		Release();
+		return;
+	}
 	CObjectX::Update();
 }
 
@@ -77,11 +84,33 @@ void CMeshObstacle::Draw()
 }
 
 //==========================================================================================
+//描画処理
+//==========================================================================================
+bool CMeshObstacle::PlayerDistanceCheck()
+{
+	if (CManager::GetInstance()->GetScene()->GetSceneMode() == CScene::MODE_GAME)
+	{
+		return (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < -OBJ_DESTROY_DIS);
+	}
+	return false;
+}
+
+//==========================================================================================
 //生成処理
 //==========================================================================================
 CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos,int Type)
 {
-	CMeshObstacle* enemy = new CMeshObstacle;
+	CMeshObstacle* enemy;
+
+	switch (Type)
+	{
+	case 7:
+		enemy = new CBossEmitter;
+		break;
+	default:
+		enemy = new CMeshObstacle;
+		break;
+	}
 
 	enemy->BindModel(modelName[Type]);
 
@@ -96,8 +125,17 @@ CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos,int Type)
 //==========================================================================================
 CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale, int Type)
 {
-	CMeshObstacle* enemy = new CMeshObstacle;
+	CMeshObstacle* enemy;
 
+	switch (Type)
+	{
+	case 7:
+		enemy = new CBossEmitter;
+		break;
+	default:
+		enemy = new CMeshObstacle;
+		break;
+	}
 	enemy->BindModel(modelName[Type]);
 
 	enemy->SetModelParam(pos);
@@ -107,3 +145,54 @@ CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTO
 
 	return enemy;
 }
+
+//---------------------------------------------------------------------------------------------------------------------------------
+//特殊オブジェ配置用設定
+
+
+//初期化オーバーロード
+void CScoreItemEmitter::Init()
+{
+	if (CManager::GetInstance()->GetScene()->GetSceneMode() == CScene::MODE_GAME)
+	{
+		m_bSceneCheck = true;
+	}
+}
+
+//更新オーバーロード
+void CScoreItemEmitter::Update()
+{
+	CMeshObstacle::Update();
+}
+
+//初期化オーバーロード
+void CBossEmitter::Init()
+{
+	if (CManager::GetInstance()->GetScene()->GetSceneMode() == CScene::MODE_GAME)
+	{
+		m_bSceneCheck = true;
+	}
+}
+
+//更新オーバーロード
+void CBossEmitter::Update()
+{
+	if (m_bSceneCheck)
+	{
+		if (PlayerLength())
+		{
+			CBossTerra::Create(CObjectX::GetPos());
+
+			Release();
+			return;
+		}
+	}
+	CMeshObstacle::Update();
+}
+
+bool CBossEmitter::PlayerLength()
+{
+	return (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < BOSS_EMITTE_DIS);
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------

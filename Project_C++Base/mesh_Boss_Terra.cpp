@@ -34,7 +34,7 @@ namespace BulletOption {
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamaging(false), m_nDamageFrame(0),m_nDeadFrame(0),m_nAttackFrame(0)
+CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamaging(false), m_nDamageFrame(0),m_nDeadFrame(0),m_nAttackFrame(0), m_move({0.0f,0.0f,0.0f})
 {
 	m_Reticle[0] = nullptr;
 	m_Reticle[1] = nullptr;
@@ -87,7 +87,6 @@ void CBossTerra::Update()
 {
 	D3DXVECTOR3 pos = CObjectX::GetPos();
 	D3DXVECTOR3 Playerpos = CPlayerObserver::GetPlayerPos();
-
 	if (CObjectX::GetPos().x > 500.0f ||
 		CObjectX::GetPos().x < -500.0f)
 	{
@@ -141,7 +140,15 @@ void CBossTerra::Update()
 	{
 		DeathAnim();
 	}
-	CObjectX::AddPos({ 0.0f,0.0f,10.0f });
+
+	m_move.z = CPlayerObserver::GetPlayerMove().z;
+
+	CObjectX::AddPos(m_move);
+
+	//移動量を更新
+	m_move.x += (0.0f - m_move.x) * 0.17f;
+	m_move.y += (0.0f - m_move.y) * 0.17f;
+	m_move.z += (0.0f - m_move.z) * 0.17f;
 
 	CObjectX::Update();
 }

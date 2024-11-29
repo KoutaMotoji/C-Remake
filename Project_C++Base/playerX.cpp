@@ -19,13 +19,10 @@ const float CPlayerX::MOVE_SPEED = 0.35f;
 const int CPlayerX::MAX_LIFE = 1000;
 const int CPlayerX::MAX_STAMINA = 500;
 
-
-
-
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_nStamina(500),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false)
+CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false)
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
@@ -258,24 +255,6 @@ bool CPlayerX::PMove(float fCamRotZ)
 {
 	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2, 0.0f};
 
-	if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true||
-		CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
-	{
-
-	}
-	if (CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) == true ||
-		CManager::GetInstance()->GetJoypad()->GetJoyStickRelease(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) == true)
-	{
-
-	}
-	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_A) == true||CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DLEFT) == true)
-	{//Aキーが押された
-
-	}
-	else if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_D) == true || CManager::GetInstance()->GetJoypad()->GetJoyStickL(CJoypad::JOYSTICK_DRIGHT) == true)
-	{//Dキーが押された
-
-	}
 	if (CManager::GetInstance()->GetJoypad()->GetJoyStickVecL() > 0)
 	{
 		m_vecAxis = { m_move.y,m_move.x,0.0f };
@@ -339,16 +318,7 @@ void CPlayerX::SetWeaponRot(D3DXVECTOR2 rot)
 	m_rot = { -(abs(atan2f(rot.x ,rot.y))), m_rot.y,0.0f };
 }
 
-//==========================================================================================
-//スタミナの増減関数
-//==========================================================================================
-void CPlayerX::StaminaAdd(int value)
-{
-	if (m_nStamina + value <= MAX_STAMINA)
-	{
-		m_nStamina += value;
-	}
-}
+
 
 //==========================================================================================
 //ゴール判定チェック
