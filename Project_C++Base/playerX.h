@@ -11,6 +11,7 @@
 #include "object.h"
 #include "modelparts.h"
 #include "reticle.h"
+#include "shadow.h"
 
 #include "manager.h"
 
@@ -53,14 +54,12 @@ private:
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
 	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); };	//ダメージ加算、生存確認
-	void LockOnEnemy();						//敵のロックオン
+	D3DXVECTOR3 LockOnEnemy();						//敵のロックオン
 
 	//void GoalCheck();						//ゴールしているかチェック
 	void DeadCheck();
 	float m_fWeaponRadius;
 	int m_nLife;			//体力
-
-
 
 	CModelParts* m_apModelParts[MAX_MODELPARTS];
 
@@ -130,6 +129,12 @@ private:
 	D3DXQUATERNION m_quat;		//クオータニオン
 	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
 	float m_fValueRot;			//回転量	
+
+	//丸影を出し、地面に沿わせたりサイズを変えたりする処理
+	void SetShadowGround();
+
+	CShadow* m_shadow;
+
 };
 
 #endif

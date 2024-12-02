@@ -217,6 +217,7 @@ bool CBullet3D::MeshCollision()
 								delete pCollision;
 								pCollision = nullptr;
 							}
+							return true;
 						}
 
 						return false;

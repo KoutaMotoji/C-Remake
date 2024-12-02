@@ -1,121 +1,75 @@
 //===============================================================================
 //
-//  C++使った2D(enemy_basic.cpp)
+//  C++使った2D(watermelon.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "enemy_base.h"
-#include "eff_explosion.h"
-#include "player_observer.h"
+#include "lockon_enemy.h"
 
 #include "manager.h"
-#include "game.h"
 
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CEnemyBase::CEnemyBase() :m_bMove(false), m_DefPos({0.0f,0.0f,0.0f}), m_bLockOned(false), lockon(nullptr)
+CLockonEnemy::CLockonEnemy()
 {
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\reticle002.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
 
 }
 
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CEnemyBase::~CEnemyBase()
+CLockonEnemy::~CLockonEnemy()
 {
-	m_DefPos = CObjectX::GetPos();
+
 }
 
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CEnemyBase::Init()
+void CLockonEnemy::Init()
 {
-	CObject::SetType(TYPE_3D_ENEMY);
-	CObjectX::Init();
+	CObject::SetType(TYPE_BILLBOARD);
+	CBillboard::Init();
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CEnemyBase::Uninit()
+void CLockonEnemy::Uninit()
 {
-
-	CObjectX::Uninit();
+	CBillboard::Uninit();
 }
 
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CEnemyBase::Update()
+void CLockonEnemy::Update()
 {
-	D3DXVECTOR3 pos = CObjectX::GetPos();
-
-	if (pos.y >m_DefPos.y +  300.0f ||
-		pos.y < m_DefPos .y - 300.0f)
-	{
-		m_bMove = !m_bMove;
-	}
-	
-	if (m_bMove)
-	{
-		CObjectX::AddPos({ 0.0f,3.0f,0.0f });
-	}
-	else
-	{
-		CObjectX::AddPos({ 0.0f,-3.0f,0.0f });
-	}
-	if (m_bLockOned)
-	{
-		lockon->SetThisPos(CObjectX::GetPos());
-	}
-	if (CObjectX::GetPos().z - CPlayerObserver::GetInstance()->GetPlayerPos().z < -1000)
-	{
-		Release();
-		return;
-	}
-	CObjectX::Update();
+	CBillboard::Update();
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CEnemyBase::Draw()
+void CLockonEnemy::Draw()
 {
-	if (m_bLockOned)
-	{
-		if (lockon != nullptr)
-		{
-			lockon->Draw();
-		}
-	}
-	CObjectX::Draw();
+	CBillboard::Draw();
 }
 
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CEnemyBase* CEnemyBase::Create(D3DXVECTOR3 pos)
+CLockonEnemy* CLockonEnemy::Create(D3DXVECTOR3 pos)
 {
-	CEnemyBase* enemy = new CEnemyBase;
+	CLockonEnemy* loe = new CLockonEnemy;
 
-	enemy->BindModel("data\\MODEL\\enemy_base.x");
-	enemy->SetModelParam(pos);
-	enemy->Init();
+	loe->SetPolygonParam(pos, POLY_RADIUS, POLY_RADIUS);
+	loe->Init();
 
-	return enemy;
-}
-
-void CEnemyBase::Damaged()
-{
-	CEffExplosion::Create(CObjectX::GetPos(), 300.0f);
-	if (lockon != nullptr)
-	{
-		lockon->Release();
-	}
-	Release();
-	return;
+	return loe;
 }
 

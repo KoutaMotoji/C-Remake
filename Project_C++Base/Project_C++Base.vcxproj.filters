@@ -97,6 +97,12 @@
     <Filter Include="ヘッダー ファイル\2D\PlayerUI">
       <UniqueIdentifier>{d069c26d-00f9-481a-a5b2-fd8e54fc9ed6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D\Model\Enemy\Enemy_UI">
+      <UniqueIdentifier>{a8f03298-247f-4fda-8120-e0e71fb64709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\Model\Enemy\Enemy_UI">
+      <UniqueIdentifier>{7e8fb155-c023-43a0-887e-345c5637fb70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -195,9 +201,6 @@
     <ClCompile Include="t_player.cpp">
       <Filter>ソース ファイル\3D\TitleObj</Filter>
     </ClCompile>
-    <ClCompile Include="gauge_Boss_Life.cpp">
-      <Filter>ソース ファイル\3D\Model\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="EDIT_particle.cpp">
       <Filter>ソース ファイル\Scene\Edit</Filter>
     </ClCompile>
@@ -254,6 +257,15 @@
     </ClCompile>
     <ClCompile Include="enemy_base.cpp">
       <Filter>ソース ファイル\3D\Model\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="gauge_Boss_Life.cpp">
+      <Filter>ソース ファイル\3D\Model\Enemy\Enemy_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="lockon_enemy.cpp">
+      <Filter>ソース ファイル\3D\Model\Enemy\Enemy_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="shadow.cpp">
+      <Filter>ソース ファイル\3D\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,9 +365,6 @@
     <ClInclude Include="t_player.h">
       <Filter>ヘッダー ファイル\3D\TitleObj</Filter>
     </ClInclude>
-    <ClInclude Include="gauge_Boss_Life.h">
-      <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="EDIT_particle.h">
       <Filter>ヘッダー ファイル\Scene\Edit</Filter>
     </ClInclude>
@@ -415,6 +424,15 @@
     </ClInclude>
     <ClInclude Include="enemy_base.h">
       <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="gauge_Boss_Life.h">
+      <Filter>ヘッダー ファイル\3D\Model\Enemy\Enemy_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="lockon_enemy.h">
+      <Filter>ヘッダー ファイル\3D\Model\Enemy\Enemy_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="shadow.h">
+      <Filter>ヘッダー ファイル\3D\Model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

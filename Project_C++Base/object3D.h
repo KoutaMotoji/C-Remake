@@ -20,7 +20,9 @@ public:
 	void Update()override;		//çXêV
 	void Draw()override;		//ï`âÊ
 
+
 	D3DXVECTOR3 GetPos();
+	void SetPos(D3DXVECTOR3 pos) { m_pos = pos; };
 	void AddSize(float value);
 	void SetSize(float size);
 	float GetSize();

@@ -9,6 +9,7 @@
 
 #include "main.h"
 #include "objectX.h"
+#include "lockon_enemy.h"
 
 class CEnemyBase :public CObjectX
 {
@@ -22,11 +23,20 @@ public:
 	static CEnemyBase* Create(D3DXVECTOR3 pos);
 
 	void Damaged();
-
+	void LockOned() 
+	{
+		if (m_bLockOned != true)
+		{
+			m_bLockOned = true;
+			lockon = CLockonEnemy::Create(CObjectX::GetPos());
+		}
+	};
 protected:
 	bool m_bMove;
 	D3DXVECTOR3 m_DefPos;
+	bool m_bLockOned;
 private:
+	CLockonEnemy* lockon;
 };
 
 

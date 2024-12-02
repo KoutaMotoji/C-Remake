@@ -10,6 +10,7 @@
 #include "3D_Item.h"
 #include "particle3D.h"
 #include "bullet3D.h"
+#include "enemy_base.h"
 #include "mesh_ground.h" 
 #include "mesh_obstacle.h"
 #include "mesh_cylinder.h"
@@ -26,6 +27,7 @@ CPlayerX::CPlayerX():m_nLife(1000),m_fWeaponRadius(25),
 	{
 		m_apModelParts[i] = nullptr;
 	}
+	m_shadow = nullptr;
 }
 
 //==========================================================================================
@@ -41,12 +43,11 @@ CPlayerX::~CPlayerX()
 //==========================================================================================
 void CPlayerX::Init()
 {
-
 	MotionInit();
 	m_pReticle = CReticle::Create({ 0.0f,0.0f,500.0f });
+	m_shadow = CShadow::Create(m_pos);
 	CObject::SetType(TYPE_3D_PLAYER);
 	CGaugeLife::Create(MAX_LIFE);
-
 }
 
 //==========================================================================================
@@ -121,6 +122,11 @@ void CPlayerX::Update()
 	{
 		SetNextMotion(MOTION_ROBO_SLASH);
 	}
+	D3DXVECTOR3 lockonVec;
+	if (m_bTransformed)
+	{
+		lockonVec = LockOnEnemy();
+	}
 	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
 	{
 	
@@ -138,7 +144,19 @@ void CPlayerX::Update()
 		{
 			SetNextMotion(MOTION_ROBO_SHOT);
 			m_bMotion = true;
-			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot , { 1.0f,0.0f,0.2f,1.0f }, 150,38,35);
+			digitRot.x = (lockonVec.x - posMtx.x) * 0.2f;
+			digitRot.y = (lockonVec.y - posMtx.y) * 0.2f;
+			digitRot.z = (lockonVec.z - posMtx.z) * 0.2f;
+			D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
+			D3DXVec3Normalize(&SetdigitedRot, &digitRot);
+			if (lockonVec != m_pReticle->GetPos())
+			{
+				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 0.1f,1.0f,0.2f,1.0f }, 150, 38, 35);
+			}
+			else
+			{
+				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150, 38, 35);
+			}
 		}
 		else
 		{
@@ -150,7 +168,7 @@ void CPlayerX::Update()
 		m_move.z += 12.5f;
 	}
 	m_move.z += 5.5f;
-
+	SetShadowGround();
 	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
 
 	m_pos += m_move;
@@ -990,6 +1008,10 @@ bool CPlayerX::MeshObstacle()
 //
 //========================================================================================================================================
 
+
+//==========================================================================================
+// アイテム取得処理
+//==========================================================================================
 void CPlayerX::GetItem()
 {
 	CCollision* pCollision = new CCollision();
@@ -1026,5 +1048,97 @@ void CPlayerX::GetItem()
 	{
 		delete pCollision;
 		pCollision = nullptr;
+	}
+}
+
+//==========================================================================================
+// ロボット形態のみ、近くの敵をロックオンする処理
+//==========================================================================================
+D3DXVECTOR3 CPlayerX::LockOnEnemy()
+{
+	std::shared_ptr<CCollision> pCollision = std::make_shared<CCollision>();
+
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_ENEMY) {
+					CEnemyBase* pTest = dynamic_cast<CEnemyBase*>(pObj);
+
+					if (pTest != nullptr) {
+
+						if (pTest->GetPos().z - m_pos.z < 4000.0f &&
+							pTest->GetPos().z - m_pos.z > 1000.0f)
+						{
+							D3DXVECTOR3 dirM = D3DXVECTOR3(3000.0f, 0, 0);
+
+							if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), dirM, dirM))
+							{
+								pTest->LockOned();
+								return pTest->GetPos();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return m_pReticle->GetPos();
+}
+
+void CPlayerX::SetShadowGround()
+{
+	// 地形判定
+	BOOL  bIsHit = false;
+	float fLandDistance;
+	DWORD dwHitIndex = 0U;
+	float fHitU;
+	float fHitV;
+	LPD3DXMESH pMesh = nullptr;
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; i++) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
+					CMeshGround* pTest = dynamic_cast<CMeshGround*>(pObj);
+					if (pTest != nullptr) {
+						pMesh = pTest->GetMesh();
+						if (pTest != nullptr) {
+							// 地形判定
+
+							LPD3DXMESH pMesh = nullptr;
+
+							pMesh = pTest->GetMesh();
+							D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+							D3DXVECTOR3 objpos = m_pos - pTest->GetPos();
+							D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+							// 当たったインデックスバッファ取得
+							WORD dwHitVertexNo[3];
+							WORD* pIndex;
+							HRESULT hr = pMesh->LockIndexBuffer(0, (void**)&pIndex);
+
+							for (int nIdxIdx = 0; nIdxIdx < 3; nIdxIdx++)
+							{
+								dwHitVertexNo[nIdxIdx] = pIndex[dwHitIndex * 3 + nIdxIdx];
+							}
+
+							pMesh->UnlockIndexBuffer();
+
+							// 当たったポリゴン取得
+							VERTEX_3D* pVertex;
+							hr = pMesh->LockVertexBuffer(0, (void**)&pVertex);
+
+							m_shadow->SetPos({ m_pos.x,m_pos.y - fLandDistance + 20.0f,m_pos.z });
+							//m_shadow->SetRot({});
+
+							pMesh->UnlockVertexBuffer();
+						}
+					}
+				}
+			}
+		}
 	}
 }

@@ -16,15 +16,12 @@ public:
 	//サウンド一覧
 	typedef enum
 	{
-		SOUND_LABEL_TITLEBGM = 0,
-		SOUND_LABEL_GAMEBGM,
-		SOUND_LABEL_RESULTBGM,
-		SOUND_LABEL_ATTACK,
-		SOUND_LABEL_RUSH,
-		SOUND_LABEL_DAMAGED,
-		SOUND_LABEL_SWING,
-		SOUND_LABEL_SELECT,
-		SOUND_LABEL_MAX,
+		SOUND_LABEL_TITLESE_OPEN = 0,
+		SOUND_LABEL_TITLESE_LIFT,
+		SOUND_LABEL_TITLESE_,
+		SOUND_LABEL_TITLESE_LIF,
+		SOUND_LABEL_MAX
+
 	} SOUND_LABEL;
 	CSound();								//コンストラクタ
 	~CSound();								//デストラクタ
@@ -55,10 +52,7 @@ private:
 		{"data/SOUND/GameBGM.wav",		-1},	//BGM2
 		{"data/SOUND/ResultBGM.wav", -1},		//BGM3
 		{"data/SOUND/Attack.wav", 0},			//攻撃SE
-		{"data/SOUND/Rush.wav", 0},
-		{"data/SOUND/Damaged.wav", 0},
-		{"data/SOUND/Swing.wav", 0},
-		{"data/SOUND/Select.wav", 0},
+
 
 	};
 };
