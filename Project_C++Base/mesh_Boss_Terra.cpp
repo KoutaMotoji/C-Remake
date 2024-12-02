@@ -194,6 +194,7 @@ void CBossTerra::DeathAnim() {
 			m_Gauge->Release();
 			m_Gauge = nullptr;
 			CObject::Release();
+			CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_RESULT);
 			return;
 		}
 		else

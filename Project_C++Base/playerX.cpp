@@ -4,8 +4,10 @@
 //								§ìFŒ³’nO‘¿
 // 
 //===============================================================================
-#include "playerX.h"
+#include "playerX.h"4
+#include "player_UI.h"
 
+#include "3D_Item.h"
 #include "particle3D.h"
 #include "bullet3D.h"
 #include "mesh_ground.h" 
@@ -47,6 +49,8 @@ void CPlayerX::Init()
 	MotionInit();
 	m_pReticle = CReticle::Create({ 0.0f,0.0f,500.0f });
 	CObject::SetType(TYPE_3D_PLAYER);
+	CGaugeLife::Create(MAX_LIFE);
+
 }
 
 //==========================================================================================
@@ -92,12 +96,14 @@ void CPlayerX::Update()
 			m_bMotion = true;
 		}
 	}
-	
+	GetItem();
+
 	if (MeshObstacle() &&
 		!m_bDamaged)
 	{
 		m_bDamaged = true;
 		CManager::GetInstance()->GetCamera()->SetShake(20, 40);
+		DamageAdd(1000 * 0.125);
 		m_DamageTime = 0;
 	}
 	if (!TestUseMeshCollision())
@@ -142,6 +148,10 @@ void CPlayerX::Update()
 		{
 			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120,32,22);
 		}
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_G) == true)
+	{
+		m_move.z += 12.5f;
 	}
 	m_move.z += 5.5f;
 
@@ -983,3 +993,42 @@ bool CPlayerX::MeshObstacle()
 
 //
 //========================================================================================================================================
+
+void CPlayerX::GetItem()
+{
+	CCollision* pCollision = new CCollision();
+
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_ITEMS) {
+					C3DItem* pTest = dynamic_cast<C3DItem*>(pObj);
+
+					if (pTest != nullptr) {
+
+						D3DXVECTOR3 dirM = D3DXVECTOR3(100.0f, 300.0f, 300.0f);
+
+
+						if (pCollision->SphireCollosion(m_pos,pTest->GetPos(),dirM, dirM))
+						{
+							pTest->GotThisItem();
+							if (pCollision != nullptr)
+							{
+								delete pCollision;
+								pCollision = nullptr;
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+	if (pCollision != nullptr)
+	{
+		delete pCollision;
+		pCollision = nullptr;
+	}
+}

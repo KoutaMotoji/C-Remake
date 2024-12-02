@@ -9,7 +9,7 @@
 
 //マクロ定義
 #define CLASS_NAME	"WindowClass" //ウィンドウクラスの名前
-#define WINDOW_NAME	"MetalStrike"
+#define WINDOW_NAME	"Sky Unit"
 #define ID_BUTTON_RESET	(101)
 
 //プロトタイプ宣言

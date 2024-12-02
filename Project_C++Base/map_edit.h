@@ -13,7 +13,7 @@
 
 #define MAX_EDITOBJ	(1024)
 
-static constexpr int MAX_OBJNUM = 8;
+static constexpr int MAX_OBJNUM = 10;
 
 class CMapEdit : public CScene
 {

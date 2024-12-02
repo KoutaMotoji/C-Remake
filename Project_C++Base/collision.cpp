@@ -42,6 +42,27 @@ bool CCollision::CircleCollosion(D3DXVECTOR3 MainPos, D3DXVECTOR3 SubPos, D3DXVE
 }
 
 //==========================================================================================
+//球形当たり判定
+//==========================================================================================
+bool CCollision::SphireCollosion(D3DXVECTOR3 MainPos, D3DXVECTOR3 SubPos, D3DXVECTOR3 MainRadius, D3DXVECTOR3 SubRadious)
+{
+	float fLengthX = MainPos.x - SubPos.x;
+	float fLengthY = MainPos.y - SubPos.y;
+	float fLengthZ = MainPos.z - SubPos.z;
+	float fRadiusM, fRadiusS;
+	fRadiusM = MainRadius.x;
+	fRadiusS = SubRadious.x;
+
+
+	if ((fLengthX * fLengthX) + (fLengthY * fLengthY) + (fLengthZ * fLengthZ) <= ((fRadiusM + fRadiusS) * (fRadiusM + fRadiusS)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+//==========================================================================================
 //飛ばしたレイとメッシュの判定
 //==========================================================================================
 bool CCollision::MeshToIntersectCollision(LPD3DXMESH pMesh, D3DXVECTOR3 pos, D3DXVECTOR3 dir, float CheckDistance)

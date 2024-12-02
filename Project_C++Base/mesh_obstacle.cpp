@@ -7,6 +7,8 @@
 #include "mesh_obstacle.h"
 #include "player_observer.h"
 #include "mesh_Boss_Terra.h"
+#include "enemy_base.h"
+#include "3D_Item.h"
 
 #include "manager.h"
 #include "game.h"
@@ -21,8 +23,9 @@ namespace {
 		"data\\MODEL\\tower.x",
 		"data\\MODEL\\brighe.x",
 		"data\\MODEL\\pail.x",
-		"data\\MODEL\\boss_spawner.x"
-
+		"data\\MODEL\\boss_spawner.x",
+		"data\\MODEL\\ItemEmitter.x",
+		"data\\MODEL\\enemy_spawner.x",
 	};
 };
 
@@ -107,6 +110,12 @@ CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos,int Type)
 	case 7:
 		enemy = new CBossEmitter;
 		break;
+	case 8:
+		enemy = new CScoreItemEmitter;
+		break;
+	case 9:
+		enemy = new CEnemyEmitter;
+		break;
 	default:
 		enemy = new CMeshObstacle;
 		break;
@@ -131,6 +140,12 @@ CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTO
 	{
 	case 7:
 		enemy = new CBossEmitter;
+		break;
+	case 8:
+		enemy = new CScoreItemEmitter;
+		break;
+	case 9:
+		enemy = new CEnemyEmitter;
 		break;
 	default:
 		enemy = new CMeshObstacle;
@@ -162,6 +177,12 @@ void CScoreItemEmitter::Init()
 //更新オーバーロード
 void CScoreItemEmitter::Update()
 {
+	if (m_bSceneCheck)
+	{
+		C3DItem::Create(CObjectX::GetPos());
+		Release();
+		return;
+	}
 	CMeshObstacle::Update();
 }
 
@@ -195,4 +216,33 @@ bool CBossEmitter::PlayerLength()
 	return (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < BOSS_EMITTE_DIS);
 }
 
+//初期化オーバーロード
+void CEnemyEmitter::Init()
+{
+	if (CManager::GetInstance()->GetScene()->GetSceneMode() == CScene::MODE_GAME)
+	{
+		m_bSceneCheck = true;
+	}
+}
+
+//更新オーバーロード
+void CEnemyEmitter::Update()
+{
+	if (m_bSceneCheck)
+	{
+		if (PlayerLength())
+		{
+			CEnemyBase::Create(CObjectX::GetPos());
+
+			Release();
+			return;
+		}
+	}
+	CMeshObstacle::Update();
+}
+
+bool CEnemyEmitter::PlayerLength()
+{
+	return (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < ENEMY_EMITTE_DIS);
+}
 //---------------------------------------------------------------------------------------------------------------------------------

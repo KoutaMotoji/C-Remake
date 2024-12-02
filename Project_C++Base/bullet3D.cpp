@@ -6,6 +6,7 @@
 //===============================================================================
 #include "bullet3D.h"
 #include "particle3D.h"
+#include "enemy_base.h"
 #include "mesh_Boss_Terra.h"
 #include "mesh_ground.h"
 #include "mesh_obstacle.h"
@@ -198,6 +199,26 @@ bool CBullet3D::MeshCollision()
 							return true;
 						}
 						
+						return false;
+					}
+				}
+				else if (type == CObject::TYPE::TYPE_3D_ENEMY) {
+
+					CEnemyBase* pTest = dynamic_cast<CEnemyBase*>(pObj);
+					if (pTest != nullptr) {
+						D3DXVECTOR3 dirM = D3DXVECTOR3(50.0f, 100.0f, 100.0f);
+
+
+						if (pCollision->SphireCollosion(CBillboard::GetPos(), pTest->GetPos(), dirM, pTest->GetModelMax()))
+						{
+							if (pCollision != nullptr)
+							{
+								pTest->Damaged();
+								delete pCollision;
+								pCollision = nullptr;
+							}
+						}
+
 						return false;
 					}
 				}

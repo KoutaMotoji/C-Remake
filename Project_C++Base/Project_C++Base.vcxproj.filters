@@ -91,6 +91,12 @@
     <Filter Include="ヘッダー ファイル\3D\TitleObj\UI">
       <UniqueIdentifier>{bb74f040-d351-47c6-94ab-f88e40e8ad6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\2D\PlayerUI">
+      <UniqueIdentifier>{852eca20-00c6-4056-99ed-928a13815286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\2D\PlayerUI">
+      <UniqueIdentifier>{d069c26d-00f9-481a-a5b2-fd8e54fc9ed6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -239,6 +245,15 @@
     </ClCompile>
     <ClCompile Include="t_UI.cpp">
       <Filter>ソース ファイル\3D\TitleObj\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="player_UI.cpp">
+      <Filter>ソース ファイル\2D\PlayerUI</Filter>
+    </ClCompile>
+    <ClCompile Include="3D_Item.cpp">
+      <Filter>ソース ファイル\3D\Model\StageObj</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy_base.cpp">
+      <Filter>ソース ファイル\3D\Model\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -391,6 +406,15 @@
     </ClInclude>
     <ClInclude Include="t_UI.h">
       <Filter>ヘッダー ファイル\3D\TitleObj\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="player_UI.h">
+      <Filter>ヘッダー ファイル\2D\PlayerUI</Filter>
+    </ClInclude>
+    <ClInclude Include="3D_Item.h">
+      <Filter>ヘッダー ファイル\3D\Model\StageObj</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy_base.h">
+      <Filter>ヘッダー ファイル\3D\Model\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

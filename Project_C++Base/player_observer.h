@@ -20,6 +20,8 @@ public:
 	static D3DXVECTOR3 GetPlayerPos();
 	static CPlayerX* GetPlayer();
 	static D3DXVECTOR3 GetPlayerMove();
+	static int GetPlayerLife();
+
 private:
 	static CPlayerX* pPlayer;
 };

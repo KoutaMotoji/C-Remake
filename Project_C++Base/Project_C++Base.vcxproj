@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3D_Item.h" />
     <ClInclude Include="billboard.h" />
     <ClInclude Include="boss_bullet.h" />
     <ClInclude Include="boss_reticle.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="collision.h" />
     <ClInclude Include="EDIT_particle.h" />
     <ClInclude Include="eff_explosion.h" />
+    <ClInclude Include="enemy_base.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="fog.h" />
     <ClInclude Include="game.h" />
@@ -181,6 +183,7 @@
     <ClInclude Include="particle_system.h" />
     <ClInclude Include="playerX.h" />
     <ClInclude Include="player_observer.h" />
+    <ClInclude Include="player_UI.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="reticle.h" />
@@ -199,6 +202,7 @@
     <ClInclude Include="t_UI.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3D_Item.cpp" />
     <ClCompile Include="billboard.cpp" />
     <ClCompile Include="boss_bullet.cpp" />
     <ClCompile Include="boss_reticle.cpp" />
@@ -207,6 +211,7 @@
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="EDIT_particle.cpp" />
     <ClCompile Include="eff_explosion.cpp" />
+    <ClCompile Include="enemy_base.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fog.cpp" />
     <ClCompile Include="game.cpp" />
@@ -232,6 +237,7 @@
     <ClCompile Include="particle_system.cpp" />
     <ClCompile Include="playerX.cpp" />
     <ClCompile Include="player_observer.cpp" />
+    <ClCompile Include="player_UI.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="reticle.cpp" />

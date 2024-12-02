@@ -15,11 +15,11 @@
 #include "manager.h"
 
 
-#define MAX_MODELPARTS	(20)
+static constexpr int MAX_MODELPARTS = 20;
 
-#define MAX_PARTS	(20)
-#define MAX_KEYSET	(20)
-#define MAX_MOTION	(7)
+static constexpr int MAX_PARTS = 20;
+static constexpr int MAX_KEYSET = 20;
+static constexpr int MAX_MOTION = 7;
 
 class CPlayerX :public CObject
 {
@@ -50,6 +50,7 @@ private:
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
 	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); };	//ダメージ加算、生存確認
+
 
 	//void GoalCheck();						//ゴールしているかチェック
 	void DeadCheck();
@@ -91,7 +92,6 @@ private:
 		int bLoop;
 		int nKeyNum;
 		KeySet aKetSet[MAX_KEYSET];
-		
 	};
 	Motion m_aMotion[MAX_MOTION];
 
@@ -123,6 +123,7 @@ private:
 	bool m_bDamaged;
 	int m_DamageTime;
 	bool MeshObstacle();
+	void GetItem();
 
 	//=====================			クオータニオン用		====================================
 	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)

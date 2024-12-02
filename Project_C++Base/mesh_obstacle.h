@@ -10,8 +10,10 @@
 #include "main.h"
 #include "objectX.h"
 
-static constexpr int MAX_MODELTYPE = 8;
+static constexpr int MAX_MODELTYPE = 10;
 static constexpr float BOSS_EMITTE_DIS = 6000.0f;
+static constexpr float ENEMY_EMITTE_DIS = 10000.0f;
+
 static constexpr float OBJ_DESTROY_DIS = 12000.0f;
 
 
@@ -58,5 +60,18 @@ private:
 	bool m_bSceneCheck;
 	bool PlayerLength();
 };
+
+class CEnemyEmitter : public CMeshObstacle
+{
+public:
+	CEnemyEmitter() : m_bSceneCheck(false) {};
+	~CEnemyEmitter()override = default;
+	void Init()override;		//èâä˙âª
+	void Update()override;		//çXêV
+private:
+	bool m_bSceneCheck;
+	bool PlayerLength();
+};
+
 
 #endif

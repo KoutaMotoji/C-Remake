@@ -1,93 +1,106 @@
 //===============================================================================
 //
-//  C++使った3D(result.cpp)
+//  C++使った2D(enemy_basic.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
+#include "enemy_base.h"
+#include "eff_explosion.h"
+#include "player_observer.h"
 
 #include "manager.h"
-#include "fade.h"
-#include "object.h"
-#include "result.h"
+#include "game.h"
+
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CResult::CResult()
+CEnemyBase::CEnemyBase() :m_bMove(false), m_DefPos({0.0f,0.0f,0.0f})
 {
-	
+
 }
 
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CResult::~CResult()
+CEnemyBase::~CEnemyBase()
 {
-
+	m_DefPos = CObjectX::GetPos();
 }
 
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-HRESULT CResult::Init()
+void CEnemyBase::Init()
 {
-	CScene::Init();
-	CResultBG::Create();
-	return S_OK;
+	CObject::SetType(TYPE_3D_ENEMY);
+	CObjectX::Init();
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CResult::Uninit()
+void CEnemyBase::Uninit()
 {
-	CScene::Uninit();
+	CObjectX::Uninit();
 }
 
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CResult::Update()
+void CEnemyBase::Update()
 {
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN)|| CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A))
-	{
-		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
+	D3DXVECTOR3 pos = CObjectX::GetPos();
 
+	if (pos.y >m_DefPos.y +  300.0f ||
+		pos.y < m_DefPos .y - 300.0f)
+	{
+		m_bMove = !m_bMove;
 	}
-	CScene::Update();
+	
+	if (m_bMove)
+	{
+		CObjectX::AddPos({ 0.0f,3.0f,0.0f });
+	}
+	else
+	{
+		CObjectX::AddPos({ 0.0f,-3.0f,0.0f });
+	}
+	if (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < -1000)
+	{
+		Release();
+		return;
+	}
+	CObjectX::Update();
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CResult::Draw()
+void CEnemyBase::Draw()
 {
-	CScene::Draw();
+	CObjectX::Draw();
 }
 
-
 //==========================================================================================
-//枠の初期化処理
+//生成処理
 //==========================================================================================
-void CResultBG::Init()
+CEnemyBase* CEnemyBase::Create(D3DXVECTOR3 pos)
 {
-	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\result.png");
-	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
+	CEnemyBase* enemy = new CEnemyBase;
 
-	CObject::SetType(TYPE_2D_UI);
-	CObject2D::Init();
+	enemy->BindModel("data\\MODEL\\enemy_base.x");
+	enemy->SetModelParam(pos);
+	enemy->Init();
+
+	return enemy;
 }
 
-
-//==========================================================================================
-//枠の生成処理
-//==========================================================================================
-CResultBG* CResultBG::Create()
+void CEnemyBase::Damaged()
 {
-	CResultBG* bg = new CResultBG;
+	CEffExplosion::Create(CObjectX::GetPos(), 300.0f);
 
-	bg->SetPolygonParam({SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f}, SCREEN_HEIGHT, SCREEN_WIDTH);
-	bg->Init();
-
-	return bg;
+	Release();
+	return;
 }
+

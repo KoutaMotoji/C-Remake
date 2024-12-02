@@ -23,7 +23,7 @@ namespace AnimPoint
 	int SECTION_ZOOM_PLAYER = 120;
 	int SECTION_LOOK = 90;
 	int SECTION_LOOK_ANOTHOR = 260;
-	int SECTION_SCENE_CHANGE = 420;
+	int SECTION_SCENE_CHANGE = 400;
 }
 
 namespace UIState

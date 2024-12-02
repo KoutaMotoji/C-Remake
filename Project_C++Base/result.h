@@ -8,6 +8,7 @@
 #define _RESULT_H_
 
 #include "scene.h"
+#include "object2D.h"
 
 class CResult : public CScene
 {
@@ -18,6 +19,17 @@ public:
 	void Uninit()override;
 	void Update()override;
 	void Draw()override;
+};
+
+class CResultBG :public CObject2D
+{
+public:
+	CResultBG() {};		//コンストラクタ
+	~CResultBG()override = default;				//デストラクタ
+	void Init()override;		//初期化
+
+	static CResultBG* Create();
+private:
 };
 
 #endif
