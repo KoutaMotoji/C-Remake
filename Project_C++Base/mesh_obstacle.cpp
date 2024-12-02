@@ -80,7 +80,7 @@ void CMeshObstacle::Update()
 //==========================================================================================
 void CMeshObstacle::Draw()
 {
-	if (CPlayerObserver::GetPlayerPos().z < CObjectX::GetPos().z + 10000)
+	if (CPlayerObserver::GetInstance()->GetPlayerPos().z < CObjectX::GetPos().z + 10000)
 	{
 		CObjectX::Draw();
 	}
@@ -93,7 +93,7 @@ bool CMeshObstacle::PlayerDistanceCheck()
 {
 	if (CManager::GetInstance()->GetScene()->GetSceneMode() == CScene::MODE_GAME)
 	{
-		return (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < -OBJ_DESTROY_DIS);
+		return (CObjectX::GetPos().z - CPlayerObserver::GetInstance()->GetPlayerPos().z < -OBJ_DESTROY_DIS);
 	}
 	return false;
 }
@@ -213,7 +213,7 @@ void CBossEmitter::Update()
 
 bool CBossEmitter::PlayerLength()
 {
-	return (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < BOSS_EMITTE_DIS);
+	return (CObjectX::GetPos().z - CPlayerObserver::GetInstance()->GetPlayerPos().z < BOSS_EMITTE_DIS);
 }
 
 //初期化オーバーロード
@@ -243,6 +243,6 @@ void CEnemyEmitter::Update()
 
 bool CEnemyEmitter::PlayerLength()
 {
-	return (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < ENEMY_EMITTE_DIS);
+	return (CObjectX::GetPos().z - CPlayerObserver::GetInstance()->GetPlayerPos().z < ENEMY_EMITTE_DIS);
 }
 //---------------------------------------------------------------------------------------------------------------------------------

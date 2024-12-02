@@ -4,7 +4,7 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "playerX.h"4
+#include "playerX.h"
 #include "player_UI.h"
 
 #include "3D_Item.h"
@@ -16,15 +16,11 @@
 #include "game.h"
 #include "collision.h"
 
-
-const float CPlayerX::MOVE_SPEED = 0.35f;
-const int CPlayerX::MAX_LIFE = 1000;
-const int CPlayerX::MAX_STAMINA = 500;
-
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CPlayerX::CPlayerX():fGravity(0.55f),m_nLife(1000),m_fWeaponRadius(25), bStop(false), m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false)
+CPlayerX::CPlayerX():m_nLife(1000),m_fWeaponRadius(25), 
+					m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false)
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{

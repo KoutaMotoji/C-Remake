@@ -52,7 +52,7 @@ void CTreeBillboard::Uninit()
 void CTreeBillboard::Update()
 {
 	//一定間隔プレイヤーから後ろに離れた場合、X座標のみを参照して一定数後方に再設置する処理
-	if (CBillboard::GetPos().z - CPlayerObserver::GetPlayerPos().z <= REPLACEMENT_CHECKDIS)
+	if (CBillboard::GetPos().z - CPlayerObserver::GetInstance()->GetPlayerPos().z <= REPLACEMENT_CHECKDIS)
 	{
 		D3DXVECTOR3 newPos = CBillboard::GetPos();
 		newPos.z += REPLACEMENT_SETDIS;

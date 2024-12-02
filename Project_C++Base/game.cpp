@@ -53,7 +53,7 @@ HRESULT CGame::Init()
 
 	CFog::SetFogLinear(4500.0f,15000.0f);
 	CPlayerX::Create({ 0.0f,0.0f,0.0f });
-	CPlayerObserver::PlayerSearch();
+	CPlayerObserver::GetInstance()->PlayerSearch();
 
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
 	CMeshGround::Create({ 0.0f,-1000.0f,0.0f });
@@ -78,7 +78,7 @@ HRESULT CGame::Init()
 void CGame::Uninit()
 {
 	CFog::FinishFog();
-	CPlayerObserver::PlayerObsDestroy();
+	CPlayerObserver::GetInstance()->PlayerObsDestroy();
 
 	CScene::Uninit();
 }

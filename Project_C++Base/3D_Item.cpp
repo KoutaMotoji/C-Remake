@@ -69,7 +69,7 @@ C3DItem* C3DItem::Create(D3DXVECTOR3 pos)
 //==========================================================================================
 void  C3DItem::GotAnimation()
 {
-	CObjectX::SetPos(CPlayerObserver::GetPlayerPos());
+	CObjectX::SetPos(CPlayerObserver::GetInstance()->GetPlayerPos());
 	
 	CObjectX::AddRot({ 0.0f,0.07f,0.0f });
 	CObjectX::AddSize({ -0.02,-0.02 ,-0.02 });

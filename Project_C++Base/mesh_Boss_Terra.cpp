@@ -86,7 +86,7 @@ void CBossTerra::Uninit()
 void CBossTerra::Update()
 {
 	D3DXVECTOR3 pos = CObjectX::GetPos();
-	D3DXVECTOR3 Playerpos = CPlayerObserver::GetPlayerPos();
+	D3DXVECTOR3 Playerpos = CPlayerObserver::GetInstance()->GetPlayerPos();
 	if (CObjectX::GetPos().x > 500.0f ||
 		CObjectX::GetPos().x < -500.0f)
 	{
@@ -141,7 +141,7 @@ void CBossTerra::Update()
 		DeathAnim();
 	}
 
-	m_move.z = CPlayerObserver::GetPlayerMove().z;
+	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z;
 
 	CObjectX::AddPos(m_move);
 

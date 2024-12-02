@@ -7,7 +7,7 @@
 #include "player_observer.h"
 #include "manager.h"
 
-CPlayerX* CPlayerObserver::pPlayer = nullptr;
+std::shared_ptr<CPlayerObserver> CPlayerObserver::_instance = nullptr;
 
 void CPlayerObserver::PlayerSearch()
 {

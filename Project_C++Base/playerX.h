@@ -14,12 +14,16 @@
 
 #include "manager.h"
 
-
+//モーション用定数
 static constexpr int MAX_MODELPARTS = 20;
-
 static constexpr int MAX_PARTS = 20;
 static constexpr int MAX_KEYSET = 20;
 static constexpr int MAX_MOTION = 7;
+
+//ステータス用定数
+static constexpr int MAX_LIFE = 1000;		//体力
+static constexpr float MOVE_SPEED = 0.35f;	//移動スピードの設定
+
 
 class CPlayerX :public CObject
 {
@@ -34,7 +38,6 @@ public:
 	bool PMove(float fCamRotZ);
 	static CPlayerX* Create(D3DXVECTOR3 pos);
 	int GetPLife() { return m_nLife; };
-	void StaminaAdd(int value);				//スタミナ回復
 
 	D3DXVECTOR3 GetPos() { return m_pos; };
 	D3DXVECTOR3 GetMove() { return m_move; };
@@ -50,17 +53,13 @@ private:
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
 	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); };	//ダメージ加算、生存確認
-
+	void LockOnEnemy();						//敵のロックオン
 
 	//void GoalCheck();						//ゴールしているかチェック
 	void DeadCheck();
-	static const float MOVE_SPEED;			//移動スピードの設定
-	float fGravity;							//重力
 	float m_fWeaponRadius;
 	int m_nLife;			//体力
-	static const int MAX_LIFE;
-	static const int MAX_STAMINA;
-	bool bStop;				//デバッグ用移動量無効
+
 
 
 	CModelParts* m_apModelParts[MAX_MODELPARTS];
@@ -100,6 +99,7 @@ private:
 	void SetNextMotion(int nNextMotionNum);
 	void SetNextKey();
 	bool MotionBlending();
+
 	enum
 	{
 		MOTION_JET_NUTO = 0,

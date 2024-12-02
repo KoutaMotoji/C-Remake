@@ -86,7 +86,7 @@ CGaugeLife* CGaugeLife::Create(int nMaxGauge)
 //==========================================================================================
 void CGaugeLife::SetGauge()
 {
-	int nNowGauge = CPlayerObserver::GetPlayerLife();
+	int nNowGauge = CPlayerObserver::GetInstance()->GetPlayerLife();
 	CObject2D::SetGauge(nNowGauge);
 }
 

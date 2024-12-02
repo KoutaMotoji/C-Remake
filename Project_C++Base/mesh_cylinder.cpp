@@ -181,7 +181,7 @@ void CMeshCylinder::Update()
 	//メッシュの頂点バッファのアンロック
 	m_pMesh->UnlockVertexBuffer();
 
-	m_pos.z = CPlayerObserver::GetPlayerPos().z;
+	m_pos.z = CPlayerObserver::GetInstance()->GetPlayerPos().z;
 }
 
 //==========================================================================================

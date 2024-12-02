@@ -66,7 +66,7 @@ void CEnemyBase::Update()
 	{
 		CObjectX::AddPos({ 0.0f,-3.0f,0.0f });
 	}
-	if (CObjectX::GetPos().z - CPlayerObserver::GetPlayerPos().z < -1000)
+	if (CObjectX::GetPos().z - CPlayerObserver::GetInstance()->GetPlayerPos().z < -1000)
 	{
 		Release();
 		return;

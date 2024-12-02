@@ -52,7 +52,7 @@ void CMeshGround::Update()
 {
 	if (CManager::GetInstance()->GetScene()->GetSceneMode() == CScene::MODE_GAME)
 	{
-		if (CPlayerObserver::GetPlayerPos().z - this->GetPos().z > this->GetModelMax().z * 1.5f)
+		if (CPlayerObserver::GetInstance()->GetPlayerPos().z - this->GetPos().z > this->GetModelMax().z * 1.5f)
 		{
 			D3DXVECTOR3 newPos = CObjectX::GetPos();
 			newPos.z += CObjectX::GetModelMax().z * 6 - 20.0f;

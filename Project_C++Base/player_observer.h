@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  プレイヤー監視クラス(Block.h)
+//  プレイヤー監視クラス(player_observer.h)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -10,20 +10,31 @@
 #include "main.h"
 #include "playerX.h"
 
-//カメラクラス
+//プレイヤー監視クラス
 class CPlayerObserver
 {
-public:
-	CPlayerObserver();
-	static void PlayerSearch();
-	static void PlayerObsDestroy();
-	static D3DXVECTOR3 GetPlayerPos();
-	static CPlayerX* GetPlayer();
-	static D3DXVECTOR3 GetPlayerMove();
-	static int GetPlayerLife();
-
 private:
-	static CPlayerX* pPlayer;
+	CPlayerX* pPlayer;
+	static std::shared_ptr<CPlayerObserver> _instance;
+public:
+	CPlayerObserver() { pPlayer = nullptr; }
+	//シングルトン用内部インスタンス
+	static const std::shared_ptr<CPlayerObserver> GetInstance()
+	{
+		if (_instance == nullptr)
+		{
+			_instance = std::make_shared<CPlayerObserver>();
+		}
+		return _instance;
+	}
+	void PlayerSearch();
+	void PlayerObsDestroy();
+	D3DXVECTOR3 GetPlayerPos();
+	CPlayerX* GetPlayer();
+	D3DXVECTOR3 GetPlayerMove();
+	int GetPlayerLife();
+
+
 };
 
 #endif 
