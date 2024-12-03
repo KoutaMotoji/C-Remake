@@ -13,7 +13,7 @@
 class CObject3D :public CObject
 {
 public:
-	CObject3D();				//コンストラクタ
+	CObject3D(int nPriority = 2);				//コンストラクタ
 	~CObject3D()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

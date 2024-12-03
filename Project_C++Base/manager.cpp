@@ -69,7 +69,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//ƒ‰ƒCƒg‚Ì‰Šú‰»
 	m_pLight->Init();
 
-	SetMode(CScene::MODE_TITLE);
+	SetMode(CScene::MODE_GAME);
 	m_pFade->SetFade(m_pFade->FADE_OUT, CScene::MODE_GAME);
 	return S_OK;
 }

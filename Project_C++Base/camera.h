@@ -27,6 +27,7 @@ public:
 	void SetPlayerPos(D3DXVECTOR3 pos);
 	float GetRotZ();
 
+
 	void SetFreeCam(D3DXVECTOR3 destPosV, D3DXVECTOR3 destPosR, int Frame);
 	void DefuseFreeCam() { m_bFreeCam = false; }
 	void SetRotz(float rot) { m_fRotZ = rot; };

@@ -7,6 +7,7 @@
 #include "playerX.h"
 #include "player_UI.h"
 
+#include "shadow.h"
 #include "3D_Item.h"
 #include "particle3D.h"
 #include "bullet3D.h"
@@ -27,7 +28,6 @@ CPlayerX::CPlayerX():m_nLife(1000),m_fWeaponRadius(25),
 	{
 		m_apModelParts[i] = nullptr;
 	}
-	m_shadow = nullptr;
 }
 
 //==========================================================================================
@@ -45,8 +45,8 @@ void CPlayerX::Init()
 {
 	MotionInit();
 	m_pReticle = CReticle::Create({ 0.0f,0.0f,500.0f });
-	m_shadow = CShadow::Create(m_pos);
 	CObject::SetType(TYPE_3D_PLAYER);
+	CShadow::Create({ 0.0f,0.0f,0.0f });
 	CGaugeLife::Create(MAX_LIFE);
 }
 
@@ -168,7 +168,6 @@ void CPlayerX::Update()
 		m_move.z += 12.5f;
 	}
 	m_move.z += 5.5f;
-	SetShadowGround();
 	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
 
 	m_pos += m_move;
@@ -1087,58 +1086,4 @@ D3DXVECTOR3 CPlayerX::LockOnEnemy()
 	return m_pReticle->GetPos();
 }
 
-void CPlayerX::SetShadowGround()
-{
-	// 地形判定
-	BOOL  bIsHit = false;
-	float fLandDistance;
-	DWORD dwHitIndex = 0U;
-	float fHitU;
-	float fHitV;
-	LPD3DXMESH pMesh = nullptr;
-	for (int j = 0; j < SET_PRIORITY; ++j) {
-		for (int i = 0; i < MAX_OBJECT; i++) {
-			CObject* pObj = CObject::GetObjects(j, i);
-			if (pObj != nullptr) {
-				CObject::TYPE type = pObj->GetType();
-				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
-					CMeshGround* pTest = dynamic_cast<CMeshGround*>(pObj);
-					if (pTest != nullptr) {
-						pMesh = pTest->GetMesh();
-						if (pTest != nullptr) {
-							// 地形判定
 
-							LPD3DXMESH pMesh = nullptr;
-
-							pMesh = pTest->GetMesh();
-							D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
-							D3DXVECTOR3 objpos = m_pos - pTest->GetPos();
-							D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
-
-							// 当たったインデックスバッファ取得
-							WORD dwHitVertexNo[3];
-							WORD* pIndex;
-							HRESULT hr = pMesh->LockIndexBuffer(0, (void**)&pIndex);
-
-							for (int nIdxIdx = 0; nIdxIdx < 3; nIdxIdx++)
-							{
-								dwHitVertexNo[nIdxIdx] = pIndex[dwHitIndex * 3 + nIdxIdx];
-							}
-
-							pMesh->UnlockIndexBuffer();
-
-							// 当たったポリゴン取得
-							VERTEX_3D* pVertex;
-							hr = pMesh->LockVertexBuffer(0, (void**)&pVertex);
-
-							m_shadow->SetPos({ m_pos.x,m_pos.y - fLandDistance + 20.0f,m_pos.z });
-							//m_shadow->SetRot({});
-
-							pMesh->UnlockVertexBuffer();
-						}
-					}
-				}
-			}
-		}
-	}
-}

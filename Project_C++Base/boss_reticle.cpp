@@ -47,6 +47,9 @@ void CBossReticle::Uninit()
 //==========================================================================================
 void CBossReticle::Update()
 {
+	--m_nLife;
+	CBillboard::AddRot({ 0.0f,0.0f,m_RotateSpeed });
+	CBillboard::AddScale(-Poly_MinutSize);
 	CBillboard::Update();
 }
 
@@ -55,10 +58,6 @@ void CBossReticle::Update()
 //==========================================================================================
 void CBossReticle::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
-	--m_nLife;
-	CBillboard::AddRot({ 0.0f,0.0f,m_RotateSpeed });
-	CBillboard::AddScale(-Poly_MinutSize);
 	CBillboard::Draw();
 }
 

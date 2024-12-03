@@ -19,11 +19,12 @@ public:
 	~CShadow()override = default;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override { CObject3D::Uninit(); }		//終了
-	void Update()override { CObject3D::Update(); }		//更新
+	void Update()override { SetShadowGround();  CObject3D::Update(); }		//更新
 	void Draw()override;		//描画
 
 	static CShadow* Create(D3DXVECTOR3 pos);
 private:
+	void SetShadowGround();
 
 };
 

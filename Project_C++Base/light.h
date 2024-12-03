@@ -18,6 +18,7 @@ public:
 	HRESULT Init();
 	void Uninit();
 	void Update();
+
 private:
 	D3DLIGHT9 m_aLight[MAX_LIGHT];
 };

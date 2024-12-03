@@ -15,7 +15,7 @@
 class CObjectX :public CObject
 {
 public:
-	CObjectX();				//コンストラクタ
+	CObjectX(int nPriority = 1);				//コンストラクタ
 	~CObjectX()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

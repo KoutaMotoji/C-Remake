@@ -18,7 +18,7 @@ const int CObject3D::MAX_POLYGON = 2;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CObject3D::CObject3D() : m_fWidth(0), m_fHeight(0)
+CObject3D::CObject3D(int nPriority) : CObject(nPriority) ,m_fWidth(0), m_fHeight(0)
 {
 	m_pVtxBuffObject3D = nullptr;
 	m_pTextureObject3D = nullptr;

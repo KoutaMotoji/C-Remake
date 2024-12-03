@@ -11,7 +11,6 @@
 #include "object.h"
 #include "modelparts.h"
 #include "reticle.h"
-#include "shadow.h"
 
 #include "manager.h"
 
@@ -129,12 +128,6 @@ private:
 	D3DXQUATERNION m_quat;		//クオータニオン
 	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
 	float m_fValueRot;			//回転量	
-
-	//丸影を出し、地面に沿わせたりサイズを変えたりする処理
-	void SetShadowGround();
-
-	CShadow* m_shadow;
-
 };
 
 #endif
