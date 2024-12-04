@@ -166,7 +166,7 @@ bool CBullet3D::MeshCollision()
 						D3DXVec3Normalize(&dir, &m_move);
 
 						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						float ChedkDis = 50.0f;
+						float ChedkDis = 50.0f + m_move.z;
 
 						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
 						{

@@ -29,6 +29,12 @@ namespace
 		"通常敵出現ポイント",
 
 	};
+
+	const char* Gizmodraw[2] = {
+		"描画しない",
+		"描画する",
+	};
+
 	int SizeDownScale = 150.0f;
 }
 
@@ -69,7 +75,7 @@ HRESULT CMapEdit::Init()
 	m_thisRot = { 0.0f,0.0f,0.0f };
 	m_thisScale = { 1.0f,1.0f,1.0f };
 	m_thisType = 0;
-
+	m_Gizmo = CGizmo::Create(m_thisPos);
 	SelectObject();
 
 	for (int i = 0; i < 10; ++i)
@@ -93,6 +99,10 @@ void CMapEdit::Uninit()
 	if (m_LastObj != nullptr)
 	{
 		m_LastObj->Release();
+	}
+	if (m_Gizmo != nullptr)
+	{
+		m_Gizmo->Uninit();
 	}
 	UninitFont();
 	CScene::Uninit();
@@ -126,6 +136,12 @@ void CMapEdit::Update()
 	CameraPos.y = (m_SelectObject->GetModelMin().y + m_SelectObject->GetModelMax().y) * 0.5f + m_thisPos.y;
 	EditObj();
 	CManager::GetInstance()->GetCamera()->SetPlayerPos(CameraPos);
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_R) == true)
+	{
+		m_Gizmo->m_bdraw = !m_Gizmo->m_bdraw;
+	}
+	m_Gizmo->SetPos(m_thisPos);
+	m_Gizmo->SetSize(m_thisScale);
 
 	DrawFont();
 	CScene::Update();
@@ -501,12 +517,14 @@ void CMapEdit::DrawFont()
 		"現在のオブジェクトの位置：< %.2f,%.2f,%.2f >\n"
 		"現在のオブジェクトの回転：< %.2f,%.2f,%.2f >\n"
 		"現在のオブジェクトのスケール：< %.2f >\n"
-		"現在のオブジェクトの種類：< %s >",
+		"現在のオブジェクトの種類：< %s >\n\n"
+		"ギズモ：< %s>",
 		m_MaxObj,
 		m_thisPos.x, m_thisPos.y, m_thisPos.z, 
 		m_thisRot.x, m_thisRot.y, m_thisRot.z,
 		m_thisScale.x,
-		typeName[m_thisType]);
+		typeName[m_thisType],
+		Gizmodraw[(unsigned int)(m_Gizmo->m_bdraw)]);
 
 	 //テキストの描画
 	m_pFont->DrawText(NULL, 
@@ -576,4 +594,33 @@ void CMapEdit::SetLoadMap()
 		}
 		fclose(pFile);
 	}
+}
+
+void CGizmo::Init()
+{
+	CObject::SetType(TYPE_3D_BLOCK);
+	CObjectX::Init();
+
+}
+
+void CGizmo::Draw()
+{
+	if (m_bdraw)
+	{
+		CObjectX::Draw();
+	}
+}
+
+//==========================================================================================
+//生成処理
+//==========================================================================================
+CGizmo* CGizmo::Create(D3DXVECTOR3 pos)
+{
+	CGizmo* gzm = new CGizmo;
+
+	gzm->BindModel("data\\MODEL\\Gizmo.x");
+	gzm->SetModelParam(pos);
+	gzm->Init();
+
+	return gzm;
 }

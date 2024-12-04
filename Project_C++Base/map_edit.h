@@ -15,6 +15,9 @@
 
 static constexpr int MAX_OBJNUM = 10;
 
+
+class CGizmo;
+
 class CMapEdit : public CScene
 {
 public:
@@ -62,6 +65,19 @@ private:
 	void InitFont();
 	void UninitFont();
 	void DrawFont();
+
+	CGizmo* m_Gizmo;
+};
+
+class CGizmo : public CObjectX
+{
+public:
+	CGizmo() :m_bdraw(true) {};
+	void Init()override;
+	void Draw()override;
+	static CGizmo* Create(D3DXVECTOR3 pos);
+	bool m_bdraw;
+
 };
 
 #endif

@@ -51,7 +51,7 @@ void CMeshCylinder::Init()
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\sky_bg.png",
+		"data\\TEXTURE\\sky_bg002.png",
 		&m_apTexMeshCylinder);
 
 	D3DXCreateMeshFVF(

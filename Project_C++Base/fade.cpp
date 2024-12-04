@@ -102,6 +102,8 @@ void CFade::Update()
 				m_bFinish = true;
 				m_bUse = false;
 				CManager::GetInstance()->SetMode(setmode);
+				CManager::GetInstance()->GetSound()->StopSound();
+
 				SetFade(FADE_OUT, setmode);
 			}
 		}

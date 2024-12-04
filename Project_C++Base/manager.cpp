@@ -42,7 +42,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//ライトの生成
 	m_pLight = new CLight();
 	//サウンドの生成
-	//m_pSound = new CSound();
+	m_pSound = new CSound();
 
 	//キーボードの生成
 	m_pKeyboard = new CKeyboard();
@@ -65,11 +65,11 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//カメラの初期化
 	m_pCamera->Init();
 	//サウンドの初期化
-	//m_pSound->Init(hWnd);
+	m_pSound->Init(hWnd);
 	//ライトの初期化
 	m_pLight->Init();
 
-	SetMode(CScene::MODE_GAME);
+	SetMode(CScene::MODE_TITLE);
 	m_pFade->SetFade(m_pFade->FADE_OUT, CScene::MODE_GAME);
 	return S_OK;
 }
@@ -103,12 +103,12 @@ void CManager::Uninit()
 		delete m_pLight;
 		m_pLight = nullptr;
 	}
-	//if (m_pSound != nullptr)
-	//{
-	//	m_pSound->Uninit();
-	//	delete m_pSound;
-	//	m_pSound = nullptr;
-	//}
+	if (m_pSound != nullptr)
+	{
+		m_pSound->Uninit();
+		delete m_pSound;
+		m_pSound = nullptr;
+	}
 	if (m_pTexture != nullptr)
 	{
 		m_pTexture->Unload();

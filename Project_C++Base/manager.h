@@ -44,7 +44,7 @@ public:
 	CTexture* GetTexture() { return m_pTexture; };
 	CJoypad* GetJoypad() { return m_pJoypad; };
 	CCamera* GetCamera() { return m_pCamera; };
-	//CSound* GetSound() { return m_pSound; };
+	CSound* GetSound() { return m_pSound; };
 	CLight* GetLight() { return m_pLight; };
 	CScene* GetScene() { return m_pScene; };
 	CFade* GetFade() { return m_pFade; };
@@ -57,7 +57,7 @@ private:
 	 CTexture* m_pTexture;
 	 CJoypad* m_pJoypad;
 	 CCamera* m_pCamera;
-	 //CSound* m_pSound;
+	 CSound* m_pSound;
 	 CLight* m_pLight;
 	 CScene* m_pScene;
 	 CFade* m_pFade;

@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  2DアクションMaster版(main.cpp)
+//  3Dゲーム制作(main.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -40,7 +40,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 		NULL,
 		CLASS_NAME,
 		LoadIcon(NULL,IDI_APPLICATION)
-
 	};
 	
 	HWND hWnd;

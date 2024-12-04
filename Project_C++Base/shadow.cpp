@@ -117,7 +117,7 @@ void CShadow::SetShadowGround()
 								WORD dwHitVertexNo[3];
 								WORD* pIndex;
 								HRESULT hr = pMesh->LockIndexBuffer(0, (void**)&pIndex);
-
+								
 								for (int nIdxIdx = 0; nIdxIdx < 3; nIdxIdx++)
 								{
 									dwHitVertexNo[nIdxIdx] = pIndex[dwHitIndex * 3 + nIdxIdx];
@@ -129,9 +129,8 @@ void CShadow::SetShadowGround()
 								VERTEX_3D* pVertex;
 								hr = pMesh->LockVertexBuffer(0, (void**)&pVertex);
 
-
 								CObject3D::SetPos({ objpos.x,objpos.y - fLandDistance + 20.0f,objpos.z });
-								float size = 1.0f - (1.0f / fLandDistance);
+								float size = 1.0 -  (5.0f / fLandDistance);
 								CObject3D::SetSize(size);
 								//m_shadow->SetRot({});
 

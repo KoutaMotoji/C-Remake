@@ -18,8 +18,9 @@ public:
 	{
 		SOUND_LABEL_TITLESE_OPEN = 0,
 		SOUND_LABEL_TITLESE_LIFT,
-		SOUND_LABEL_TITLESE_,
-		SOUND_LABEL_TITLESE_LIF,
+		SOUND_LABEL_TITLESE_RIDER,
+		SOUND_LABEL_TITLESE_MOVE,
+		SOUND_LABEL_TITLESE_ENTER,
 		SOUND_LABEL_MAX
 
 	} SOUND_LABEL;
@@ -48,11 +49,11 @@ private:
 	// サウンドの情報
 	SOUNDINFO m_aSoundInfo[SOUND_LABEL_MAX] =
 	{
-		{"data/SOUND/TitleBGM.wav", -1},		//BGM1
-		{"data/SOUND/GameBGM.wav",		-1},	//BGM2
-		{"data/SOUND/ResultBGM.wav", -1},		//BGM3
-		{"data/SOUND/Attack.wav", 0},			//攻撃SE
-
+		{"data/SOUND/opener1.wav", 0},	//開く音
+		{"data/SOUND/lift2.wav", 0},	//リフトが動く音
+		{"data/SOUND/rider1.wav", 0},	//ブースターが上がる音
+		{"data/SOUND/move1.wav", 0},	//自機が動く音
+		{"data/SOUND/Enter1.wav", 0},	//Enterキーが押された音
 
 	};
 };

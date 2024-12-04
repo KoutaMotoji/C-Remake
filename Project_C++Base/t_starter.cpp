@@ -148,6 +148,7 @@ void CStarter::SetNextMotion(int nNextMotionNum)
 	m_CurKey = 0;
 	m_NowFrame = 0;
 	SetNextKey();
+	
 }
 
 //==========================================================================================
@@ -228,6 +229,22 @@ void CStarter::SetNextKey()
 	if (m_NowFrame >= m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
 	{
 		++m_CurKey;
+		if (m_CurMotion == MOTION_START)
+		{
+			if (m_CurKey == 1 ||
+				m_CurKey == 2 ||
+				m_CurKey == 3 )
+			{
+				CManager::GetInstance()->GetSound()->PlaySoundA(CSound::SOUND_LABEL_TITLESE_LIFT);
+			}
+			else if (m_CurKey == 4 ||
+					 m_CurKey == 5 ||
+			     	 m_CurKey == 6 )	
+			{
+				CManager::GetInstance()->GetSound()->PlaySoundA(CSound::SOUND_LABEL_TITLESE_RIDER);
+			}
+		}
+
 		m_NowFrame = 0;
 		if (m_CurKey >= m_aMotion[nNowMotion].nKeyNum)
 		{
