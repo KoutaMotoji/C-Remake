@@ -69,7 +69,12 @@ void CMeshGround::Update()
 //==========================================================================================
 void CMeshGround::Draw()
 {
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
+
+	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	CObjectX::Draw();
+	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+
 }
 
 //==========================================================================================

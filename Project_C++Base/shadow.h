@@ -10,7 +10,7 @@
 #include "main.h"
 #include "object3D.h"
 
-static constexpr float DEF_RADIUS = 200.0f;
+static constexpr float DEF_RADIUS = 70.0f;
 
 class CShadow :public CObject3D
 {

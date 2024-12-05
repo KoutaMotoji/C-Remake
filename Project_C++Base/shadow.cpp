@@ -129,10 +129,21 @@ void CShadow::SetShadowGround()
 								VERTEX_3D* pVertex;
 								hr = pMesh->LockVertexBuffer(0, (void**)&pVertex);
 
-								CObject3D::SetPos({ objpos.x,objpos.y - fLandDistance + 20.0f,objpos.z });
-								float size = 1.0 -  (5.0f / fLandDistance);
+								////レイと交差しているポリゴンの3頂点の外積を出して法線ベクトルを求め、それにポリゴンを沿わせる
+								//D3DXVECTOR3 VecCross;
+								//D3DXVECTOR3 vecA = (pVertex[dwHitVertexNo[0]].pos - pVertex[dwHitVertexNo[2]].pos);
+								//D3DXVECTOR3 vecB = (pVertex[dwHitVertexNo[1]].pos - pVertex[dwHitVertexNo[2]].pos);
+
+								//D3DXVec3Cross(&VecCross, &vecA, &vecB);
+								//D3DXVec3Normalize(&VecCross, &VecCross);
+
+								dir.y = 1.0f;
+								//D3DXVECTOR3 VecAx1 = { dir.x * VecCross.x, dir.y * VecCross.y, dir.z * VecCross.z };
+								float size = 1.0 - (5.0f / fLandDistance);
+
+								CObject3D::SetPos({ objpos.x,objpos.y - fLandDistance + 10.0f,objpos.z });
+								//CObject3D::SetRot(VecCross);
 								CObject3D::SetSize(size);
-								//m_shadow->SetRot({});
 
 								pMesh->UnlockVertexBuffer();
 							}

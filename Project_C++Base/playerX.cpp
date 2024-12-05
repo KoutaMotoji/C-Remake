@@ -118,55 +118,9 @@ void CPlayerX::Update()
 			m_bDamaged = false;
 		}
 	}
-	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_RIGHT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
-	{
-		SetNextMotion(MOTION_ROBO_SLASH);
-	}
-	D3DXVECTOR3 lockonVec;
-	if (m_bTransformed)
-	{
-		lockonVec = LockOnEnemy();
-	}
-	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
-	{
-	
-		D3DXVECTOR3 digitRot = {0.0f,0.0f,0.0f};
-		D3DXVECTOR3 posMtx = { m_apModelParts[19]->GetWorldMatrix()._41, m_apModelParts[19]->GetWorldMatrix()._42 ,m_apModelParts[19]->GetWorldMatrix()._43 };
 
-		digitRot.x = (m_pReticle->GetPos().x - posMtx.x) * 0.2f;
-		digitRot.y = (m_pReticle->GetPos().y - posMtx.y) * 0.2f;
-		digitRot.z = (m_pReticle->GetPos().z - posMtx.z) * 0.2f;
-		D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
-		D3DXVECTOR3 addZpos = { 0.0f,0.0f,200.0f };
-		D3DXVec3Normalize(&SetdigitedRot, &digitRot);
-		SetdigitedRot.z;
-		if (m_bTransformed)
-		{
-			SetNextMotion(MOTION_ROBO_SHOT);
-			m_bMotion = true;
-			digitRot.x = (lockonVec.x - posMtx.x) * 0.2f;
-			digitRot.y = (lockonVec.y - posMtx.y) * 0.2f;
-			digitRot.z = (lockonVec.z - posMtx.z) * 0.2f;
-			D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
-			D3DXVec3Normalize(&SetdigitedRot, &digitRot);
-			if (lockonVec != m_pReticle->GetPos())
-			{
-				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 0.1f,1.0f,0.2f,1.0f }, 150, 38, 35);
-			}
-			else
-			{
-				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150, 38, 35);
-			}
-		}
-		else
-		{
-			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120,32,22);
-		}
-	}
-	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_G) == true)
-	{
-		m_move.z += 12.5f;
-	}
+	ShootBullet();
+
 	m_move.z += 5.5f;
 	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
 
@@ -182,6 +136,7 @@ void CPlayerX::Update()
 
 	//GoalCheck();
 }
+
 
 //==========================================================================================
 //描画処理
@@ -966,7 +921,7 @@ bool CPlayerX::TestUseMeshCollision()
 
 bool CPlayerX::MeshObstacle()
 {	//=============================		障害物メッシュ判定		==========================================================================
-	CCollision* pCollision = new CCollision();
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
 
 	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; ++i) {
@@ -982,24 +937,13 @@ bool CPlayerX::MeshObstacle()
 
 						if (pCollision->MeshToIntersectCollision(pTest, m_pos, dir, 10 + m_move.z))
 						{
-							if (pCollision != nullptr)
-							{
-								delete pCollision;
-								pCollision = nullptr;
-							}
 							return true;
-
 						}
 					}
 				}
 				
 			}
 		}
-	}
-	if (pCollision != nullptr)
-	{
-		delete pCollision;
-		pCollision = nullptr;
 	}
 	return false;
 }
@@ -1013,7 +957,7 @@ bool CPlayerX::MeshObstacle()
 //==========================================================================================
 void CPlayerX::GetItem()
 {
-	CCollision* pCollision = new CCollision();
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
 
 	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; ++i) {
@@ -1031,22 +975,11 @@ void CPlayerX::GetItem()
 						if (pCollision->SphireCollosion(m_pos,pTest->GetPos(),dirM, dirM))
 						{
 							pTest->GotThisItem();
-							if (pCollision != nullptr)
-							{
-								delete pCollision;
-								pCollision = nullptr;
-							}
 						}
 					}
 				}
-
 			}
 		}
-	}
-	if (pCollision != nullptr)
-	{
-		delete pCollision;
-		pCollision = nullptr;
 	}
 }
 
@@ -1055,7 +988,7 @@ void CPlayerX::GetItem()
 //==========================================================================================
 D3DXVECTOR3 CPlayerX::LockOnEnemy()
 {
-	std::shared_ptr<CCollision> pCollision = std::make_shared<CCollision>();
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
 
 	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; ++i) {
@@ -1086,4 +1019,95 @@ D3DXVECTOR3 CPlayerX::LockOnEnemy()
 	return m_pReticle->GetPos();
 }
 
+//==========================================================================================
+//弾の発射を制御する処理
+//==========================================================================================
+void CPlayerX::ShootBullet()
+{
+	D3DXVECTOR3 lockonVec;
+	if (m_bTransformed)
+	{
+		lockonVec = LockOnEnemy();
+	}
+	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
+	{
 
+		D3DXVECTOR3 digitRot = { 0.0f,0.0f,0.0f };
+		D3DXVECTOR3 posMtx = { m_apModelParts[19]->GetWorldMatrix()._41, m_apModelParts[19]->GetWorldMatrix()._42 ,m_apModelParts[19]->GetWorldMatrix()._43 };
+
+		digitRot.x = (m_pReticle->GetPos().x - posMtx.x) * 0.2f;
+		digitRot.y = (m_pReticle->GetPos().y - posMtx.y) * 0.2f;
+		digitRot.z = (m_pReticle->GetPos().z - posMtx.z) * 0.2f;
+		D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
+		D3DXVECTOR3 addZpos = { 0.0f,0.0f,200.0f };
+		D3DXVec3Normalize(&SetdigitedRot, &digitRot);
+		SetdigitedRot.z;
+		if (m_bTransformed)
+		{
+			SetNextMotion(MOTION_ROBO_SHOT);
+			m_bMotion = true;
+			digitRot.x = (lockonVec.x - posMtx.x) * 0.2f;
+			digitRot.y = (lockonVec.y - posMtx.y) * 0.2f;
+			digitRot.z = (lockonVec.z - posMtx.z) * 0.2f;
+			D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
+			D3DXVec3Normalize(&SetdigitedRot, &digitRot);
+			if (lockonVec != m_pReticle->GetPos())
+			{
+				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 0.1f,1.0f,0.2f,1.0f }, 150, 38, 35);
+			}
+			else
+			{
+				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150, 38, 35);
+			}
+		}
+		else
+		{
+			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120, 32, 22);
+		}
+	}
+	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_RIGHT_TRIGGER) == true &&
+		!m_bMotion && !m_bDamaged && m_bTransformed&& 
+		m_CurMotion != MOTION_ROBO_SLASH)
+	{
+		SetNextMotion(MOTION_ROBO_SLASH);
+	}
+	if (lockonVec != m_pReticle->GetPos() && m_bTransformed)
+	{
+		m_vecAxis = { 0.0f,1.0f,0.0f };
+		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
+
+		m_fValueRot = atan2f((lockonVec.x - m_pos.x), (lockonVec.z - m_pos.z));
+		if (m_CurMotion == MOTION_ROBO_SLASH)
+		{
+			AttackCollisionToEnemy();
+			m_move += ((lockonVec - m_pos) * 0.015);
+		}
+	}
+}
+
+//==========================================================================================
+// ロボット形態のみ、近くの敵をロックオンする処理
+//==========================================================================================
+void CPlayerX::AttackCollisionToEnemy()
+{
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
+
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_ENEMY) {
+					CEnemyBase* pTest = dynamic_cast<CEnemyBase*>(pObj);
+					D3DXVECTOR3 SetRadius = { 700.0f,0.0f,0.0f };
+					if (pTest != nullptr) {
+						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
+						{
+							pTest->Damaged();
+						}
+					}
+				}
+			}
+		}
+	}
+}

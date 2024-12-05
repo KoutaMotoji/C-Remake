@@ -134,7 +134,7 @@ void CBossTerra::Update()
 		}
 	}
 
-	m_Gauge->SetPos({ CObjectX::GetPos().x,CObjectX::GetPos().y + 300.0f ,CObjectX::GetPos().z });
+	m_Gauge->SetPos({ CObjectX::GetPos().x,CObjectX::GetPos().y + 400.0f ,CObjectX::GetPos().z });
 	DeathCheck();
 	if(m_bDead)
 	{

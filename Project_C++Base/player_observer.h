@@ -33,8 +33,6 @@ public:
 	CPlayerX* GetPlayer();
 	D3DXVECTOR3 GetPlayerMove();
 	int GetPlayerLife();
-
-
 };
 
 #endif 

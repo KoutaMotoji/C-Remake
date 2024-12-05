@@ -33,6 +33,7 @@ public:
 	void Init()override;		//初期化
 	void Uninit()override;		//終了
 	void Update()override;		//更新
+	void ShootBullet();
 	void Draw()override;		//描画
 
 	bool PMove(float fCamRotZ);
@@ -54,6 +55,7 @@ private:
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
 	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); };	//ダメージ加算、生存確認
 	D3DXVECTOR3 LockOnEnemy();						//敵のロックオン
+	void AttackCollisionToEnemy();
 
 	//void GoalCheck();						//ゴールしているかチェック
 	void DeadCheck();
