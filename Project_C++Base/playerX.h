@@ -11,6 +11,7 @@
 #include "object.h"
 #include "modelparts.h"
 #include "reticle.h"
+#include "shadow.h"
 
 #include "manager.h"
 
@@ -23,6 +24,7 @@ static constexpr int MAX_MOTION = 7;
 //ステータス用定数
 static constexpr int MAX_LIFE = 1000;		//体力
 static constexpr float MOVE_SPEED = 0.35f;	//移動スピードの設定
+static constexpr float SCROLL_SPEED = 5.5f;	//移動スピードの設定
 
 
 class CPlayerX :public CObject
@@ -125,11 +127,14 @@ private:
 	bool MeshObstacle();
 	void GetItem();
 
+	CShadow* m_pShadow;
+
 	//=====================			クオータニオン用		====================================
 	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)
 	D3DXQUATERNION m_quat;		//クオータニオン
 	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
-	float m_fValueRot;			//回転量	
+	float m_fValueRot;			//回転量
+
 };
 
 #endif

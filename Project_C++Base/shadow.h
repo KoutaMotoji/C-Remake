@@ -19,13 +19,18 @@ public:
 	~CShadow()override = default;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override { CObject3D::Uninit(); }		//終了
-	void Update()override { SetShadowGround();  CObject3D::Update(); }		//更新
+	void Update()override { CObject3D::Update(); }		//更新
 	void Draw()override;		//描画
 
 	static CShadow* Create(D3DXVECTOR3 pos);
-private:
-	void SetShadowGround();
+	void SetShadowGround(D3DXVECTOR3 pos);
 
+private:
+	//=====================			クオータニオン用		====================================
+	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)
+	D3DXQUATERNION m_quat;		//クオータニオン
+	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
+	float m_fValueRot;			//回転量	
 };
 
 #endif

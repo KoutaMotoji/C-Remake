@@ -10,6 +10,7 @@
 #include "main.h"
 #include "objectX.h"
 #include "lockon_enemy.h"
+#include "shadow.h"
 
 class CEnemyBase :public CObjectX
 {
@@ -37,6 +38,7 @@ protected:
 	bool m_bLockOned;
 private:
 	CLockonEnemy* lockon;
+	CShadow* m_pShadow;
 };
 
 

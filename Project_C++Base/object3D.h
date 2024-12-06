@@ -19,6 +19,7 @@ public:
 	void Uninit()override;		//I—¹
 	void Update()override;		//XV
 	void Draw()override;		//•`‰æ
+	void Draw(D3DXMATRIX SetmtxRot);		//•`‰æ
 
 
 	D3DXVECTOR3 GetPos();

@@ -7,7 +7,6 @@
 #include "playerX.h"
 #include "player_UI.h"
 
-#include "shadow.h"
 #include "3D_Item.h"
 #include "particle3D.h"
 #include "bullet3D.h"
@@ -28,6 +27,7 @@ CPlayerX::CPlayerX():m_nLife(1000),m_fWeaponRadius(25),
 	{
 		m_apModelParts[i] = nullptr;
 	}
+	m_pShadow = nullptr;
 }
 
 //==========================================================================================
@@ -46,7 +46,7 @@ void CPlayerX::Init()
 	MotionInit();
 	m_pReticle = CReticle::Create({ 0.0f,0.0f,500.0f });
 	CObject::SetType(TYPE_3D_PLAYER);
-	CShadow::Create({ 0.0f,0.0f,0.0f });
+	m_pShadow = CShadow::Create({ 0.0f,0.0f,0.0f });
 	CGaugeLife::Create(MAX_LIFE);
 }
 
@@ -67,7 +67,7 @@ void CPlayerX::Uninit()
 void CPlayerX::Update()
 {
 	D3DXVECTOR3 CameraPos;
-
+	m_pShadow->SetShadowGround(m_pos);
 	ReticleController();
 	if (!MotionBlending())
 	{
@@ -121,7 +121,7 @@ void CPlayerX::Update()
 
 	ShootBullet();
 
-	m_move.z += 5.5f;
+	m_move.z += SCROLL_SPEED;
 	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
 
 	m_pos += m_move;
@@ -295,8 +295,6 @@ void CPlayerX::SetWeaponRot(D3DXVECTOR2 rot)
 {
 	m_rot = { -(abs(atan2f(rot.x ,rot.y))), m_rot.y,0.0f };
 }
-
-
 
 //==========================================================================================
 //ゴール判定チェック
@@ -1053,16 +1051,16 @@ void CPlayerX::ShootBullet()
 			D3DXVec3Normalize(&SetdigitedRot, &digitRot);
 			if (lockonVec != m_pReticle->GetPos())
 			{
-				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 0.1f,1.0f,0.2f,1.0f }, 150, 38, 35);
+				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 0.1f,1.0f,0.2f,1.0f }, 80, 38, 35);
 			}
 			else
 			{
-				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 150, 38, 35);
+				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 80, 38, 35);
 			}
 		}
 		else
 		{
-			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 120, 32, 22);
+			CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.0f,1.0f }, 80, 32, 22);
 		}
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_RIGHT_TRIGGER) == true &&
@@ -1103,6 +1101,8 @@ void CPlayerX::AttackCollisionToEnemy()
 					if (pTest != nullptr) {
 						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
 						{
+							SetNextMotion(MOTION_ROBO_NUTO);
+
 							pTest->Damaged();
 						}
 					}

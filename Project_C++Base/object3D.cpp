@@ -231,3 +231,58 @@ D3DXVECTOR3 CObject3D::GetPos()
 {
 	return m_pos;
 }
+
+//==========================================================================================
+//描画処理
+//==========================================================================================
+void CObject3D::Draw(D3DXMATRIX SetmtxRot)
+{
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
+	//ワールドマトリックス
+	D3DXMatrixIdentity(&m_mtxWorld);
+	//大きさを反映(初期設定された大きさx,zを基準値1.0としたサイズスケーリング)
+	D3DXMatrixScaling(&mtxSize,
+		m_size.y,
+		m_size.x,
+		m_size.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxSize);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot,
+		m_rot.y,
+		m_rot.x,
+		m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&SetmtxRot);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxRot);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans,
+		m_pos.x,
+		m_pos.y,
+		m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxTrans);
+
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD,
+		&m_mtxWorld);
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, m_pVtxBuffObject3D, 0, sizeof(VERTEX_3D));
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+	//テクスチャの設定
+	pDevice->SetTexture(0, m_pTextureObject3D);
+	//ポリゴンの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,
+		0,
+		MAX_POLYGON);
+}

@@ -35,8 +35,10 @@ void CShadow::Draw()
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
+	//Zアルファ
+	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	CObject3D::Draw();
 
@@ -68,7 +70,7 @@ CShadow* CShadow::Create(D3DXVECTOR3 pos)
 //==========================================================================================
 //生成処理
 //==========================================================================================
-void CShadow::SetShadowGround()
+void CShadow::SetShadowGround(D3DXVECTOR3 pos)
 {
 	// 地形判定
 	BOOL  bIsHit = false;
@@ -76,6 +78,11 @@ void CShadow::SetShadowGround()
 	DWORD dwHitIndex = 0U;
 	float fHitU;
 	float fHitV;
+	D3DXMATRIX mWorld;
+	D3DXVECTOR3 vStartl;
+	D3DXVECTOR3 vDirl;
+	D3DXVECTOR3 vEnd;
+	D3DXVECTOR3 objpos = pos;
 	LPD3DXMESH pMesh = nullptr;
 	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; i++) {
@@ -90,12 +97,6 @@ void CShadow::SetShadowGround()
 
 							LPD3DXMESH pMesh = nullptr;
 							D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
-
-							D3DXMATRIX mWorld;
-							D3DXVECTOR3 vStartl;
-							D3DXVECTOR3 vDirl;
-							D3DXVECTOR3 vEnd;
-							D3DXVECTOR3 objpos = CPlayerObserver::GetInstance()->GetPlayerPos();
 
 							pMesh = pTest->GetMesh();
 							vEnd = objpos + dir;
@@ -137,12 +138,23 @@ void CShadow::SetShadowGround()
 								//D3DXVec3Cross(&VecCross, &vecA, &vecB);
 								//D3DXVec3Normalize(&VecCross, &VecCross);
 
-								dir.y = 1.0f;
-								//D3DXVECTOR3 VecAx1 = { dir.x * VecCross.x, dir.y * VecCross.y, dir.z * VecCross.z };
-								float size = 1.0 - (5.0f / fLandDistance);
+								//dir.y = 1.0f;
+								//D3DXVECTOR3 VecAx1;
+								//D3DXVec3Cross(&VecAx1, &dir, &VecCross);
+								//float R1 = (D3DXVec3Dot(&dir, &VecCross)) / sqrtf(D3DXVec3LengthSq(&dir)) * sqrtf(D3DXVec3LengthSq(&VecCross));
+								//m_fValueRot = acos(R1);
+								//m_quat = { 0, 0, 0, 1 };
+								//D3DXQuaternionRotationAxis(&m_quat, &VecAx1, m_fValueRot);
 
-								CObject3D::SetPos({ objpos.x,objpos.y - fLandDistance + 10.0f,objpos.z });
-								//CObject3D::SetRot(VecCross);
+								////クオータニオンから回転マトリックスを作成
+								//D3DXMatrixRotationQuaternion(
+								//	&m_mtxRot,
+								//	&m_quat);
+
+								float size = 2.0 + (4.0f / fLandDistance);
+
+								CObject3D::SetPos({ objpos.x,objpos.y - fLandDistance,objpos.z });
+								//CObject3D::SetRot(VecAx1);
 								CObject3D::SetSize(size);
 
 								pMesh->UnlockVertexBuffer();

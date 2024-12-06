@@ -17,7 +17,7 @@
 //==========================================================================================
 CEnemyBase::CEnemyBase() :m_bMove(false), m_DefPos({0.0f,0.0f,0.0f}), m_bLockOned(false), lockon(nullptr)
 {
-
+	m_pShadow = nullptr;
 }
 
 //==========================================================================================
@@ -34,6 +34,7 @@ CEnemyBase::~CEnemyBase()
 void CEnemyBase::Init()
 {
 	CObject::SetType(TYPE_3D_ENEMY);
+	m_pShadow = CShadow::Create({ 0.0f,0.0f,0.0f });
 	CObjectX::Init();
 }
 
@@ -52,6 +53,7 @@ void CEnemyBase::Uninit()
 void CEnemyBase::Update()
 {
 	D3DXVECTOR3 pos = CObjectX::GetPos();
+	m_pShadow->SetShadowGround(pos);
 
 	if (pos.y >m_DefPos.y +  300.0f ||
 		pos.y < m_DefPos .y - 300.0f)
@@ -114,6 +116,10 @@ void CEnemyBase::Damaged()
 	if (lockon != nullptr)
 	{
 		lockon->Release();
+	}
+	if (m_pShadow != nullptr)
+	{
+		m_pShadow->Release();
 	}
 	Release();
 	return;
