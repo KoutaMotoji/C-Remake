@@ -21,7 +21,7 @@
 //コンストラクタ
 //==========================================================================================
 CPlayerX::CPlayerX():m_nLife(1000),m_fWeaponRadius(25), 
-					m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false)
+					m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false), m_bAttack(false)
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
@@ -231,8 +231,14 @@ CPlayerX* CPlayerX::Create(D3DXVECTOR3 pos)
 //==========================================================================================
 bool CPlayerX::PMove(float fCamRotZ)
 {
-	m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * 2, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * 2, 0.0f};
-
+	if (!m_bTransformed)
+	{
+		m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x* MOVE_JET_SPEED, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y* MOVE_JET_SPEED, 0.0f};
+	}
+	else
+	{
+		m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * MOVE_ROBO_SPEED, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * MOVE_ROBO_SPEED, 0.0f};
+	}
 	if (CManager::GetInstance()->GetJoypad()->GetJoyStickVecL() > 0)
 	{
 		m_vecAxis = { m_move.y,m_move.x,0.0f };
@@ -285,7 +291,6 @@ void CPlayerX::FloorCollision()
 	{
 		m_pReticle->SetPos({ m_pos.x + 500, m_pReticle->GetPos().y ,m_pReticle->GetPos().z });
 	}
-
 }
 
 //==========================================================================================
@@ -295,46 +300,6 @@ void CPlayerX::SetWeaponRot(D3DXVECTOR2 rot)
 {
 	m_rot = { -(abs(atan2f(rot.x ,rot.y))), m_rot.y,0.0f };
 }
-
-//==========================================================================================
-//ゴール判定チェック
-//==========================================================================================
-/*
-void CPlayerX::GoalCheck()
-{
-	for (int j = 0; j < SET_PRIORITY; j++)
-	{
-		for (int i = 0; i < MAX_OBJECT; i++)
-		{
-			CObject* pObj = CObject::GetObjects(j, i);
-			if (pObj != nullptr)
-			{
-				CObject::TYPE type = pObj->GetType();
-
-				if (type == CObject::TYPE::TYPE_3D_G_MARKER)
-				{
-					CGoal* pGoal = dynamic_cast<CGoal*>(pObj);
-					if (pGoal != nullptr)
-					{
-						D3DXVECTOR3 PlayerMin = { -15.0f,10.0f,0.0f };
-						D3DXVECTOR3 PlayerMax = { 15.0f,35.0f,0.0f };
-						D3DXVECTOR3 GoalMin = pGoal->GetModelMin();
-						D3DXVECTOR3 GoalMax = pGoal->GetModelMax();
-						if (m_pos.x + PlayerMax.x > (pGoal->CObjectX::GetPos().x + GoalMin.x * 2.0f) &&
-							m_pos.x + PlayerMin.x < (pGoal->CObjectX::GetPos().x + GoalMax.x * 2.0f) &&
-							m_pos.y + PlayerMax.y > (pGoal->CObjectX::GetPos().y + GoalMin.y * 2.0f) &&
-							m_pos.y + PlayerMin.y < (pGoal->CObjectX::GetPos().y + GoalMax.y * 2.0f))
-						{
-							m_move.x *= 0.001f;
-							CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_RESULT);
-						}
-					}
-				}
-			}
-		}
-	}
-}
-*/
 
 //==========================================================================================
 //死亡チェック
@@ -357,7 +322,6 @@ void CPlayerX::MotionInit()
 	m_CurMotion = 0;
 	m_CurKey = 0;
 	m_NowFrame = 0;
-
 }
 
 //==========================================================================================
@@ -459,8 +423,13 @@ void CPlayerX::SetNextKey()
 					m_CurMotion == MOTION_ROBO_SHOT || 
 					m_CurMotion == MOTION_ROBO_SLASH)
 				{
+
 					--m_CurKey;
 					m_bMotion = false;
+				}
+				if (m_CurMotion == MOTION_ROBO_SLASH)
+				{
+					m_bAttack = false;
 				}
 				if (m_bTransformed)
 				{
@@ -817,7 +786,6 @@ D3DXVECTOR3 CPlayerX::CameraPosDigit()
 {
 	D3DXVECTOR3 CamPos = m_pos;
 
-	CamPos.z = m_pos.z;
 	return CamPos;
 }
 
@@ -886,7 +854,6 @@ bool CPlayerX::TestUseMeshCollision()
 						pMesh = pTest->GetMesh();
 						if (pTest != nullptr) {
 							// 地形判定
-		
 							LPD3DXMESH pMesh = nullptr;
 
 							pMesh = pTest->GetMesh();
@@ -914,7 +881,6 @@ bool CPlayerX::TestUseMeshCollision()
 		}
 	}
 	return false;
-	
 }
 
 bool CPlayerX::MeshObstacle()
@@ -939,7 +905,6 @@ bool CPlayerX::MeshObstacle()
 						}
 					}
 				}
-				
 			}
 		}
 	}
@@ -948,7 +913,6 @@ bool CPlayerX::MeshObstacle()
 
 //
 //========================================================================================================================================
-
 
 //==========================================================================================
 // アイテム取得処理
@@ -966,9 +930,7 @@ void CPlayerX::GetItem()
 					C3DItem* pTest = dynamic_cast<C3DItem*>(pObj);
 
 					if (pTest != nullptr) {
-
 						D3DXVECTOR3 dirM = D3DXVECTOR3(100.0f, 300.0f, 300.0f);
-
 
 						if (pCollision->SphireCollosion(m_pos,pTest->GetPos(),dirM, dirM))
 						{
@@ -1029,7 +991,6 @@ void CPlayerX::ShootBullet()
 	}
 	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_LEFT_TRIGGER) == true && !m_bMotion && !m_bDamaged)
 	{
-
 		D3DXVECTOR3 digitRot = { 0.0f,0.0f,0.0f };
 		D3DXVECTOR3 posMtx = { m_apModelParts[19]->GetWorldMatrix()._41, m_apModelParts[19]->GetWorldMatrix()._42 ,m_apModelParts[19]->GetWorldMatrix()._43 };
 
@@ -1068,6 +1029,7 @@ void CPlayerX::ShootBullet()
 		m_CurMotion != MOTION_ROBO_SLASH)
 	{
 		SetNextMotion(MOTION_ROBO_SLASH);
+		m_bAttack = true;
 	}
 	if (lockonVec != m_pReticle->GetPos() && m_bTransformed)
 	{
@@ -1075,7 +1037,7 @@ void CPlayerX::ShootBullet()
 		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
 
 		m_fValueRot = atan2f((lockonVec.x - m_pos.x), (lockonVec.z - m_pos.z));
-		if (m_CurMotion == MOTION_ROBO_SLASH)
+		if (m_CurMotion == MOTION_ROBO_SLASH && m_bAttack)
 		{
 			AttackCollisionToEnemy();
 			m_move += ((lockonVec - m_pos) * 0.015);
@@ -1102,7 +1064,7 @@ void CPlayerX::AttackCollisionToEnemy()
 						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
 						{
 							SetNextMotion(MOTION_ROBO_NUTO);
-
+							m_bAttack = false;
 							pTest->Damaged();
 						}
 					}

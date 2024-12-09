@@ -30,6 +30,7 @@ CEffExplosion::~CEffExplosion()
 void CEffExplosion::Init()
 {
 	CObject::SetType(TYPE_BILLBOARD);
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOMB);
 	CBillboard::Init();
 }
 

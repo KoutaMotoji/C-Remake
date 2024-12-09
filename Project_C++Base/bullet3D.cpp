@@ -97,7 +97,6 @@ void CBullet3D::Draw()
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
-
 	CBillboard::Draw();
 
 	//í èÌÇÃçáê¨Ç…ñﬂÇ∑ê›íË
@@ -128,7 +127,7 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 //==========================================================================================
 bool CBullet3D::MeshCollision()
 {
-	CCollision* pCollision  = new CCollision();
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
 	D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 
 	LPD3DXMESH pMesh = nullptr;
@@ -149,9 +148,6 @@ bool CBullet3D::MeshCollision()
 						// ----- ê⁄ínéûèàóù -----
 						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
-							delete pCollision;
-							pCollision = nullptr;
-
 							return true;
 						}						
 					}
@@ -163,16 +159,12 @@ bool CBullet3D::MeshCollision()
 
 						pMesh = pTest->GetMesh();
 						D3DXVECTOR3 pos = CBillboard::GetPos();
-						D3DXVec3Normalize(&dir, &m_move);
-
-						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						float ChedkDis = 50.0f + m_move.z;
+						//D3DXVec3Normalize(&dir, &m_move);
+						dir.z = -1.0f;
+						float ChedkDis = 10.0f + m_move.z;
 
 						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
 						{
-							delete pCollision;
-							pCollision = nullptr;
-
 							return true;
 						}
 					}
@@ -190,8 +182,6 @@ bool CBullet3D::MeshCollision()
 						
 						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
-							delete pCollision;
-							pCollision = nullptr;
 							if (!pTest->GetDamageState() && !pTest->GetDeadState())
 							{
 								pTest->Damaged(40);
@@ -214,8 +204,6 @@ bool CBullet3D::MeshCollision()
 							if (pCollision != nullptr)
 							{
 								pTest->Damaged();
-								delete pCollision;
-								pCollision = nullptr;
 							}
 							return true;
 						}
@@ -226,7 +214,5 @@ bool CBullet3D::MeshCollision()
 			}
 		}
 	}
-	
-
 	return false;
 }

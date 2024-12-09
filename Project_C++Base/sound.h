@@ -21,6 +21,8 @@ public:
 		SOUND_LABEL_TITLESE_RIDER,
 		SOUND_LABEL_TITLESE_MOVE,
 		SOUND_LABEL_TITLESE_ENTER,
+		SOUND_LABEL_GAMESE_EXPLOAD,
+		SOUND_LABEL_GAMESE_BOMB,
 		SOUND_LABEL_MAX
 
 	} SOUND_LABEL;
@@ -54,6 +56,10 @@ private:
 		{"data/SOUND/rider1.wav", 0},	//ブースターが上がる音
 		{"data/SOUND/move1.wav", 0},	//自機が動く音
 		{"data/SOUND/Enter1.wav", 0},	//Enterキーが押された音
+		{"data/SOUND/expload1.wav", 0},	//爆発音１
+		{"data/SOUND/expload2.wav", 0},	//爆発音１
+
+
 
 	};
 };

@@ -10,6 +10,7 @@
 #include "main.h"
 #include "objectX.h"
 #include "gauge_Boss_Life.h"
+#include "mesh_obstacle.h"
 #include "boss_reticle.h"
 
 
@@ -53,6 +54,22 @@ private:
 	bool m_bDamaging;
 };
 
-
+class CBossStatue : public CMeshObstacle
+{
+public:
+	CBossStatue() :m_bSeted(false) {};
+	~CBossStatue()override = default;
+	void Update()override
+	{
+		if (!m_bSeted)
+		{
+			SetYPos();
+		}
+	}
+	static CBossStatue* Create(D3DXVECTOR3 pos);
+private:
+	void SetYPos();
+	bool m_bSeted;
+};
 
 #endif

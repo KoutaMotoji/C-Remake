@@ -10,6 +10,7 @@
 #include "player_observer.h"
 #include "boss_bullet.h"
 
+#include "mesh_ground.h"
 #include "manager.h"
 #include "game.h"
 #include <random>
@@ -104,8 +105,26 @@ void CBossTerra::Update()
 		}
 		if (AttackRateCheck())
 		{
-			m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
-			m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
+			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+			std::uniform_int_distribution<> rand_num(1, 1);     // [-1200, 1200] 範囲の一様乱数
+			if (rand_num(mt) == 0)
+			{
+				m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
+				m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
+			}
+			else
+			{
+				std::uniform_int_distribution<> rand_x(-3000, 3000);	  // [-1200, 1200] 範囲の一様乱数
+				for (int i = 0; i < 4; ++i)
+				{
+					CBossStatue::Create(
+						{ (float)(rand_x(mt)),
+						0.0f,
+						CObjectX::GetPos().z + (i + 1) * 2500 }
+					);
+				}
+			}
 		}
 		if (m_Reticle[0] != nullptr &&
 			m_Reticle[1] != nullptr)
@@ -141,7 +160,7 @@ void CBossTerra::Update()
 		DeathAnim();
 	}
 
-	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z;
+	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z* 1.1f;
 
 	CObjectX::AddPos(m_move);
 
@@ -166,7 +185,6 @@ void CBossTerra::Draw()
 	{
 		CObjectX::Draw();
 	}
-
 }
 
 //==========================================================================================
@@ -187,7 +205,7 @@ CBossTerra* CBossTerra::Create(D3DXVECTOR3 pos)
 //死亡演出処理
 //==========================================================================================
 void CBossTerra::DeathAnim() {
-	if (m_nDeadFrame % 5 == 0)
+	if (m_nDeadFrame % 15 == 0)
 	{
 		if (m_nDeadFrame == 180)
 		{
@@ -203,7 +221,7 @@ void CBossTerra::DeathAnim() {
 			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
 			std::uniform_int_distribution<> rand_x(-1200, 1200);     // [-1200, 1200] 範囲の一様乱数
-			std::uniform_int_distribution<> rand_z(-700, 700);     // [-1200, 1200] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_z(-700, 700);     // [-700, 700] 範囲の一様乱数
 			std::uniform_int_distribution<> rand_y(-400, 700);     // [-400, 700] 範囲の一様乱数
 			std::uniform_int_distribution<> rand_Radius(100, 250);		 // [400, 1200] 範囲の一様乱数
 			D3DXVECTOR3 pos = {
@@ -267,4 +285,65 @@ void CBossTerra::SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos)
 	CBossBullet::Create(pos4, value4, color2, Life, Radius, EffectSize);
 	CBossBullet::Create(pos5, value5, color1, Life, Radius, EffectSize);
 	CBossBullet::Create(pos6, value6, color2, Life, Radius, EffectSize);
+}
+
+//==========================================================================================
+//ボスが出す石柱の生成処理
+//==========================================================================================
+CBossStatue* CBossStatue::Create(D3DXVECTOR3 pos)
+{
+	CBossStatue* statue = new CBossStatue;
+
+	statue->BindModel("data\\MODEL\\boss_statue.x");
+	statue->SetModelParam(pos);
+	statue->Init();
+	statue->AddPos({ 0.0f,3000.0f,0.0f });
+	return statue;
+}
+
+//==========================================================================================
+//空中に出した石柱を地面に突き刺す
+//==========================================================================================
+void CBossStatue::SetYPos()
+{
+	CBossStatue::AddPos({ 0.0f,-250.0f,0.0f });
+	// 地形判定
+	BOOL  bIsHit = false;
+	float fLandDistance;
+	DWORD dwHitIndex = 0U;
+	float fHitU;
+	float fHitV;
+	LPD3DXMESH pMesh = nullptr;
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; i++) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
+					CMeshGround* pTest = dynamic_cast<CMeshGround*>(pObj);
+					if (pTest != nullptr) {
+						pMesh = pTest->GetMesh();
+						if (pTest != nullptr) {
+							// 地形判定
+							LPD3DXMESH pMesh = nullptr;
+
+							pMesh = pTest->GetMesh();
+							D3DXVECTOR3 dir = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+							D3DXVECTOR3 objpos = CBossStatue::GetPos() - pTest->GetPos();
+							D3DXIntersect(pMesh, &objpos, &dir, &bIsHit, &dwHitIndex, &fHitU, &fHitV, &fLandDistance, nullptr, nullptr);
+
+							// ----- 接地時処理 -----
+							if (bIsHit)
+							{
+								if (fLandDistance > 100)
+								{
+									m_bSeted = true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

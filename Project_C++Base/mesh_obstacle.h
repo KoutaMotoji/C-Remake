@@ -46,7 +46,6 @@ public:
 	void Update()override;		//çXêV
 private:
 	bool m_bSceneCheck;
-
 };
 
 class CBossEmitter : public CMeshObstacle
@@ -72,6 +71,5 @@ private:
 	bool m_bSceneCheck;
 	bool PlayerLength();
 };
-
 
 #endif

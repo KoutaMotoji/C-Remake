@@ -13,7 +13,6 @@
 #include "manager.h"
 #include "game.h"
 
-
 namespace {
 	const char* modelName[MAX_MODELTYPE]{
 		"data\\MODEL\\gate000.x",

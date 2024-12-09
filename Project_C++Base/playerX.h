@@ -23,8 +23,10 @@ static constexpr int MAX_MOTION = 7;
 
 //ステータス用定数
 static constexpr int MAX_LIFE = 1000;		//体力
-static constexpr float MOVE_SPEED = 0.35f;	//移動スピードの設定
-static constexpr float SCROLL_SPEED = 5.5f;	//移動スピードの設定
+static constexpr float MOVE_JET_SPEED = 3.45f;	//移動スピードの設定
+static constexpr float MOVE_ROBO_SPEED = 2.00f;	//移動スピードの設定
+
+static constexpr float SCROLL_SPEED = 5.5f;	//自動スクロールスピードの設定
 
 
 class CPlayerX :public CObject
@@ -55,11 +57,10 @@ private:
 	void FloorCollision();			//床との当たり判定
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
-	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); };	//ダメージ加算、生存確認
+	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_EXPLOAD); }	//ダメージ加算、生存確認
 	D3DXVECTOR3 LockOnEnemy();						//敵のロックオン
 	void AttackCollisionToEnemy();
 
-	//void GoalCheck();						//ゴールしているかチェック
 	void DeadCheck();
 	float m_fWeaponRadius;
 	int m_nLife;			//体力
@@ -117,6 +118,7 @@ private:
 	bool m_bBlend;
 	bool m_bMotion;
 	bool m_bTransformed;
+	bool m_bAttack;
 	bool TestUseMeshCollision();
 	CReticle* m_pReticle;
 	void ReticleController();
