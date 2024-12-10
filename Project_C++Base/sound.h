@@ -23,6 +23,13 @@ public:
 		SOUND_LABEL_TITLESE_ENTER,
 		SOUND_LABEL_GAMESE_EXPLOAD,
 		SOUND_LABEL_GAMESE_BOMB,
+		SOUND_LABEL_GAMESE_ITEM,
+		SOUND_LABEL_GAMESE_SHOT,
+		SOUND_LABEL_GAMESE_BOSSSHOT,
+		SOUND_LABEL_GAMESE_BOSSLOCKON,
+		SOUND_LABEL_GAMESE_FALL,
+		SOUND_LABEL_GAMESE_SPAWN,
+
 		SOUND_LABEL_MAX
 
 	} SOUND_LABEL;
@@ -57,9 +64,13 @@ private:
 		{"data/SOUND/move1.wav", 0},	//自機が動く音
 		{"data/SOUND/Enter1.wav", 0},	//Enterキーが押された音
 		{"data/SOUND/expload1.wav", 0},	//爆発音１
-		{"data/SOUND/expload2.wav", 0},	//爆発音１
-
-
+		{"data/SOUND/expload2.wav", 0},	//爆発音２
+		{"data/SOUND/Item2.wav", 0},	//アイテム獲得音
+		{"data/SOUND/Shot1.wav", 0},	//射撃音
+		{"data/SOUND/Shot2.wav", 0},	//ボス射撃音
+		{"data/SOUND/lockon1.wav", 0},	//ボスロックオン音
+		{"data/SOUND/fall.wav", 0},		//落ちる音
+		{"data/SOUND/spawn1.wav", 0},	//石柱が出現する音
 
 	};
 };

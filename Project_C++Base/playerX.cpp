@@ -934,6 +934,10 @@ void CPlayerX::GetItem()
 
 						if (pCollision->SphireCollosion(m_pos,pTest->GetPos(),dirM, dirM))
 						{
+							if (!pTest->GetItemUse())
+							{
+								CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_ITEM);
+							}
 							pTest->GotThisItem();
 						}
 					}
@@ -949,6 +953,7 @@ void CPlayerX::GetItem()
 D3DXVECTOR3 CPlayerX::LockOnEnemy()
 {
 	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
+	D3DXVECTOR3 dirM = D3DXVECTOR3(3000.0f, 0, 0);
 
 	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; ++i) {
@@ -963,7 +968,6 @@ D3DXVECTOR3 CPlayerX::LockOnEnemy()
 						if (pTest->GetPos().z - m_pos.z < 4000.0f &&
 							pTest->GetPos().z - m_pos.z > 1000.0f)
 						{
-							D3DXVECTOR3 dirM = D3DXVECTOR3(3000.0f, 0, 0);
 
 							if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), dirM, dirM))
 							{
@@ -976,6 +980,7 @@ D3DXVECTOR3 CPlayerX::LockOnEnemy()
 			}
 		}
 	}
+
 	return m_pReticle->GetPos();
 }
 
@@ -1003,20 +1008,23 @@ void CPlayerX::ShootBullet()
 		SetdigitedRot.z;
 		if (m_bTransformed)
 		{
-			SetNextMotion(MOTION_ROBO_SHOT);
-			m_bMotion = true;
-			digitRot.x = (lockonVec.x - posMtx.x) * 0.2f;
-			digitRot.y = (lockonVec.y - posMtx.y) * 0.2f;
-			digitRot.z = (lockonVec.z - posMtx.z) * 0.2f;
-			D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
-			D3DXVec3Normalize(&SetdigitedRot, &digitRot);
-			if (lockonVec != m_pReticle->GetPos())
+			if (m_CurMotion != MOTION_ROBO_SHOT)
 			{
-				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 0.1f,1.0f,0.2f,1.0f }, 80, 38, 35);
-			}
-			else
-			{
-				CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 80, 38, 35);
+				SetNextMotion(MOTION_ROBO_SHOT);
+				m_bMotion = true;
+				digitRot.x = (lockonVec.x - posMtx.x) * 0.2f;
+				digitRot.y = (lockonVec.y - posMtx.y) * 0.2f;
+				digitRot.z = (lockonVec.z - posMtx.z) * 0.2f;
+				D3DXVECTOR3 SetdigitedRot = { 0.0f,0.0f,0.0f };
+				D3DXVec3Normalize(&SetdigitedRot, &digitRot);
+				if (lockonVec != m_pReticle->GetPos())
+				{
+					CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 0.1f,1.0f,0.2f,1.0f }, 80, 38, 35);
+				}
+				else
+				{
+					CBullet3D::Create(RifleMtxSet() + m_move + addZpos, SetdigitedRot, { 1.0f,0.0f,0.2f,1.0f }, 80, 38, 35);
+				}
 			}
 		}
 		else
@@ -1037,7 +1045,7 @@ void CPlayerX::ShootBullet()
 		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
 
 		m_fValueRot = atan2f((lockonVec.x - m_pos.x), (lockonVec.z - m_pos.z));
-		if (m_CurMotion == MOTION_ROBO_SLASH && m_bAttack)
+		if (m_CurMotion == MOTION_ROBO_SLASH && m_bAttack&& CheckLockonBlocking())
 		{
 			AttackCollisionToEnemy();
 			m_move += ((lockonVec - m_pos) * 0.015);
@@ -1046,12 +1054,12 @@ void CPlayerX::ShootBullet()
 }
 
 //==========================================================================================
-// ロボット形態のみ、近くの敵をロックオンする処理
+// ロックオンした敵を撃破する処理
 //==========================================================================================
 void CPlayerX::AttackCollisionToEnemy()
 {
 	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
-
+	
 	for (int j = 0; j < SET_PRIORITY; ++j) {
 		for (int i = 0; i < MAX_OBJECT; ++i) {
 			CObject* pObj = CObject::GetObjects(j, i);
@@ -1072,4 +1080,59 @@ void CPlayerX::AttackCollisionToEnemy()
 			}
 		}
 	}
+}
+
+//==========================================================================================
+// ロックオン先の敵との間に障害物がないか調べる処理
+//==========================================================================================
+bool CPlayerX::CheckLockonBlocking()
+{
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_ENEMY) {
+					CEnemyBase* pTest = dynamic_cast<CEnemyBase*>(pObj);
+
+					if (pTest != nullptr) {
+						bool bCheck = CheckToObs(pTest);
+						return bCheck;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+bool CPlayerX::CheckToObs(CEnemyBase* pEnemy)
+{
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
+
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
+					CMeshObstacle* pTest = dynamic_cast<CMeshObstacle*>(pObj);
+
+					if (pTest != nullptr) {
+
+						D3DXVECTOR3 toVec = pEnemy->GetPos() - m_pos;
+						D3DXVECTOR3 dir;
+						float toLength = D3DXVec3Length(&toVec);
+						D3DXVec3Normalize(&dir, &toVec);
+						if (pCollision->MeshToIntersectCollision(pTest, m_pos, dir, toLength))
+						{
+							return false;
+						}
+					}
+				}
+			}
+		}
+	}
+	return true;
 }

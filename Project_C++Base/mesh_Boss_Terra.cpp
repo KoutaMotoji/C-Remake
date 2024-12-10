@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  C++使った2D(enemy_basic.cpp)
+//  C++使った2D(mesh_Boss_Terra.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -24,7 +24,7 @@ namespace BulletOption {
 	D3DXVECTOR3	setpos5 = { 300.0f,300.0f,-500.0f };
 	D3DXVECTOR3	setpos6 = { 500.0f,300.0f,-500.0f };
 
-	int Life = 70;
+	int Life = 60;
 	float Radius = 150;
 	float EffectSize = 100;
 	D3DXCOLOR color1 = { 0.2f,0.2f,0.8f,1.0f };
@@ -107,20 +107,26 @@ void CBossTerra::Update()
 		{
 			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-			std::uniform_int_distribution<> rand_num(1, 1);     // [-1200, 1200] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_num(0, 1);     // [-1200, 1200] 範囲の一様乱数
 			if (rand_num(mt) == 0)
 			{
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
+
 				m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
 				m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
 			}
 			else
 			{
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_SPAWN);
+
 				std::uniform_int_distribution<> rand_x(-3000, 3000);	  // [-1200, 1200] 範囲の一様乱数
+				std::uniform_int_distribution<> rand_y(2000, 5000);	  // [-1200, 1200] 範囲の一様乱数
+
 				for (int i = 0; i < 4; ++i)
 				{
 					CBossStatue::Create(
 						{ (float)(rand_x(mt)),
-						0.0f,
+						(float)(rand_y(mt)),
 						CObjectX::GetPos().z + (i + 1) * 2500 }
 					);
 				}
@@ -134,6 +140,7 @@ void CBossTerra::Update()
 			if (m_Reticle[0]->GetLifeState() ||
 				m_Reticle[1]->GetLifeState())
 			{
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSSHOT);
 				SetBullet(pos, Playerpos);
 
 				m_Reticle[0]->Release();
@@ -160,7 +167,7 @@ void CBossTerra::Update()
 		DeathAnim();
 	}
 
-	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z* 1.1f;
+	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z * 1.135f;
 
 	CObjectX::AddPos(m_move);
 
@@ -338,6 +345,7 @@ void CBossStatue::SetYPos()
 								if (fLandDistance > 100)
 								{
 									m_bSeted = true;
+									CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_FALL);
 								}
 							}
 						}

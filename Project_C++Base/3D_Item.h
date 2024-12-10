@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  C++使った2D(object3D.h)
+//  C++使った2D(3D_Item.h)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -24,7 +24,7 @@ public:
 	void Draw()override;		//描画
 
 	void GotThisItem() { m_bGot = true; }
-
+	bool GetItemUse() { return m_bGot; }
 	static C3DItem* Create(D3DXVECTOR3 pos);
 private:
 	bool m_bGot;

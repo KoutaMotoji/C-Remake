@@ -28,6 +28,8 @@ static constexpr float MOVE_ROBO_SPEED = 2.00f;	//移動スピードの設定
 
 static constexpr float SCROLL_SPEED = 5.5f;	//自動スクロールスピードの設定
 
+class CEnemyBase;
+class CCollision;
 
 class CPlayerX :public CObject
 {
@@ -128,7 +130,9 @@ private:
 	int m_DamageTime;
 	bool MeshObstacle();
 	void GetItem();
+	bool CheckLockonBlocking();
 
+	bool CheckToObs(CEnemyBase* pEnemy);
 	CShadow* m_pShadow;
 
 	//=====================			クオータニオン用		====================================

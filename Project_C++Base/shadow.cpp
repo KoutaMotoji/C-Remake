@@ -114,50 +114,14 @@ void CShadow::SetShadowGround(D3DXVECTOR3 pos)
 
 							if (bIsHit)
 							{
-								// 当たったインデックスバッファ取得
-								WORD dwHitVertexNo[3];
-								WORD* pIndex;
-								HRESULT hr = pMesh->LockIndexBuffer(0, (void**)&pIndex);
-								
-								for (int nIdxIdx = 0; nIdxIdx < 3; nIdxIdx++)
-								{
-									dwHitVertexNo[nIdxIdx] = pIndex[dwHitIndex * 3 + nIdxIdx];
-								}
-
-								pMesh->UnlockIndexBuffer();
-
 								// 当たったポリゴン取得
 								VERTEX_3D* pVertex;
-								hr = pMesh->LockVertexBuffer(0, (void**)&pVertex);
-
-								////レイと交差しているポリゴンの3頂点の外積を出して法線ベクトルを求め、それにポリゴンを沿わせる
-								//D3DXVECTOR3 VecCross;
-								//D3DXVECTOR3 vecA = (pVertex[dwHitVertexNo[0]].pos - pVertex[dwHitVertexNo[2]].pos);
-								//D3DXVECTOR3 vecB = (pVertex[dwHitVertexNo[1]].pos - pVertex[dwHitVertexNo[2]].pos);
-
-								//D3DXVec3Cross(&VecCross, &vecA, &vecB);
-								//D3DXVec3Normalize(&VecCross, &VecCross);
-
-								//dir.y = 1.0f;
-								//D3DXVECTOR3 VecAx1;
-								//D3DXVec3Cross(&VecAx1, &dir, &VecCross);
-								//float R1 = (D3DXVec3Dot(&dir, &VecCross)) / sqrtf(D3DXVec3LengthSq(&dir)) * sqrtf(D3DXVec3LengthSq(&VecCross));
-								//m_fValueRot = acos(R1);
-								//m_quat = { 0, 0, 0, 1 };
-								//D3DXQuaternionRotationAxis(&m_quat, &VecAx1, m_fValueRot);
-
-								////クオータニオンから回転マトリックスを作成
-								//D3DXMatrixRotationQuaternion(
-								//	&m_mtxRot,
-								//	&m_quat);
 
 								float size = 2.0 + (4.0f / fLandDistance);
 
 								CObject3D::SetPos({ objpos.x,objpos.y - fLandDistance,objpos.z });
-								//CObject3D::SetRot(VecAx1);
 								CObject3D::SetSize(size);
 
-								pMesh->UnlockVertexBuffer();
 							}
 						}
 					}

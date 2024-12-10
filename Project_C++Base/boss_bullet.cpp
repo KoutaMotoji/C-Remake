@@ -143,10 +143,9 @@ bool CBossBullet::MeshCollision()
 						D3DXVECTOR3 pos = CBillboard::GetPos();
 						D3DXVec3Normalize(&dir, &m_move);
 
-						D3DXVECTOR3 objpos = pos - pTest->GetPos();
 						float ChedkDis = 20.0f;
 
-						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
+						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
 						{
 							delete pCollision;
 							pCollision = nullptr;

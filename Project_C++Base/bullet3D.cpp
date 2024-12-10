@@ -41,6 +41,7 @@ CBullet3D::~CBullet3D()
 void CBullet3D::Init()
 {
 	CObject::SetType(TYPE_BILLBOARD);
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_SHOT);
 	CBillboard::Init();
 }
 
@@ -128,6 +129,10 @@ CBullet3D* CBullet3D::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR col,in
 bool CBullet3D::MeshCollision()
 {
 	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
+	if (pCollision == nullptr)
+	{
+		return false;
+	}
 	D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 
 	LPD3DXMESH pMesh = nullptr;
@@ -142,9 +147,10 @@ bool CBullet3D::MeshCollision()
 						pMesh = pTest->GetMesh();
 						D3DXVECTOR3 pos = CBillboard::GetPos();
 						D3DXVec3Normalize(&dir, &m_move);
-
+						float fLength = D3DXVec3Length(&m_move);
+						float ChedkDis = 10.0f + fLength;
 						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						float ChedkDis = 20.0f;
+
 						// ----- Ú’nŽžˆ— -----
 						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
@@ -159,9 +165,9 @@ bool CBullet3D::MeshCollision()
 
 						pMesh = pTest->GetMesh();
 						D3DXVECTOR3 pos = CBillboard::GetPos();
-						//D3DXVec3Normalize(&dir, &m_move);
-						dir.z = -1.0f;
-						float ChedkDis = 10.0f + m_move.z;
+						D3DXVec3Normalize(&dir, &m_move);
+						float fLength = D3DXVec3Length(&m_move);
+						float ChedkDis = 10.0f + fLength;
 
 						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
 						{
@@ -188,8 +194,6 @@ bool CBullet3D::MeshCollision()
 							}
 							return true;
 						}
-						
-						return false;
 					}
 				}
 				else if (type == CObject::TYPE::TYPE_3D_ENEMY) {
@@ -198,17 +202,11 @@ bool CBullet3D::MeshCollision()
 					if (pTest != nullptr) {
 						D3DXVECTOR3 dirM = D3DXVECTOR3(50.0f, 100.0f, 100.0f);
 
-
 						if (pCollision->SphireCollosion(CBillboard::GetPos(), pTest->GetPos(), dirM, pTest->GetModelMax()))
 						{
-							if (pCollision != nullptr)
-							{
-								pTest->Damaged();
-							}
+							pTest->Damaged();	
 							return true;
 						}
-
-						return false;
 					}
 				}
 			}
