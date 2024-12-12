@@ -14,7 +14,6 @@ CReticle::CReticle()
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\reticle000.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
-
 }
 
 //==========================================================================================

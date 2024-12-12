@@ -13,6 +13,8 @@
 #include "mesh_obstacle.h"
 #include "boss_reticle.h"
 
+static constexpr float WORLD_WALL_X = 1000;
+static constexpr float WORLD_WALL_Y = 600;
 
 
 class CBossTerra :public CObjectX
@@ -23,6 +25,7 @@ public:
 	void Init()override;		//èâä˙âª
 	void Uninit()override;		//èIóπ
 	void Update()override;		//çXêV
+	void SetStatue();
 	void SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos);
 	void Draw()override;		//ï`âÊ
 	static CBossTerra* Create(D3DXVECTOR3 pos);
@@ -70,6 +73,23 @@ public:
 private:
 	void SetYPos();
 	bool m_bSeted;
+};
+
+class CBossEnemySpawner : public CObjectX
+{
+public:
+	CBossEnemySpawner() : m_moveVec({0.0f,0.0f,0.0f}), m_Lifetime(), m_CntTime(0){};
+	~CBossEnemySpawner()override = default;
+
+	void Init(int num);
+	void Update()override;
+	static CBossEnemySpawner* Create(D3DXVECTOR3 pos,int num);
+private:
+	void Move();
+	void SetEnemy();
+	D3DXVECTOR3 m_moveVec;
+	int m_Lifetime;
+	int m_CntTime;
 };
 
 #endif

@@ -75,7 +75,6 @@ void CBossBullet::Draw()
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
-
 	CBillboard::Draw();
 
 	//í èÌÇÃçáê¨Ç…ñﬂÇ∑ê›íË
@@ -106,7 +105,7 @@ CBossBullet* CBossBullet::Create(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXCOLOR co
 //==========================================================================================
 bool CBossBullet::MeshCollision()
 {
-	CCollision* pCollision = new CCollision();
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
 	D3DXVECTOR3 dir = { 0.0f,0.0f,0.0f };
 
 	LPD3DXMESH pMesh = nullptr;
@@ -127,9 +126,6 @@ bool CBossBullet::MeshCollision()
 						// ----- ê⁄ínéûèàóù -----
 						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
 						{
-							delete pCollision;
-							pCollision = nullptr;
-
 							return true;
 						}
 					}
@@ -147,9 +143,6 @@ bool CBossBullet::MeshCollision()
 
 						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
 						{
-							delete pCollision;
-							pCollision = nullptr;
-
 							return true;
 						}
 					}

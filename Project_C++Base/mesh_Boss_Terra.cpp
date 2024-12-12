@@ -9,6 +9,8 @@
 #include "playerX.h"
 #include "player_observer.h"
 #include "boss_bullet.h"
+#include "enemy_base.h"
+#include "particle3D.h"
 
 #include "mesh_ground.h"
 #include "manager.h"
@@ -107,31 +109,28 @@ void CBossTerra::Update()
 		{
 			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-			std::uniform_int_distribution<> rand_num(0, 1);     // [-1200, 1200] 範囲の一様乱数
-			if (rand_num(mt) == 0)
+			std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
+			switch (rand_num(mt))
 			{
+			case 0:
 				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
 
 				m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
 				m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
-			}
-			else
-			{
-				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_SPAWN);
-
-				std::uniform_int_distribution<> rand_x(-3000, 3000);	  // [-1200, 1200] 範囲の一様乱数
-				std::uniform_int_distribution<> rand_y(2000, 5000);	  // [-1200, 1200] 範囲の一様乱数
-
-				for (int i = 0; i < 4; ++i)
+				break;
+			case 1:
+				SetStatue();
+				break;
+			case 2:
+				for (int i = 0; i < 5; ++i)
 				{
-					CBossStatue::Create(
-						{ (float)(rand_x(mt)),
-						(float)(rand_y(mt)),
-						CObjectX::GetPos().z + (i + 1) * 2500 }
-					);
+					CBossEnemySpawner::Create(pos,i);
 				}
+				break;
 			}
 		}
+
+
 		if (m_Reticle[0] != nullptr &&
 			m_Reticle[1] != nullptr)
 		{
@@ -166,6 +165,10 @@ void CBossTerra::Update()
 	{
 		DeathAnim();
 	}
+	if (Playerpos.z - pos.z < 2000)
+	{
+		m_move.z += 2500;
+	}
 
 	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z * 1.135f;
 
@@ -178,6 +181,7 @@ void CBossTerra::Update()
 
 	CObjectX::Update();
 }
+
 
 //==========================================================================================
 //描画処理
@@ -227,10 +231,10 @@ void CBossTerra::DeathAnim() {
 			//乱数生成
 			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-			std::uniform_int_distribution<> rand_x(-1200, 1200);     // [-1200, 1200] 範囲の一様乱数
-			std::uniform_int_distribution<> rand_z(-700, 700);     // [-700, 700] 範囲の一様乱数
-			std::uniform_int_distribution<> rand_y(-400, 700);     // [-400, 700] 範囲の一様乱数
-			std::uniform_int_distribution<> rand_Radius(100, 250);		 // [400, 1200] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_x(-1200, 1200);    // [-1200, 1200] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_z(-700, 700);		// [-700, 700] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_y(-400, 700);		// [-400, 700] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_Radius(100, 250);	// [100, 250] 範囲の一様乱数
 			D3DXVECTOR3 pos = {
 							CObjectX::GetMatrix()._41 + (float)(rand_x(mt)),
 							CObjectX::GetMatrix()._42 + (float)(rand_y(mt)),
@@ -295,6 +299,28 @@ void CBossTerra::SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos)
 }
 
 //==========================================================================================
+//ボスが出す石柱の出現
+//==========================================================================================
+void CBossTerra::SetStatue()
+{
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_SPAWN);
+
+	std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+	std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+	std::uniform_int_distribution<> rand_x(-3000, 3000);	 // [-3000, 3000] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_y(2000, 5000);		 // [2000, 5000] 範囲の一様乱数
+
+	for (int i = 0; i < 4; ++i)
+	{
+		CBossStatue::Create(
+			{ (float)(rand_x(mt)),
+			(float)(rand_y(mt)),
+			CObjectX::GetPos().z + (i + 1) * 2500 }
+		);
+	}
+}
+
+//==========================================================================================
 //ボスが出す石柱の生成処理
 //==========================================================================================
 CBossStatue* CBossStatue::Create(D3DXVECTOR3 pos)
@@ -354,4 +380,104 @@ void CBossStatue::SetYPos()
 			}
 		}
 	}
+}
+
+//==========================================================================================================================
+//敵を放出するクラスの処理群
+
+//==========================================================================================
+//ボスが出す敵の生成処理
+//==========================================================================================
+CBossEnemySpawner* CBossEnemySpawner::Create(D3DXVECTOR3 pos,int num)
+{
+	CBossEnemySpawner* statue = new CBossEnemySpawner;
+
+	statue->BindModel("data\\MODEL\\enemy_base.x");
+	statue->SetModelParam(pos);
+	statue->Init(num);
+	return statue;
+}
+
+//==========================================================================================
+//初期化処理
+//==========================================================================================
+void CBossEnemySpawner::Init(int num)
+{
+	//乱数生成
+	std::random_device rnd;			// 非決定的な乱数生成器でシード生成機を生成
+	std::mt19937 mt(rnd());			//  メルセンヌツイスターの32ビット版、引数は初期シード
+	std::uniform_int_distribution<> rand_x(-1200, 1200);	// [-1200, 1200] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_y(-1000, 1000);	// [-1000, 1000] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_z(1500, 2500);		// [1000, 2000] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_time(30, 60);		// [30, 60] 範囲の一様乱数
+
+	m_Lifetime = rand_time(mt);
+
+	m_moveVec = {
+		(float)(rand_x(mt) / m_Lifetime),
+		(float)(rand_y(mt) / m_Lifetime),
+		(float)((rand_z(mt) * (num + 1)) / m_Lifetime)
+	};
+
+	CObjectX::Init();
+}
+
+//==========================================================================================
+//更新処理
+//==========================================================================================
+void CBossEnemySpawner::Update()
+{
+	if (m_CntTime >= m_Lifetime)
+	{
+		SetEnemy();
+	}
+	else
+	{
+		++m_CntTime;
+		Move();
+	}
+	CObjectX::Update();
+}
+
+//==========================================================================================
+//動かす処理
+//==========================================================================================
+void CBossEnemySpawner::Move()
+{
+	D3DXVECTOR3 pos = CObjectX::GetPos();
+
+	pos += m_moveVec;
+
+	if (pos.x >= WORLD_WALL_X)
+	{
+		pos.x = WORLD_WALL_X;
+	}
+	else if (pos.x <= -WORLD_WALL_X)
+	{
+		pos.x = -WORLD_WALL_X;
+	}
+
+	if (pos.y >= WORLD_WALL_Y)
+	{
+		pos.y = WORLD_WALL_Y;
+	}
+	else if (pos.y <= -WORLD_WALL_Y)
+	{
+		pos.y = -WORLD_WALL_Y;
+	}
+	CParticle3D::Create(pos, {0.2f,0.0f,1.0f,0.7f}, 90, 120, true);
+
+	CObjectX::SetPos(pos);
+}
+
+//==========================================================================================
+//本物の敵に置き換える処理
+//==========================================================================================
+void CBossEnemySpawner::SetEnemy()
+{
+	CObjectX::SetSize({ 0.8f,0.8f ,0.8f });
+
+	CEnemyBase::Create(CObjectX::GetPos());
+	CObject::Release();
+	return;
 }
