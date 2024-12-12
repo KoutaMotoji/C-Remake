@@ -101,6 +101,7 @@ void CTitle::Update()
 
 			CTAnimBorder::Create(0);
 			CTAnimBorder::Create(1);
+			CMoveButton::Create({ SCREEN_WIDTH - 120.0f,SCREEN_HEIGHT - 60.0f,0.0f });
 		}
 	}
 	else

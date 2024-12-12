@@ -23,8 +23,6 @@ public:
 	void Draw()override;
 
 private:
-	void LoadMapData();
-	void SetBGObject();
 	void MakeRandTree();
 
 	static const int BG_OBJ_CNT;

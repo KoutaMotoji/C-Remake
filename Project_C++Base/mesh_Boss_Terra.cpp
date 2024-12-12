@@ -165,13 +165,14 @@ void CBossTerra::Update()
 	{
 		DeathAnim();
 	}
-	if (Playerpos.z - pos.z < 2000)
-	{
-		m_move.z += 2500;
-	}
+
 
 	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z * 1.135f;
-
+	float disPos = pos.z - Playerpos.z;
+	if (disPos < 2500)
+	{
+		m_move.z += 3000;
+	}
 	CObjectX::AddPos(m_move);
 
 	//移動量を更新
@@ -307,7 +308,7 @@ void CBossTerra::SetStatue()
 
 	std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 	std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-	std::uniform_int_distribution<> rand_x(-3000, 3000);	 // [-3000, 3000] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_x(-2500, 2500);	 // [-3000, 3000] 範囲の一様乱数
 	std::uniform_int_distribution<> rand_y(2000, 5000);		 // [2000, 5000] 範囲の一様乱数
 
 	for (int i = 0; i < 4; ++i)

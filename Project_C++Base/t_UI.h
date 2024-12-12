@@ -11,6 +11,9 @@
 #include "object2D.h"
 
 static constexpr float SWAP_SPEED = 0.02f;
+static constexpr int PUSHING_TIME = 60;
+static constexpr float PushGaugeWidth = 240.0f;
+static constexpr float PushGaugeHeight = 120.0f;
 
 class CTitleUI :public CObject2D
 {
@@ -45,4 +48,27 @@ private:
 	D3DXCOLOR m_LocalCol;
 };
 
+class CMoveButton : public CObject2D
+{
+public:
+	CMoveButton(int nPriority = SET_PRIORITY - 1):CObject2D(nPriority),m_Gauge(0){}
+	~CMoveButton()override = default;
+	void Init()override;		//èâä˙âª
+	void Update()override;		//çXêV
+	static CMoveButton* Create(D3DXVECTOR3 pos);
+
+private:
+
+	int m_Gauge;
+};
+
+class CMoveButtonBack : public CObject2D
+{
+public:
+	CMoveButtonBack(int nPriority = SET_PRIORITY - 2):CObject2D(nPriority) {}
+	~CMoveButtonBack()override = default;
+	void Init()override;		//èâä˙âª
+	static CMoveButtonBack* Create(D3DXVECTOR3 pos);
+
+};
 #endif

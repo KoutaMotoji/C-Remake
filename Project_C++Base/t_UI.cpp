@@ -143,3 +143,73 @@ void CTitleButton::AlphableUI()
 	CObject2D::SetColor(m_LocalCol);
 }
 //----------------------------------------------------------------------------------------------------------
+
+//初期化オーバーロード
+void CMoveButton::Init()
+{
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\skip_over.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
+
+	CObject::SetType(TYPE_3D_TITLEOBJ);
+
+	CMoveButtonBack::Create(CObject2D::GetPos());
+	CObject2D::Init();
+}
+
+//更新オーバーロード
+void CMoveButton::Update()
+{
+	CObject2D::SetGauge(m_Gauge);
+
+	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_RETURN) == true ||
+		CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_A) == true)
+	{
+		++m_Gauge;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetRelease(DIK_RETURN) == true && m_Gauge < PUSHING_TIME ||
+		CManager::GetInstance()->GetJoypad()->GetRelease(CJoypad::JOYPAD_A) == true && m_Gauge < PUSHING_TIME)
+	{
+		m_Gauge = 0;
+	}
+	if (m_Gauge >= PUSHING_TIME)
+	{
+		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
+		return;
+	}
+	CObject2D::Update();
+}
+
+
+//==========================================================================================
+//生成処理
+//==========================================================================================
+CMoveButton* CMoveButton::Create(D3DXVECTOR3 pos)
+{
+	CMoveButton* background = new CMoveButton;
+
+	background->SetPolygonParam(pos, PushGaugeHeight, PushGaugeWidth, PUSHING_TIME, false);
+	background->Init();
+	return background;
+}
+
+//初期化オーバーロード
+void CMoveButtonBack::Init()
+{
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\skip_Under.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
+
+	CObject::SetType(TYPE_3D_TITLEOBJ);
+	CObject2D::Init();
+}
+
+//==========================================================================================
+//生成処理
+//==========================================================================================
+CMoveButtonBack* CMoveButtonBack::Create(D3DXVECTOR3 pos)
+{
+	CMoveButtonBack* background = new CMoveButtonBack;
+
+	background->SetPolygonParam(pos, PushGaugeHeight, PushGaugeWidth);
+	background->Init();
+	return background;
+}
