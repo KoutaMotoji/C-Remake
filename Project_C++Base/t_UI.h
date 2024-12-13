@@ -12,8 +12,8 @@
 
 static constexpr float SWAP_SPEED = 0.02f;
 static constexpr int PUSHING_TIME = 60;
-static constexpr float PushGaugeWidth = 160.0f;
-static constexpr float PushGaugeHeight = PushGaugeWidth * 0.5f;
+static constexpr float PushGaugeWidth = 640.0f;
+static constexpr float PushGaugeHeight = PushGaugeWidth * 0.125f;
 
 class CTitleUI :public CObject2D
 {
@@ -40,6 +40,7 @@ class CTitleButton : public CTitleUI
 {
 public:
 	CTitleButton() : m_LocalCol({ 1.0f,1.0f,1.0f,1.0f }), m_bColSwitch(false) {}
+	~CTitleButton()override = default;
 	void Init()override;		//初期化
 	void Update()override;		//更新
 private:
@@ -55,7 +56,7 @@ public:
 	~CMoveButton()override = default;
 	void Init()override;		//初期化
 	void Update()override;		//更新
-	static CMoveButton* Create(D3DXVECTOR3 pos);
+	static CMoveButton* Create();
 
 private:
 

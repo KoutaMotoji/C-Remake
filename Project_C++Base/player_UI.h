@@ -14,7 +14,7 @@
 class CGaugeLife :public CObject2D
 {
 public:
-	CGaugeLife(int nPriority = 6);		//コンストラクタ
+	CGaugeLife(int nPriority = 7);		//コンストラクタ
 	~CGaugeLife()override;				//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了
@@ -32,7 +32,7 @@ private:
 class CGaugeLiFrame :public CObject2D
 {
 public:
-	CGaugeLiFrame(int nPriority = 6) :CObject2D(nPriority) {};		//コンストラクタ
+	CGaugeLiFrame(int nPriority = 7) :CObject2D(nPriority) {};		//コンストラクタ
 	~CGaugeLiFrame()override = default;				//デストラクタ
 	void Init()override;		//初期化
 
@@ -43,7 +43,7 @@ private:
 class CGaugeLiBack :public CObject2D
 {
 public:
-	CGaugeLiBack(int nPriority = 5) : CObject2D(nPriority) {};		//コンストラクタ
+	CGaugeLiBack(int nPriority = 6) : CObject2D(nPriority) {};		//コンストラクタ
 	~CGaugeLiBack()override = default;				//デストラクタ
 	void Init()override;		//初期化
 

@@ -185,10 +185,10 @@ void CMoveButton::Update()
 //==========================================================================================
 //¶¬ˆ—
 //==========================================================================================
-CMoveButton* CMoveButton::Create(D3DXVECTOR3 pos)
+CMoveButton* CMoveButton::Create()
 {
 	CMoveButton* background = new CMoveButton;
-
+	D3DXVECTOR3 pos = { SCREEN_WIDTH - PushGaugeWidth * 0.5f,SCREEN_HEIGHT - PushGaugeHeight * 0.5f,0.0f };
 	background->SetPolygonParam(pos, PushGaugeHeight, PushGaugeWidth, PUSHING_TIME, false);
 	background->Init();
 	return background;

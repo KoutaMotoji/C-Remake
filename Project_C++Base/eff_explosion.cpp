@@ -10,7 +10,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CEffExplosion::CEffExplosion():m_nTime(0)
+CEffExplosion::CEffExplosion(int nPriority) :CBillboard(nPriority) , m_nTime(0)
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\bomb000.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 8,2 });

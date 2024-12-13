@@ -1103,7 +1103,7 @@ void CPlayerX::AttackCollisionToEnemy()
 					if (pTest != nullptr) {
 						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
 						{
-							SetNextMotion(MOTION_ROBO_NUTO);
+							//SetNextMotion(MOTION_ROBO_NUTO);
 							m_bAttack = false;
 							pTest->Damaged();
 						}
