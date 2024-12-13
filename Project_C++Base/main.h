@@ -17,6 +17,7 @@
 #include <cmath>
 #include <stdio.h>
 #include <iostream>
+#include <random>
 
 //ライブラリのリンク	
 #pragma comment(lib,"d3d9.lib")		//描画処理に必要

@@ -7,7 +7,6 @@
 #include "camera.h"
 #include "manager.h"
 #include "playerX.h"
-#include <random>
 
 CCamera::CCamera():m_nShakeFlame(0)
 					,m_fShalePower(0.0f), m_camHeight(1000.0f), m_DestFrame(0),m_NowFrame(0), m_bFreeCam(false)

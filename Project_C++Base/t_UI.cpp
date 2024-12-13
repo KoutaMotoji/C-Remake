@@ -154,24 +154,26 @@ void CMoveButton::Init()
 
 	CMoveButtonBack::Create(CObject2D::GetPos());
 	CObject2D::Init();
+	CObject2D::SetColor({ 1.0f,1.0f,1.0f,0.7f });
 }
 
 //更新オーバーロード
 void CMoveButton::Update()
 {
-	CObject2D::SetGauge(m_Gauge);
-
-	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_RETURN) == true ||
-		CManager::GetInstance()->GetJoypad()->GetPress(CJoypad::JOYPAD_A) == true)
+	if (CManager::GetInstance()->GetKeyboard()->GetRepeat(DIK_RETURN) == true ||
+		CManager::GetInstance()->GetJoypad()->GetRepeat(CJoypad::JOYPAD_A) == true)
 	{
 		++m_Gauge;
 	}
-	if (CManager::GetInstance()->GetKeyboard()->GetRelease(DIK_RETURN) == true && m_Gauge < PUSHING_TIME ||
-		CManager::GetInstance()->GetJoypad()->GetRelease(CJoypad::JOYPAD_A) == true && m_Gauge < PUSHING_TIME)
+	if (CManager::GetInstance()->GetKeyboard()->GetRelease(DIK_RETURN) == true && m_Gauge <= PUSHING_TIME ||
+		CManager::GetInstance()->GetJoypad()->GetRelease(CJoypad::JOYPAD_A) == true && m_Gauge <= PUSHING_TIME)
 	{
 		m_Gauge = 0;
 	}
-	if (m_Gauge >= PUSHING_TIME)
+
+	CObject2D::SetGauge(m_Gauge);
+
+	if (m_Gauge > PUSHING_TIME)
 	{
 		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
 		return;
@@ -200,6 +202,7 @@ void CMoveButtonBack::Init()
 
 	CObject::SetType(TYPE_3D_TITLEOBJ);
 	CObject2D::Init();
+	CObject2D::SetColor({ 1.0f,1.0f,1.0f,0.7f });
 }
 
 //==========================================================================================

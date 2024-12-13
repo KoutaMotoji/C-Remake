@@ -32,13 +32,7 @@ public:
 
 	void Damaged(int nDmg) { m_nLife -= nDmg; m_Gauge->SetGauge(m_nLife); m_bDamaging = true; m_nDamageFrame = 0; };
 	void DeathAnim();
-	void DeathCheck() {
-		if (m_nLife <= 0&&!m_bDead)
-		{
-			CObjectX::AddRot({ 0.4f,0.0f,0.6f });
-			m_bDead = true;
-		}
-	};
+	void DeathCheck();
 	bool GetDamageState() { return m_bDamaging; }
 	bool GetDeadState() { return m_bDead; }
 	bool AttackRateCheck();

@@ -1,18 +1,19 @@
 //===============================================================================
 //
-//  C++使った2D(gauge_back.cpp)
+//  C++使った2D(counttimer.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "number.h"
+#include "score.h"
 #include "manager.h"
 
-
+const D3DXVECTOR3 CScore::DEFAULT_POSITION = { SCREEN_WIDTH - MAX_WIDTH,MAX_HEIGHT,0.0f };
+int CScore::SaveScore = 0;
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CNumber::CNumber(int nPriority) :CObject2D(nPriority),m_nNum(0)
+CScore::CScore() : m_Score(0)
 {
 
 }
@@ -20,7 +21,7 @@ CNumber::CNumber(int nPriority) :CObject2D(nPriority),m_nNum(0)
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CNumber::~CNumber()
+CScore::~CScore()
 {
 
 }
@@ -28,46 +29,71 @@ CNumber::~CNumber()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CNumber::Init()
+void CScore::Init()
 {
-	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\number000.png");
-	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 10, 1);
-
-	CObject::SetType(TYPE_2D_UI);
-	CObject2D::Init();
+	D3DXVECTOR3 pos = DEFAULT_POSITION;
+	for (int i = 0; i < MAX_DIGIT; i++)
+	{
+		m_number[i] = CNumber::Create(pos, MAX_HEIGHT, MAX_WIDTH);
+		pos.x -= MAX_WIDTH / 1.5f;
+	}
 }
 
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CNumber::Uninit()
+void CScore::Uninit()
 {
-	CObject2D::Uninit();
+	for (int i = 0; i < MAX_DIGIT; i++)
+	{
+		m_number[i]->Uninit();
+	}
 }
 
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CNumber::Update()
+void CScore::Update()
 {
-	CObject2D::Update();
+	for (int i = 0; i < MAX_DIGIT; i++)
+	{
+		m_number[i]->Update();
+	}
 }
 
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CNumber::Draw()
+void CScore::Draw()
 {
-	CObject2D::Draw();
+	for (int i = 0; i < MAX_DIGIT; i++)
+	{
+		m_number[i]->Uninit();
+	}
 }
 
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CNumber* CNumber::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
+CScore* CScore::Create()
 {
-	CNumber* number = new CNumber;
-	number->SetPolygonParam(pos, fHeight, fWidth, { 1.0f,1.0f,1.0f,1.0f });
+	CScore* number = new CScore;
 	number->Init();
 	return number;
+}
+
+//==========================================================================================
+//数値の各桁の数字を抜き出す
+//==========================================================================================
+void CScore::GetLastNum()
+{
+	int nType = 1;
+	int nValue = m_Score;
+	int Num = 0;
+	for (int i = 0; i < MAX_DIGIT; i++)
+	{
+		nType *= 10;
+		Num = (nValue % nType * 10) / nType;
+		m_number[i]->SetNum(Num);
+	}
 }

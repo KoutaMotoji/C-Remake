@@ -267,6 +267,9 @@
     <ClCompile Include="shadow.cpp">
       <Filter>ソース ファイル\3D\Model</Filter>
     </ClCompile>
+    <ClCompile Include="score.cpp">
+      <Filter>ソース ファイル\2D\PlayerUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -433,6 +436,9 @@
     </ClInclude>
     <ClInclude Include="shadow.h">
       <Filter>ヘッダー ファイル\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="score.h">
+      <Filter>ヘッダー ファイル\2D\PlayerUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

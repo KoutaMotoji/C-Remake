@@ -105,6 +105,8 @@ private:
 	void SetNextKey();
 	bool MotionBlending();
 
+	void TransformSound();
+
 	enum
 	{
 		MOTION_JET_NUTO = 0,

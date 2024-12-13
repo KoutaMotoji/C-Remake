@@ -15,7 +15,6 @@
 #include "mesh_ground.h"
 #include "manager.h"
 #include "game.h"
-#include <random>
 
 namespace BulletOption {
 	//各弾の発射地点の位置
@@ -169,9 +168,9 @@ void CBossTerra::Update()
 
 	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z * 1.135f;
 	float disPos = pos.z - Playerpos.z;
-	if (disPos < 2500)
+	if (disPos < 1500)
 	{
-		m_move.z += 3000;
+		m_move.z += 2500;
 	}
 	CObjectX::AddPos(m_move);
 
@@ -262,6 +261,21 @@ bool CBossTerra::AttackRateCheck()
 	++m_nAttackFrame;
 	return false;
 }
+
+void CBossTerra::DeathCheck() 
+{
+	if (m_nLife <= 0 && !m_bDead)
+	{
+		CObjectX::AddRot({ 0.4f,0.0f,0.6f });
+		m_bDead = true;
+		CScene* pScene = CManager::GetInstance()->GetScene();
+		if (pScene->GetSceneMode() == CScene::MODE_GAME)
+		{
+			CGame* pGame = dynamic_cast<CGame*>(pScene);
+			pGame->GetScore()->AddScore(5000);
+		}
+	}
+};
 
 //==========================================================================================
 //弾の発射を設定
@@ -482,3 +496,4 @@ void CBossEnemySpawner::SetEnemy()
 	CObject::Release();
 	return;
 }
+

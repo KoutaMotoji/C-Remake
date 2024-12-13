@@ -17,6 +17,7 @@
 #include "game.h"
 #include "collision.h"
 
+
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
@@ -414,12 +415,17 @@ void CPlayerX::SetNextKey()
 	{
 		++m_CurKey;
 		m_NowFrame = 0;
+		if (m_CurMotion == MOTION_TRANS_JET_TO_ROBO ||
+			m_CurMotion == MOTION_TRANS_ROBO_TO_JET)
+		{
+			TransformSound();
+		}
 		if (m_CurKey >= m_aMotion[nNowMotion].nKeyNum)
 		{
 			if (!m_aMotion[nNowMotion].bLoop)
 			{	
-				if (m_CurMotion == MOTION_TRANS_JET_TO_ROBO||
-					m_CurMotion == MOTION_TRANS_ROBO_TO_JET||
+				if (m_CurMotion == MOTION_TRANS_JET_TO_ROBO ||
+					m_CurMotion == MOTION_TRANS_ROBO_TO_JET ||
 					m_CurMotion == MOTION_ROBO_SHOT || 
 					m_CurMotion == MOTION_ROBO_SLASH)
 				{
@@ -774,6 +780,26 @@ void CPlayerX::MotionDataLoad()
 	}
 }
 
+void CPlayerX::TransformSound()
+{
+	std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+	std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+	std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
+	switch (rand_num(mt))
+	{
+	case 0:
+		CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_TRANSFORM1);
+		break;
+	case 1:
+		CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_TRANSFORM2);
+		break;
+	case 2:
+		CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_TRANSFORM3);
+		break;
+	}
+}
+
+
 void CPlayerX::ReticleController()
 {
 	D3DXVECTOR2 ReticleMove = CManager::GetInstance()->GetJoypad()->GetJoyStickVecR();
@@ -937,6 +963,12 @@ void CPlayerX::GetItem()
 							if (!pTest->GetItemUse())
 							{
 								CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_ITEM);
+								CScene* pScene = CManager::GetInstance()->GetScene();
+								if (pScene->GetSceneMode() == CScene::MODE_GAME)
+								{
+									CGame* pGame = dynamic_cast<CGame*>(pScene);
+									pGame->GetScore()->AddScore(50);
+								}
 							}
 							pTest->GotThisItem();
 						}

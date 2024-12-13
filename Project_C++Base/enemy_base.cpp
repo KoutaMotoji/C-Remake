@@ -121,6 +121,12 @@ void CEnemyBase::Damaged()
 	{
 		m_pShadow->Release();
 	}
+	CScene* pScene = CManager::GetInstance()->GetScene();
+	if (pScene->GetSceneMode() == CScene::MODE_GAME)
+	{
+		CGame* pGame = dynamic_cast<CGame*>(pScene);
+		pGame->GetScore()->AddScore(200);
+	}
 	Release();
 	return;
 }

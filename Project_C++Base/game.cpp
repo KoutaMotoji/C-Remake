@@ -23,17 +23,13 @@
 
 #include "playerX.h"
 
-#include <random>
-
-const int CGame::BG_OBJ_CNT = 40;
-
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CGame::CGame() : m_obs(nullptr)
+CGame::CGame()
 {
-
+	m_Score = nullptr;
 }
 
 //==========================================================================================
@@ -59,7 +55,8 @@ HRESULT CGame::Init()
 	CMeshGround::Create({ 0.0f,-1000.0f,0.0f });
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 });
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 });
-
+	m_Score = CScore::Create();
+	m_Score->ResetScore();
 	CMapEdit::SetLoadMap();
 	MakeRandTree();
 
@@ -77,7 +74,12 @@ void CGame::Uninit()
 {
 	CFog::FinishFog();
 	CPlayerObserver::GetInstance()->PlayerObsDestroy();
-
+	if (m_Score != nullptr)
+	{
+		m_Score->Uninit();
+		delete m_Score;
+		m_Score = nullptr;
+	}
 	CScene::Uninit();
 }
 

@@ -8,6 +8,7 @@
 #define _GAME_H_
 
 #include "scene.h"
+#include "score.h"
 #include "mesh_obstacle.h"
 
 constexpr int MAX_TREESET_NUM = 260;
@@ -22,12 +23,11 @@ public:
 	void Update()override;
 	void Draw()override;
 
+	CScore* GetScore() { return m_Score; }
 private:
 	void MakeRandTree();
 
-	static const int BG_OBJ_CNT;
-	CMeshObstacle* m_obs;
-
+	CScore* m_Score;
 };
 
 #endif

@@ -96,12 +96,12 @@ void CTitle::Update()
 		{
 			CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f, 0.0f, -300.0f }, { 0.0f, 30.0f, 0.0f }, AnimPoint::SECTION_ZOOM_PLAYER);
 			m_bNowAnim = true;
-			//CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_TITLESE_ENTER);
+			CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_TITLESE_ENTER);
 			CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_TITLESE_OPEN);
 
 			CTAnimBorder::Create(0);
 			CTAnimBorder::Create(1);
-			CMoveButton::Create({ SCREEN_WIDTH - 120.0f,SCREEN_HEIGHT - 60.0f,0.0f });
+			CMoveButton::Create({ SCREEN_WIDTH - 80.0f,SCREEN_HEIGHT - 40.0f,0.0f });
 		}
 	}
 	else

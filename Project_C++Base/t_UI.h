@@ -12,8 +12,8 @@
 
 static constexpr float SWAP_SPEED = 0.02f;
 static constexpr int PUSHING_TIME = 60;
-static constexpr float PushGaugeWidth = 240.0f;
-static constexpr float PushGaugeHeight = 120.0f;
+static constexpr float PushGaugeWidth = 160.0f;
+static constexpr float PushGaugeHeight = PushGaugeWidth * 0.5f;
 
 class CTitleUI :public CObject2D
 {
