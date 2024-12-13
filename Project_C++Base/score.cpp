@@ -7,7 +7,7 @@
 #include "score.h"
 #include "manager.h"
 
-const D3DXVECTOR3 CScore::DEFAULT_POSITION = { SCREEN_WIDTH - MAX_WIDTH,MAX_HEIGHT,0.0f };
+const D3DXVECTOR3 CScore::DEFAULT_POSITION = { SCREEN_WIDTH - MAX_WIDTH / 2,MAX_HEIGHT,0.0f };
 int CScore::SaveScore = 0;
 
 //==========================================================================================
@@ -35,7 +35,7 @@ void CScore::Init()
 	for (int i = 0; i < MAX_DIGIT; i++)
 	{
 		m_number[i] = CNumber::Create(pos, MAX_HEIGHT, MAX_WIDTH);
-		pos.x -= MAX_WIDTH / 1.5f;
+		pos.x -= MAX_WIDTH / 1.75f;
 	}
 }
 
@@ -68,7 +68,7 @@ void CScore::Draw()
 {
 	for (int i = 0; i < MAX_DIGIT; i++)
 	{
-		m_number[i]->Uninit();
+		m_number[i]->Draw();
 	}
 }
 
