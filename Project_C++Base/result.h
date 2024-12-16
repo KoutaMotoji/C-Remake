@@ -9,6 +9,7 @@
 
 #include "scene.h"
 #include "object2D.h"
+#include "score.h"
 
 class CResult : public CScene
 {
@@ -19,6 +20,8 @@ public:
 	void Uninit()override;
 	void Update()override;
 	void Draw()override;
+private:
+	CScore* m_pScore;
 };
 
 class CResultBG :public CObject2D

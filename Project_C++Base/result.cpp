@@ -33,6 +33,8 @@ HRESULT CResult::Init()
 {
 	CScene::Init();
 	CResultBG::Create();
+	m_pScore = CScore::Create({SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f});
+	m_pScore->LoadLastScore();
 	return S_OK;
 }
 
@@ -41,6 +43,12 @@ HRESULT CResult::Init()
 //==========================================================================================
 void CResult::Uninit()
 {
+	if (m_pScore != nullptr)
+	{
+		m_pScore->Uninit();
+		delete m_pScore;
+		m_pScore = nullptr;
+	}
 	CScene::Uninit();
 }
 

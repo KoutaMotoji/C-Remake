@@ -1,5 +1,5 @@
 //===============================================================================
-//
+// 
 //  C++使った3D(tree_billboard.h)
 //								制作：元地弘汰
 // 
@@ -13,18 +13,18 @@
 namespace {
 	float Poly_Radius = 300.0f;
 }
-constexpr float REPLACEMENT_CHECKDIS = -2000;
-constexpr float REPLACEMENT_SETDIS = 10000;
 
+static constexpr float REPLACEMENT_CHECKDIS = -2000;
+static constexpr float REPLACEMENT_SETDIS = 10000;
 
 class CTreeBillboard :public CBillboard
 {
 public:
-	CTreeBillboard(int nPriority = 5) ;				//コンストラクタ
-	~CTreeBillboard()override;		//デストラクタ
-	void Init()override;		//初期化
-	void Uninit()override;		//終了
-	void Update()override;		//更新
+	CTreeBillboard(int nPriority = 2) ;	//コンストラクタ
+	~CTreeBillboard()override;			//デストラクタ
+	void Init()override;				//初期化
+	void Uninit()override;				//終了
+	void Update()override;				//更新
 	void Draw()override { CBillboard::Draw(); };		//描画
 
 	static CTreeBillboard* Create(D3DXVECTOR3 pos,int TexIdx);

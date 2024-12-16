@@ -56,8 +56,8 @@ HRESULT CGame::Init()
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 });
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 });
 	m_Score = CScore::Create();
-	//m_Score->ResetScore();
-	m_Score->LoadLastScore();
+	m_Score->ResetScore();
+	//m_Score->LoadLastScore();
 	CMapEdit::SetLoadMap();
 	MakeRandTree();
 

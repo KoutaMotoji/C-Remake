@@ -163,7 +163,6 @@ void CPlayerX::Draw()
 		&m_quat);
 	m_mtxRot = mtxRot;		//回転マトリックスを保存
 
-
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
 

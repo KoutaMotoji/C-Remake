@@ -20,13 +20,16 @@ public:
 	CScore();		//コンストラクタ
 	~CScore();		//デストラクタ
 	void Init();		//初期化
+	void Init(D3DXVECTOR3 pos);		//初期化
+
 	void Uninit();		//終了
 	void Update();		//更新
 	void Draw();		//描画
 	static CScore* Create();
-	
+	static CScore* Create(D3DXVECTOR3 pos);
+
 	void LoadLastScore() { m_Score = SaveScore; GetLastNum(); }
-	void ResetScore() { m_Score += 0; GetLastNum(); };
+	void ResetScore() { m_Score += 0; GetLastNum(); SaveScore = m_Score;};
 	void SetScore(int nScore) { m_Score = nScore; GetLastNum(); SaveScore = m_Score; }
 	void AddScore(int nScore) { m_Score += nScore; GetLastNum(); SaveScore = m_Score;}
 private:
