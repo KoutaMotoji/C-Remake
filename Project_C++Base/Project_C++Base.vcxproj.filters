@@ -270,6 +270,9 @@
     <ClCompile Include="score.cpp">
       <Filter>ソース ファイル\2D\PlayerUI</Filter>
     </ClCompile>
+    <ClCompile Include="eff_bomb.cpp">
+      <Filter>ソース ファイル\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -439,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="score.h">
       <Filter>ヘッダー ファイル\2D\PlayerUI</Filter>
+    </ClInclude>
+    <ClInclude Include="eff_bomb.h">
+      <Filter>ヘッダー ファイル\2D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

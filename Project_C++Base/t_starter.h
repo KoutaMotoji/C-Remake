@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  C++使った2D(playerX.h)
+//  C++使った2D(t_starter.h)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -14,11 +14,11 @@
 #include "manager.h"
 
 
-#define MAX_MODELPARTS	(11)
+static constexpr int MAX_MODELPARTS = 11;
 
-#define MAX_PARTS	(11)
-#define MAX_KEYSET	(11)
-#define MAX_MOTION	(3)
+static constexpr int MAX_PARTS = 11;
+static constexpr int MAX_KEYSET =11;
+static constexpr int MAX_MOTION = 3;
 
 class CStarter :public CObject
 {

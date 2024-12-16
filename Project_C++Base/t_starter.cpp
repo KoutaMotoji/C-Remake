@@ -265,9 +265,7 @@ void CStarter::MotionDataLoad()
 	char LoadData[128];
 	char ModelPath[128];
 
-	int nNumModel = 0;
 	FILE* pFile;
-	int nCnt = 0;
 
 	int nMotionCnt = 0;
 	int nKeySet = 0;

@@ -200,7 +200,7 @@ bool CBullet3D::MeshCollision()
 
 					CEnemyBase* pTest = dynamic_cast<CEnemyBase*>(pObj);
 					if (pTest != nullptr) {
-						D3DXVECTOR3 dirM = D3DXVECTOR3(50.0f, 100.0f, 100.0f);
+						D3DXVECTOR3 dirM = D3DXVECTOR3(100.0f, 100.0f, 100.0f);
 
 						if (pCollision->SphireCollosion(CBillboard::GetPos(), pTest->GetPos(), dirM, pTest->GetModelMax()))
 						{

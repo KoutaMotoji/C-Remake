@@ -11,8 +11,8 @@
 #include "number.h"
 
 static constexpr int MAX_DIGIT = 8;
-static constexpr float MAX_HEIGHT = 50.0f;
-static constexpr float MAX_WIDTH = 80.0f;
+static constexpr float MAX_HEIGHT = 40.0f;
+static constexpr float MAX_WIDTH = 70.0f;
 
 class CScore
 {

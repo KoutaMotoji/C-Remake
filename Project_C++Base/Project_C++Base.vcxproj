@@ -155,6 +155,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="EDIT_particle.h" />
+    <ClInclude Include="eff_bomb.h" />
     <ClInclude Include="eff_explosion.h" />
     <ClInclude Include="enemy_base.h" />
     <ClInclude Include="fade.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="EDIT_particle.cpp" />
+    <ClCompile Include="eff_bomb.cpp" />
     <ClCompile Include="eff_explosion.cpp" />
     <ClCompile Include="enemy_base.cpp" />
     <ClCompile Include="fade.cpp" />

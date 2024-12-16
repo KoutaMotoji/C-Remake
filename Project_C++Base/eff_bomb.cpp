@@ -1,25 +1,25 @@
 //===============================================================================
 //
-//  C++使った2D(eff_explosion.cpp)
+//  C++使った2D(eff_bomb.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "eff_explosion.h"
+#include "eff_bomb.h"
 #include "manager.h"
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CEffExplosion::CEffExplosion(int nPriority) :CBillboard(nPriority) , m_nTime(0)
+CEffBomb::CEffBomb(int nPriority) :CBillboard(nPriority), m_nTime(0)
 {
-	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\bomb000.png");
-	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 8,2 });
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\bomb001.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 5,3 });
 }
 
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CEffExplosion::~CEffExplosion()
+CEffBomb::~CEffBomb()
 {
 
 }
@@ -27,7 +27,7 @@ CEffExplosion::~CEffExplosion()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CEffExplosion::Init()
+void CEffBomb::Init()
 {
 	CObject::SetType(TYPE_BILLBOARD);
 	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOMB);
@@ -37,7 +37,7 @@ void CEffExplosion::Init()
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CEffExplosion::Uninit()
+void CEffBomb::Uninit()
 {
 	CBillboard::Uninit();
 }
@@ -45,7 +45,7 @@ void CEffExplosion::Uninit()
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CEffExplosion::Update()
+void CEffBomb::Update()
 {
 	if (m_nTime > 2)
 	{
@@ -53,17 +53,17 @@ void CEffExplosion::Update()
 
 		m_nTime = 0;
 
-		if (Anim.x >= 7)
+		if (Anim.x >= 4)
 		{
-			CBillboard::AddAnim({ -8,1 });
+			CBillboard::AddAnim({ -5,1 });
 		}
-		if (Anim.y >= 1 && Anim.x >= 7)
+		if (Anim.y >= 2 && Anim.x >= 4)
 		{
 			Release();
 			return;
 		}
-		if(Anim.x < 8&&
-			Anim.y <= 1)
+		if (Anim.x < 5 &&
+			Anim.y <= 2)
 		{
 			CBillboard::AddAnim({ 1,0 });
 		}
@@ -79,7 +79,7 @@ void CEffExplosion::Update()
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CEffExplosion::Draw()
+void CEffBomb::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 
@@ -98,9 +98,9 @@ void CEffExplosion::Draw()
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CEffExplosion* CEffExplosion::Create(D3DXVECTOR3 pos)
+CEffBomb* CEffBomb::Create(D3DXVECTOR3 pos)
 {
-	CEffExplosion* Effect = new CEffExplosion;
+	CEffBomb* Effect = new CEffBomb;
 
 	Effect->SetPolygonParam(pos, 60.0f, 60.0f);
 	Effect->Init();
@@ -111,9 +111,9 @@ CEffExplosion* CEffExplosion::Create(D3DXVECTOR3 pos)
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CEffExplosion* CEffExplosion::Create(D3DXVECTOR3 pos,float Radius)
+CEffBomb* CEffBomb::Create(D3DXVECTOR3 pos, float Radius)
 {
-	CEffExplosion* Effect = new CEffExplosion;
+	CEffBomb* Effect = new CEffBomb;
 
 	Effect->SetPolygonParam(pos, Radius, Radius);
 	Effect->Init();

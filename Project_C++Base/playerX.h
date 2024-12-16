@@ -48,7 +48,6 @@ public:
 
 	D3DXVECTOR3 GetPos() { return m_pos; };
 	D3DXVECTOR3 GetMove() { return m_move; };
-
 private:
 	D3DXVECTOR3 m_pos,m_rot,m_size;	//座標・回転・大きさ
 	D3DXVECTOR3 m_move;				//移動量
@@ -59,7 +58,7 @@ private:
 	void FloorCollision();			//床との当たり判定
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
-	void DamageAdd(int nDmg) { m_nLife -= nDmg; DeadCheck(); CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_EXPLOAD); }	//ダメージ加算、生存確認
+	void DamageAdd(int nDmg);	//ダメージ加算、生存確認
 	D3DXVECTOR3 LockOnEnemy();						//敵のロックオン
 	void AttackCollisionToEnemy();
 

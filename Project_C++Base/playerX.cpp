@@ -14,6 +14,7 @@
 #include "mesh_ground.h" 
 #include "mesh_obstacle.h"
 #include "mesh_cylinder.h"
+#include "eff_bomb.h"
 #include "game.h"
 #include "collision.h"
 
@@ -1168,3 +1169,14 @@ bool CPlayerX::CheckToObs(CEnemyBase* pEnemy)
 	}
 	return true;
 }
+
+//==========================================================================================
+// ダメージ加算、生存確認、ヒット音ならして爆発エフェクト生成
+//==========================================================================================
+void CPlayerX::DamageAdd(int nDmg)
+{ 
+	m_nLife -= nDmg;
+	DeadCheck(); 
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_EXPLOAD); 
+	CEffBomb::Create(m_pos); 
+}	

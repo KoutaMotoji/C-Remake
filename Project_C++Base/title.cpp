@@ -65,11 +65,10 @@ HRESULT CTitle::Init()
 	CSkyBg::Create({ 0.0f,-200.0f,0.0f });
 
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(600.0f);
-	CFog::SetFogLinear(2000.0f, 15000.0f);
+	CFog::SetFogLinear(2000.0f, 14000.0f);
 
 	CTitleUI::Create(LogoPos, 0, LogoSize);
 	CTitleUI::Create(ButtonPos, 1, ButtonSize);
-
 
 	return S_OK;
 }

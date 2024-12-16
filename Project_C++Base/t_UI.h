@@ -18,12 +18,12 @@ static constexpr float PushGaugeHeight = PushGaugeWidth * 0.125f;
 class CTitleUI :public CObject2D
 {
 public:
-	CTitleUI(int nPriority = SET_PRIORITY - 1);					//コンストラクタ
-	~CTitleUI()override;			//デストラクタ
-	void Init()override;		//初期化
-	void Uninit()override;		//終了
-	void Update()override;		//更新
-	void Draw()override;		//描画
+	CTitleUI(int nPriority = SET_PRIORITY - 1);		//コンストラクタ
+	~CTitleUI()override;							//デストラクタ
+	void Init()override;							//初期化
+	void Uninit()override;							//終了
+	void Update()override;							//更新
+	void Draw()override;							//描画
 
 	static CTitleUI* Create(D3DXVECTOR3 pos, int Type,D3DXVECTOR2 PolySize);
 private:
