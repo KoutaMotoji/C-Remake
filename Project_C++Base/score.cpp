@@ -112,7 +112,7 @@ void CScore::GetLastNum()
 	int nType = 1;
 	int nValue = m_Score;
 	int Num = 0;
-	for (int i = 0; i < MAX_DIGIT; i++)
+	for (int i = 0; i < MAX_DIGIT; ++i)
 	{
 		nType *= 10;
 		Num = (nValue % nType * 10) / nType;

@@ -23,6 +23,8 @@ public:
 	void Draw()override;		//描画
 
 	static CShadow* Create(D3DXVECTOR3 pos);
+	static CShadow* Create(D3DXVECTOR3 pos, float radius);	//サイズ指定用オーバーロード
+
 	void SetShadowGround(D3DXVECTOR3 pos);
 
 private:

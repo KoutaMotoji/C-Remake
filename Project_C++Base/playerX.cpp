@@ -870,7 +870,7 @@ bool CPlayerX::TestUseMeshCollision()
 	float fHitV;
 	LPD3DXMESH pMesh = nullptr;
 	for (int j = 0; j < SET_PRIORITY; ++j) {
-		for (int i = 0; i < MAX_OBJECT; i++) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
 			CObject* pObj = CObject::GetObjects(j, i);
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();

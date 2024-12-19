@@ -105,7 +105,7 @@ void CTitlePlayer::Draw()
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtxWorld);
-	for (int i = 0; i < MAX_MODELPARTS; i++)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i]->Draw();	
 	}

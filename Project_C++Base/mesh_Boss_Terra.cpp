@@ -47,7 +47,6 @@ CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamagi
 //==========================================================================================
 CBossTerra::~CBossTerra()
 {
-
 }
 
 //==========================================================================================
@@ -57,6 +56,8 @@ void CBossTerra::Init()
 {
 	CObject::SetType(TYPE_3D_BOSSTERRA);
 	m_Gauge = CGaugeBoss::Create(CObjectX::GetPos(), { 700,50 }, m_nLife);
+	m_pShadow = CShadow::Create(CObjectX::GetPos(),220);
+
 	CObjectX::Init();
 }
 
@@ -89,6 +90,8 @@ void CBossTerra::Update()
 {
 	D3DXVECTOR3 pos = CObjectX::GetPos();
 	D3DXVECTOR3 Playerpos = CPlayerObserver::GetInstance()->GetPlayerPos();
+	m_pShadow->SetShadowGround(pos);
+
 	if (CObjectX::GetPos().x > 500.0f ||
 		CObjectX::GetPos().x < -500.0f)
 	{
@@ -222,6 +225,11 @@ void CBossTerra::DeathAnim() {
 		{
 			m_Gauge->Release();
 			m_Gauge = nullptr;
+			if (m_pShadow != nullptr)
+			{
+				m_pShadow->Release();
+				m_pShadow = nullptr;
+			}
 			CObject::Release();
 			CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_RESULT);
 			return;
@@ -320,8 +328,8 @@ void CBossTerra::SetStatue()
 {
 	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_SPAWN);
 
-	std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
-	std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+	std::random_device rnd;			// 非決定的な乱数生成器でシード生成機を生成
+	std::mt19937 mt(rnd());			//  メルセンヌツイスターの32ビット版、引数は初期シード
 	std::uniform_int_distribution<> rand_x(-2500, 2500);	 // [-3000, 3000] 範囲の一様乱数
 	std::uniform_int_distribution<> rand_y(2000, 5000);		 // [2000, 5000] 範囲の一様乱数
 
@@ -363,7 +371,7 @@ void CBossStatue::SetYPos()
 	float fHitV;
 	LPD3DXMESH pMesh = nullptr;
 	for (int j = 0; j < SET_PRIORITY; ++j) {
-		for (int i = 0; i < MAX_OBJECT; i++) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
 			CObject* pObj = CObject::GetObjects(j, i);
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();

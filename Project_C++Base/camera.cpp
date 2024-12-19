@@ -79,7 +79,7 @@ void CCamera::SetCamera(void)
 	D3DXVECTOR3 adjust = { 0.0f,0.0f,0.0f };
 	if (m_nShakeFlame > 0)
 	{
-		m_nShakeFlame--;
+		--m_nShakeFlame;
 		//乱数生成
 		std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 		std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
@@ -165,7 +165,6 @@ void CCamera::UpdateFreeCam()
 	if (m_DestFrame <= m_NowFrame)
 	{
 		--m_NowFrame;
-		//m_bFreeCam = false;
 	}
 }
 

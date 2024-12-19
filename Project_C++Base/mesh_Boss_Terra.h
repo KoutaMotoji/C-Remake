@@ -12,6 +12,7 @@
 #include "gauge_Boss_Life.h"
 #include "mesh_obstacle.h"
 #include "boss_reticle.h"
+#include "shadow.h"
 
 static constexpr float WORLD_WALL_X = 1000;
 static constexpr float WORLD_WALL_Y = 600;
@@ -49,6 +50,9 @@ private:
 	int m_nDeadFrame;
 	int m_nAttackFrame;
 	bool m_bDamaging;
+
+	CShadow* m_pShadow;
+
 };
 
 class CBossStatue : public CMeshObstacle
