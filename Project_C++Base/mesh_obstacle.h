@@ -22,7 +22,7 @@ class CMeshObstacle :public CObjectX
 public:
 	static int GetMaxType()	{	return MAX_MODELTYPE;	}
 
-	CMeshObstacle();				//コンストラクタ
+	CMeshObstacle(int nPriority = 1);				//コンストラクタ
 	~CMeshObstacle()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

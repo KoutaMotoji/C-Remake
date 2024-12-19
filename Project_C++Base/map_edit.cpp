@@ -27,7 +27,6 @@ namespace
 		"ボス出現ポイント",
 		"アイテム出現ポイント",
 		"通常敵出現ポイント",
-
 	};
 
 	const char* Gizmodraw[2] = {
@@ -78,7 +77,7 @@ HRESULT CMapEdit::Init()
 	m_Gizmo = CGizmo::Create(m_thisPos);
 	SelectObject();
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 16; ++i)
 	{
 		CMeshGround::Create({ 0.0f,-1000.0f,(float)(5940 * 2 * i )});
 	}

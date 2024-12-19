@@ -14,6 +14,19 @@
 #include "game.h"
 
 namespace {
+	enum
+	{
+		OBS_TYPE_GATE = 0,
+		OBS_TYPE_STATUE,
+		OBS_TYPE_BUILDING0,
+		OBS_TYPE_BUILDING1,
+		OBS_TYPE_TOWER,
+		OBS_TYPE_BRIGHE,
+		OBS_TYPE_PAIL,
+		OBS_TYPE_BOSS_SPAWNER,
+		OBS_TYPE_ITEM_EMITTER,
+		OBS_TYPE_ENEMY_SPAWNER,
+	};
 	const char* modelName[MAX_MODELTYPE]{
 		"data\\MODEL\\gate000.x",
 		"data\\MODEL\\statue000.x",
@@ -31,7 +44,7 @@ namespace {
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CMeshObstacle::CMeshObstacle()
+CMeshObstacle::CMeshObstacle(int nPriority) :CObjectX(nPriority)
 {
 
 }
@@ -137,13 +150,13 @@ CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTO
 
 	switch (Type)
 	{
-	case 7:
+	case OBS_TYPE_BOSS_SPAWNER:
 		enemy = new CBossEmitter;
 		break;
-	case 8:
+	case OBS_TYPE_ITEM_EMITTER:
 		enemy = new CScoreItemEmitter;
 		break;
-	case 9:
+	case OBS_TYPE_ENEMY_SPAWNER:
 		enemy = new CEnemyEmitter;
 		break;
 	default:
@@ -162,7 +175,6 @@ CMeshObstacle* CMeshObstacle::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTO
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //特殊オブジェ配置用設定
-
 
 //初期化オーバーロード
 void CScoreItemEmitter::Init()

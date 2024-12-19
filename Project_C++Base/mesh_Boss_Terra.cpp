@@ -496,4 +496,3 @@ void CBossEnemySpawner::SetEnemy()
 	CObject::Release();
 	return;
 }
-

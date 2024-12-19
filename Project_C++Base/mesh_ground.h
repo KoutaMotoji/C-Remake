@@ -13,7 +13,7 @@
 class CMeshGround :public CObjectX
 {
 public:
-	CMeshGround();				//コンストラクタ
+	CMeshGround(int nPriority = 0);				//コンストラクタ
 	~CMeshGround()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

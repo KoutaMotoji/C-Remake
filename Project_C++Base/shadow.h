@@ -15,7 +15,7 @@ static constexpr float DEF_RADIUS = 70.0f;
 class CShadow :public CObject3D
 {
 public:
-	CShadow() {}				//コンストラクタ
+	CShadow(int nPriority = 1) :CObject3D(nPriority),m_fValueRot(0){}				//コンストラクタ
 	~CShadow()override = default;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override { CObject3D::Uninit(); }		//終了
