@@ -361,3 +361,97 @@ void CModelParts::Draw(float alpha)
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 }
+
+//==========================================================================================
+//描画処理(オーバーロード)
+//==========================================================================================
+void CModelParts::Draw(D3DXCOLOR col)
+{
+
+
+
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+
+	//アルファテスト設定
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
+	D3DMATERIAL9 matDef;
+	D3DXMATERIAL* pMat;
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);
+
+	//大きさを反映
+	D3DXMatrixScaling(&mtxSize,
+		m_size.y,
+		m_size.x,
+		m_size.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxSize);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot,
+		m_rot.y,
+		m_rot.x,
+		m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxRot);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans,
+		m_pos.x,
+		m_pos.y,
+		m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxTrans);
+	//親の行列を取得する
+	D3DXMATRIX mtxParent;
+	if (m_pParent != nullptr)
+	{
+		//親のワールド変換行列を取得
+		mtxParent = m_pParent->GetWorldMatrix();
+	}
+	else
+	{
+		//最新のワールドマトリックスを取得
+		pDevice->GetTransform(D3DTS_WORLD, &mtxParent);
+	}
+	//ワールド行列を親の行列に掛ける
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxParent);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD,
+		&m_mtxWorld);
+	//現在のマテリアルを取得
+	pDevice->GetMaterial(&matDef);
+	//マテリアルデータへのポインタを取得
+	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
+	{
+		D3DMATERIAL9 pMatCopy = (pMat[nCntMat].MatD3D);
+		pMatCopy.Diffuse = col;
+		//マテリアルの設定
+		pDevice->SetMaterial(&pMatCopy);
+
+		//テクスチャの設定
+		pDevice->SetTexture(0, m_pTextureObjectX[nCntMat]);
+
+		//モデル(パーツ)の描画
+		m_pMesh->DrawSubset(nCntMat);
+	}
+	//保存していたマテリアルを戻す
+	pDevice->SetMaterial(&matDef);
+
+	//通常の合成に戻す設定
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+}

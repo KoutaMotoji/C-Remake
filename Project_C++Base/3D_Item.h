@@ -15,8 +15,8 @@ static constexpr int MIN_CNT = 40;
 class C3DItem :public CObjectX
 {
 public:
-	C3DItem() :m_nLestTime(0), m_bGot(false) {};				//コンストラクタ
-	~C3DItem()override = default;		//デストラクタ
+	C3DItem() :m_nLestTime(0), m_bGot(false) {};	//コンストラクタ
+	~C3DItem()override = default;					//デストラクタ
 
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

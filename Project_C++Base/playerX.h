@@ -116,7 +116,6 @@ private:
 		MOTION_ROBO_SHOT,
 		MOTION_ROBO_SLASH
 	};
-	LPD3DXMESH m_pMesh;
 
 	bool m_bBlend;
 	bool m_bMotion;

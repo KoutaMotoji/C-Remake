@@ -70,6 +70,10 @@ void CPlayerX::Update()
 {
 	D3DXVECTOR3 CameraPos;
 	m_pShadow->SetShadowGround(m_pos);
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_P) == true)
+	{
+		m_pos = { m_pos.x,m_pos.y,170000.0f };
+	}
 	ReticleController();
 	if (!MotionBlending())
 	{

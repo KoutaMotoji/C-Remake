@@ -20,6 +20,7 @@ public:
 	void Uninit();
 	void Draw();
 	void Draw(float alpha);
+	void Draw(D3DXCOLOR col);
 
 	static CModelParts* Create(D3DXVECTOR3 pos,const char* apFileName);
 	void SetParent(CModelParts* pParent);
@@ -46,7 +47,7 @@ public:
 	D3DXVECTOR3 GetModelMax() { return m_vtxMaxModel; }		//最小値取得
 
 	D3DXVECTOR3* GetRadius() { return &m_radius; };			//半径取得
-
+	LPD3DXMESH GetMesh() { return m_pMesh; }
 private:
 	//Xファイル管理に必要なデータ
 	LPDIRECT3DTEXTURE9 m_pTextureObjectX[MAX_MODEL_TEX];	//モデルに貼り付けるテクスチャ管理

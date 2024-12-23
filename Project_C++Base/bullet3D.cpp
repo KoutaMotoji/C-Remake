@@ -179,20 +179,39 @@ bool CBullet3D::MeshCollision()
 
 					CBossTerra* pTest = dynamic_cast<CBossTerra*>(pObj);
 					if (pTest != nullptr) {
-						pMesh = pTest->GetMesh();
-						D3DXVECTOR3 pos = CBillboard::GetPos();
-						D3DXVec3Normalize(&dir, &m_move);
-
-						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						float ChedkDis = 20.0f;
-						
-						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
+						for (int i = 0; i < 19; ++i)
 						{
-							if (!pTest->GetDamageState() && !pTest->GetDeadState())
+							pMesh = pTest->GetBossMesh(i);
+							D3DXVECTOR3 pos = CBillboard::GetPos();
+							D3DXVec3Normalize(&dir, &m_move);
+							BOOL  bIsHit = false;
+							float fLandDistance;
+							float ChedkDis = 20.0f;
+							D3DXMATRIX mWorld;
+							D3DXVECTOR3 vStartl;
+							D3DXVECTOR3 vDirl;
+							D3DXVECTOR3 vEnd;
+
+							vEnd = pos + dir;
+							D3DXMATRIX objMtx = pTest->GetBossMtx(i);
+
+							// レイを当てる対象のマトリックスの逆行列を取得し、始点と終点の座標に対して座標変換を行い、位置・回転・大きさの補間をする
+							D3DXMatrixInverse(&mWorld, NULL, &objMtx);
+							D3DXVec3TransformCoord(&vStartl, &pos, &mWorld);
+							D3DXVec3TransformCoord(&vEnd, &vEnd, &mWorld);
+
+							vDirl = vEnd - vStartl;
+
+							D3DXIntersect(pMesh, &vStartl, &vDirl, &bIsHit, nullptr, nullptr, nullptr, &fLandDistance, nullptr, nullptr);
+
+							if (bIsHit && fLandDistance < ChedkDis)
 							{
-								pTest->Damaged(40);
+								if (!pTest->GetDamageState() && !pTest->GetDeadState())
+								{
+									pTest->Damaged(40);
+								}
+								return true;
 							}
-							return true;
 						}
 					}
 				}

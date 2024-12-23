@@ -36,10 +36,14 @@ namespace BulletOption {
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamaging(false), m_nDamageFrame(0),m_nDeadFrame(0),m_nAttackFrame(0), m_move({0.0f,0.0f,0.0f})
+CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamaging(false), m_nDamageFrame(0),m_nDeadFrame(0),m_nAttackFrame(0), m_move({0.0f,0.0f,0.0f}), m_bBlend(false), m_bMotion(false), m_bTransformed(false)
 {
 	m_Reticle[0] = nullptr;
 	m_Reticle[1] = nullptr;
+	for (int i = 0; i < B_MAX_MODELPARTS; ++i)
+	{
+		m_apModelParts[i] = nullptr;
+	}
 }
 
 //==========================================================================================
@@ -54,11 +58,12 @@ CBossTerra::~CBossTerra()
 //==========================================================================================
 void CBossTerra::Init()
 {
-	CObject::SetType(TYPE_3D_BOSSTERRA);
-	m_Gauge = CGaugeBoss::Create(CObjectX::GetPos(), { 700,50 }, m_nLife);
-	m_pShadow = CShadow::Create(CObjectX::GetPos(),220);
+	MotionInit();
 
-	CObjectX::Init();
+	CObject::SetType(TYPE_3D_BOSSTERRA);
+
+	m_Gauge = CGaugeBoss::Create(m_pos, { 750,50 }, m_nLife);
+	m_pShadow = CShadow::Create(m_pos,270);
 }
 
 //==========================================================================================
@@ -80,7 +85,10 @@ void CBossTerra::Uninit()
 	{
 		m_Gauge->Uninit();
 	}
-	CObjectX::Uninit();
+	for (int i = 0; i < B_MAX_MODELPARTS; ++i)
+	{
+		m_apModelParts[i]->Uninit();
+	}
 }
 
 //==========================================================================================
@@ -88,12 +96,30 @@ void CBossTerra::Uninit()
 //==========================================================================================
 void CBossTerra::Update()
 {
-	D3DXVECTOR3 pos = CObjectX::GetPos();
 	D3DXVECTOR3 Playerpos = CPlayerObserver::GetInstance()->GetPlayerPos();
-	m_pShadow->SetShadowGround(pos);
-
-	if (CObjectX::GetPos().x > 500.0f ||
-		CObjectX::GetPos().x < -500.0f)
+	m_pShadow->SetShadowGround(m_pos);
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_C) == true)
+	{
+		SetNextMotion(MOTION_TRANSFORM);
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_V) == true)
+	{
+		SetNextMotion(MOTION_ROBO_BURST);
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_B) == true)
+	{
+		SetNextMotion(MOTION_ROBO_FUNNEL);
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_N) == true)
+	{
+		SetNextMotion(MOTION_ROBO_SHOOT);
+	}
+	if (!MotionBlending())
+	{
+		SetNextKey();
+	}
+	if (m_pos.x > 500.0f ||
+		m_pos.x < -500.0f)
 	{
 		m_bMove = !m_bMove;
 	}
@@ -101,55 +127,13 @@ void CBossTerra::Update()
 	{
 		if (m_bMove)
 		{
-			CObjectX::AddPos({ 5.0f,0.0f,0.0f });
+			m_pos += { 5.0f,0.0f,0.0f };
 		}
 		else
 		{
-			CObjectX::AddPos({ -5.0f,0.0f,0.0f });
+			m_pos += { -5.0f,0.0f,0.0f };
 		}
-		if (AttackRateCheck())
-		{
-			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
-			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-			std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
-			switch (rand_num(mt))
-			{
-			case 0:
-				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
-
-				m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
-				m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
-				break;
-			case 1:
-				SetStatue();
-				break;
-			case 2:
-				for (int i = 0; i < 5; ++i)
-				{
-					CBossEnemySpawner::Create(pos,i);
-				}
-				break;
-			}
-		}
-
-
-		if (m_Reticle[0] != nullptr &&
-			m_Reticle[1] != nullptr)
-		{
-			m_Reticle[0]->SetPos(Playerpos);
-			m_Reticle[1]->SetPos(Playerpos);
-			if (m_Reticle[0]->GetLifeState() ||
-				m_Reticle[1]->GetLifeState())
-			{
-				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSSHOT);
-				SetBullet(pos, Playerpos);
-
-				m_Reticle[0]->Release();
-				m_Reticle[1]->Release();
-				m_Reticle[0] = nullptr;
-				m_Reticle[1] = nullptr;
-			}
-		}
+		Attack(Playerpos);
 	}
 	
 	if (m_bDamaging)
@@ -160,8 +144,14 @@ void CBossTerra::Update()
 			m_bDamaging = false;
 		}
 	}
-
-	m_Gauge->SetPos({ CObjectX::GetPos().x,CObjectX::GetPos().y + 400.0f ,CObjectX::GetPos().z });
+	if (!m_bTransformed)
+	{
+		m_Gauge->SetPos({ m_pos.x,m_pos.y + 700.0f ,m_pos.z });
+	}
+	else
+	{
+		m_Gauge->SetPos({ m_pos.x,m_pos.y + 1700.0f ,m_pos.z });
+	}
 	DeathCheck();
 	if(m_bDead)
 	{
@@ -169,20 +159,19 @@ void CBossTerra::Update()
 	}
 
 
-	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z * 1.135f;
-	float disPos = pos.z - Playerpos.z;
+	m_move.z = CPlayerObserver::GetInstance()->GetPlayerMove().z * 1.15f;
+	float disPos = m_pos.z - Playerpos.z;
 	if (disPos < 1500)
 	{
 		m_move.z += 2500;
 	}
-	CObjectX::AddPos(m_move);
+
+	m_pos += m_move;
 
 	//移動量を更新
 	m_move.x += (0.0f - m_move.x) * 0.17f;
 	m_move.y += (0.0f - m_move.y) * 0.17f;
 	m_move.z += (0.0f - m_move.z) * 0.17f;
-
-	CObjectX::Update();
 }
 
 
@@ -191,15 +180,55 @@ void CBossTerra::Update()
 //==========================================================================================
 void CBossTerra::Draw()
 {
-	if (m_bDamaging||m_bDead)
+	LPDIRECT3DDEVICE9 pDevice;
+	//デバイスの取得
+	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+	//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
+
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);
+
+	//大きさを反映
+	D3DXMatrixScaling(&mtxSize,
+		m_size.y,
+		m_size.x,
+		m_size.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxSize);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot,
+		m_rot.y,
+		m_rot.x,
+		m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxRot);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans,
+		m_pos.x,
+		m_pos.y,
+		m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxTrans);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD,
+		&m_mtxWorld);
+	for (int i = 0; i < B_MAX_MODELPARTS; ++i)
 	{
-		CObjectX::Draw(BulletOption::DamagingColor);
-	}
-	else
-	{
-		CObjectX::Draw();
+		if (m_bDamaging || m_bDead)
+		{
+			m_apModelParts[i]->Draw(BulletOption::DamagingColor);
+		}
+		else
+		{
+			m_apModelParts[i]->Draw();
+		}
 	}
 }
+
 
 //==========================================================================================
 //生成処理
@@ -208,9 +237,12 @@ CBossTerra* CBossTerra::Create(D3DXVECTOR3 pos)
 {
 	CBossTerra* enemy = new CBossTerra;
 
-	enemy->BindModel("data\\MODEL\\Boss_Terra.x");
-	enemy->SetModelParam(pos);
 	enemy->Init();
+
+	enemy->m_pos = pos;
+	enemy->m_move = { 0.0f,0.0f,0.0f };
+	enemy->m_rot = { 0.0f,0.0f,0.0f };
+	enemy->m_size = { 1.0f,1.0f,1.0f };
 
 	return enemy;
 }
@@ -239,23 +271,23 @@ void CBossTerra::DeathAnim() {
 			//乱数生成
 			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-			std::uniform_int_distribution<> rand_x(-1200, 1200);    // [-1200, 1200] 範囲の一様乱数
-			std::uniform_int_distribution<> rand_z(-700, 700);		// [-700, 700] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_x(-800, 800);    // [-1200, 1200] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_z(-600, 600);		// [-700, 700] 範囲の一様乱数
 			std::uniform_int_distribution<> rand_y(-400, 700);		// [-400, 700] 範囲の一様乱数
-			std::uniform_int_distribution<> rand_Radius(100, 250);	// [100, 250] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_Radius(200, 450);	// [100, 250] 範囲の一様乱数
 			D3DXVECTOR3 pos = {
-							CObjectX::GetMatrix()._41 + (float)(rand_x(mt)),
-							CObjectX::GetMatrix()._42 + (float)(rand_y(mt)),
-							CObjectX::GetMatrix()._43 + (float)(rand_z(mt))
+							m_pos.x + (float)(rand_x(mt)),
+							m_pos.y + (float)(rand_y(mt)),
+							m_pos.z + (float)(rand_z(mt))
 			};
 			CEffExplosion::Create(pos, rand_Radius(mt));
 		}
 	}
 	
 	++m_nDeadFrame;
-	CObjectX::AddPos({0.0f, -2.0f, 0.0f});
+	m_pos += {0.0f, -2.0f, 0.0f};
 	
-};
+}
 
 //==========================================================================================
 //攻撃のレート管理処理
@@ -270,12 +302,77 @@ bool CBossTerra::AttackRateCheck()
 	return false;
 }
 
+//==========================================================================================
+//攻撃の管理
+//==========================================================================================
+void CBossTerra::Attack(D3DXVECTOR3& Playerpos)
+{
+	if (AttackRateCheck())
+	{
+		std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+		std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+		std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
+		switch (rand_num(mt))
+		{
+		case 0:
+			CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
+
+			m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
+			m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
+			break;
+		case 1:
+			SetStatue();
+			break;
+		case 2:
+			for (int i = 0; i < 5; ++i)
+			{
+				CBossEnemySpawner::Create(m_pos, i);
+			}
+			break;
+		}
+	}
+
+
+	if (m_Reticle[0] != nullptr &&
+		m_Reticle[1] != nullptr)
+	{
+		m_Reticle[0]->SetPos(Playerpos);
+		m_Reticle[1]->SetPos(Playerpos);
+		if (m_Reticle[0]->GetLifeState() ||
+			m_Reticle[1]->GetLifeState())
+		{
+			CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSSHOT);
+			SetBullet(m_pos, Playerpos);
+
+			m_Reticle[0]->Release();
+			m_Reticle[1]->Release();
+			m_Reticle[0] = nullptr;
+			m_Reticle[1] = nullptr;
+		}
+	}
+}
+
 void CBossTerra::DeathCheck() 
 {
 	if (m_nLife <= 0 && !m_bDead)
 	{
-		CObjectX::AddRot({ 0.4f,0.0f,0.6f });
+		if (!m_bTransformed)
+		{
+			if (m_Gauge != nullptr)
+			{
+				m_Gauge->Release();
+				m_Gauge = nullptr;
+			}
+			SetNextMotion(MOTION_TRANSFORM);
+			m_nLife = 400;
+			m_Gauge = CGaugeBoss::Create(m_pos, { 750,50 }, m_nLife);
+			m_bTransformed = true;
+			return;
+		}
+		m_pos += { 0.4f,0.0f,0.6f };
 		m_bDead = true;
+		SetNextMotion(MOTION_ROBO_DIE);
+
 		CScene* pScene = CManager::GetInstance()->GetScene();
 		if (pScene->GetSceneMode() == CScene::MODE_GAME)
 		{
@@ -338,7 +435,7 @@ void CBossTerra::SetStatue()
 		CBossStatue::Create(
 			{ (float)(rand_x(mt)),
 			(float)(rand_y(mt)),
-			CObjectX::GetPos().z + (i + 1) * 2500 }
+			m_pos.z + (i + 1) * 2500 }
 		);
 	}
 }
@@ -503,4 +600,461 @@ void CBossEnemySpawner::SetEnemy()
 	CEnemyBase::Create(CObjectX::GetPos());
 	CObject::Release();
 	return;
+}
+
+
+//==========================================================================================
+//モーションの初期化処理
+//==========================================================================================
+void CBossTerra::MotionInit()
+{
+	MotionDataLoad();
+
+	m_CurMotion = 0;
+	m_CurKey = 0;
+	m_NowFrame = 0;
+}
+
+//==========================================================================================
+//次のモーションに移行する処理
+//==========================================================================================
+void CBossTerra::SetNextMotion(int nNextMotionNum)
+{
+	m_NextMotion = nNextMotionNum;
+	m_NowFrame = 0;
+	m_bBlend = true;
+	MotionBlending();
+}
+
+//==========================================================================================
+//次のキーのモーション処理
+//==========================================================================================
+void CBossTerra::SetNextKey()
+{
+	//現在の位置・角度
+	D3DXVECTOR3 NowPos = {};
+	D3DXVECTOR3 NowRot = {};
+
+	//次の位置・角度
+	D3DXVECTOR3 NextPos = {};
+	D3DXVECTOR3 NextRot = {};
+
+	//動きの差分を求める用
+	D3DXVECTOR3 DifPos = {};
+	D3DXVECTOR3 DifRot = {};
+
+	//計算用
+	D3DXVECTOR3 DigitPos = {};
+	D3DXVECTOR3 DigitRot = {};
+
+	int nNowKey = m_CurKey;
+	int nNowMotion = m_CurMotion;
+	int nNextKey = (m_CurKey + 1) % m_aMotion[nNowMotion].nKeyNum;
+	float fRatioFrame = (float)m_NowFrame / (float)m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame;
+
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; ++nCntParts)
+	{
+		//現在の向きと位置の情報
+		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;
+		NowRot = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].rot;
+
+		//次のキーの情報
+		NextPos = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].pos;
+		NextRot = m_aMotion[nNowMotion].aKetSet[nNextKey].aKey[nCntParts].rot;
+
+		//差分を求める
+		DifPos = NextPos - NowPos;
+		DifRot = NextRot - NowRot;
+
+		//-3.14～3.14の間を超える場合の修正
+		if (DifRot.x >= D3DX_PI)
+		{
+			DifRot.x -= D3DX_PI * 2;
+		}
+		if (DifRot.y >= D3DX_PI)
+		{
+			DifRot.y -= D3DX_PI * 2;
+		}
+		if (DifRot.z >= D3DX_PI)
+		{
+			DifRot.z -= D3DX_PI * 2;
+		}
+		if (DifRot.x <= -D3DX_PI)
+		{
+			DifRot.x += D3DX_PI * 2;
+		}
+		if (DifRot.y <= -D3DX_PI)
+		{
+			DifRot.y += D3DX_PI * 2;
+		}
+		if (DifRot.z <= -D3DX_PI)
+		{
+			DifRot.z += D3DX_PI * 2;
+		}
+
+		DigitPos = DifPos * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultPos() + NowPos;
+		DigitRot = DifRot * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultRot() + NowRot;
+
+		m_apModelParts[nCntParts]->SetPos(DigitPos);
+		m_apModelParts[nCntParts]->SetRot(DigitRot);
+	}
+
+	++m_NowFrame;
+
+	if (m_NowFrame >= m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame)
+	{
+		++m_CurKey;
+		m_NowFrame = 0;
+		if (m_CurKey >= m_aMotion[nNowMotion].nKeyNum)
+		{
+			if (!m_aMotion[nNowMotion].bLoop)
+			{
+				if (m_CurMotion == MOTION_TRANSFORM ||
+					m_CurMotion == MOTION_ROBO_BURST ||
+					m_CurMotion == MOTION_ROBO_FUNNEL ||
+					m_CurMotion == MOTION_ROBO_SHOOT )
+				{
+
+					--m_CurKey;
+					m_bMotion = false;
+					SetNextMotion(MOTION_ROBO_NUTO);
+
+				}
+				else if (m_CurMotion == MOTION_ROBO_DIE)
+				{
+					m_bMotion = false;
+				}
+			}
+			else
+			{
+				m_CurKey = 0;
+			}
+		}
+	}
+}
+//==========================================================================================
+//モーション切り替え時のブレンド処理
+//==========================================================================================
+bool CBossTerra::MotionBlending()
+{
+	if (!m_bBlend) {
+		return false;
+	}
+
+	//現在の位置・角度
+	D3DXVECTOR3 NowPos = {};
+	D3DXVECTOR3 NowRot = {};
+
+	//次の位置・角度
+	D3DXVECTOR3 NextPos = {};
+	D3DXVECTOR3 NextRot = {};
+
+	//動きの差分を求める用
+	D3DXVECTOR3 DifPos = {};
+	D3DXVECTOR3 DifRot = {};
+
+	//計算用
+	D3DXVECTOR3 DigitPos = {};
+	D3DXVECTOR3 DigitRot = {};
+
+	int nLastKey = m_CurKey;
+	int nNowMotion = m_CurMotion;
+
+	float fRatioFrame = ((float)m_NowFrame / (float)m_aMotion[m_NextMotion].aKetSet[0].nFrame);
+
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; ++nCntParts)
+	{
+		//現在の向きと位置の情報
+		NowPos = m_aMotion[nNowMotion].aKetSet[nLastKey].aKey[nCntParts].pos;
+		NowRot = m_aMotion[nNowMotion].aKetSet[nLastKey].aKey[nCntParts].rot;
+
+		//次のキーの情報
+		NextPos = m_aMotion[m_NextMotion].aKetSet[0].aKey[nCntParts].pos;
+		NextRot = m_aMotion[m_NextMotion].aKetSet[0].aKey[nCntParts].rot;
+
+		//差分を求める
+		DifPos = NextPos - NowPos;
+		DifRot = NextRot - NowRot;
+
+		//-3.14～3.14の間を超える場合の修正
+		if (DifRot.x >= D3DX_PI)
+		{
+			DifRot.x -= D3DX_PI * 2;
+		}
+		if (DifRot.y >= D3DX_PI)
+		{
+			DifRot.y -= D3DX_PI * 2;
+		}
+		if (DifRot.z >= D3DX_PI)
+		{
+			DifRot.z -= D3DX_PI * 2;
+		}
+		if (DifRot.x <= -D3DX_PI)
+		{
+			DifRot.x += D3DX_PI * 2;
+		}
+		if (DifRot.y <= -D3DX_PI)
+		{
+			DifRot.y += D3DX_PI * 2;
+		}
+		if (DifRot.z <= -D3DX_PI)
+		{
+			DifRot.z += D3DX_PI * 2;
+		}
+
+		DigitPos = DifPos * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultPos() + NowPos;
+		DigitRot = DifRot * fRatioFrame + m_apModelParts[nCntParts]->GetDefaultRot() + NowRot;
+
+		m_apModelParts[nCntParts]->SetPos(DigitPos);
+		m_apModelParts[nCntParts]->SetRot(DigitRot);
+	}
+
+	++m_NowFrame;
+
+	if (m_NowFrame >= m_aMotion[m_NextMotion].aKetSet[0].nFrame)
+	{
+		m_CurKey = 0;
+		m_NowFrame = 0;
+		m_CurMotion = m_NextMotion;
+		m_bBlend = false;
+		SetNextKey();
+	}
+
+	return m_bBlend;
+}
+
+//==========================================================================================
+//モーションをファイルから読み込み
+//==========================================================================================
+void CBossTerra::MotionDataLoad()
+{
+	char LoadData[128];
+	char ModelPath[128];
+
+	int nNumModel = 0;
+	FILE* pFile;
+	int nCnt = 0;
+
+	int nMotionCnt = 0;
+	int nKeySet = 0;
+	int nKey = 0;
+	D3DXVECTOR3 pos = { 0.0f,0.0f,0.0f };
+	D3DXVECTOR3 rot = { 0.0f,0.0f,0.0f };
+	int nFilenameCnt = 0;
+	int nParent = 0;
+	int nIndex = 0;
+	int nModelCnt = 0;
+
+	pFile = fopen("data\\TEXT\\motion_Boss_Terra.txt", "r");
+
+	if (pFile != nullptr)
+	{
+		while (1)
+		{
+			fscanf(pFile, "%s", LoadData);
+
+			if (!strcmp(LoadData, "END_SCRIPT"))	// ファイルの最後
+			{
+				fclose(pFile);
+				break;
+			}
+
+			if (LoadData[0] == '#')		// 文字飛ばし
+			{
+				continue;
+			}
+
+			//モデルの読み込み
+			if (!strcmp(LoadData, "NUM_MODEL"))
+			{
+				fscanf(pFile, "%s", LoadData);
+				fscanf(pFile, "%d", &m_ModelParts);
+			}
+			//モデルのファイル名読み込み
+			if (!strcmp(LoadData, "MODEL_FILENAME"))
+			{
+				fscanf(pFile, "%s", LoadData);
+
+				fscanf(pFile, "%s", ModelPath);
+
+				m_pModelFileName[nFilenameCnt] = ModelPath;
+
+				m_apModelParts[nFilenameCnt] = CModelParts::Create(pos, m_pModelFileName[nFilenameCnt]);
+
+				++nFilenameCnt;
+			}
+			//キャラクターの設定の読み込み開始
+			if (!strcmp(LoadData, "CHARACTERSET"))
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", LoadData);
+
+					if (!strcmp(LoadData, "END_CHARACTERSET"))//読み込みを終了
+					{
+						break;
+					}
+					else if (!strcmp(LoadData, "PARTSSET"))
+					{
+						while (1)
+						{
+							fscanf(pFile, "%s", LoadData);
+
+							if (LoadData[0] == '#')
+							{//文字飛ばし
+								fgets(LoadData, 100, pFile);
+								continue;
+							}
+
+							if (!strcmp(LoadData, "END_PARTSSET"))
+							{
+								//読み込みを終了
+								break;
+							}
+							//各パーツのモーションpos値
+							else if (!strcmp(LoadData, "INDEX"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%d", &nIndex);
+							}
+
+							//各パーツのモーションrot値
+							else if (!strcmp(LoadData, "PARENT"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%d", &nParent);
+							}
+							//各パーツのモーションpos値
+							else if (!strcmp(LoadData, "POS"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%f", &pos.x);
+								fscanf(pFile, "%f", &pos.y);
+								fscanf(pFile, "%f", &pos.z);
+							}
+
+							//各パーツのモーションrot値
+							else if (!strcmp(LoadData, "ROT"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%f", &rot.x);
+								fscanf(pFile, "%f", &rot.y);
+								fscanf(pFile, "%f", &rot.z);
+							}
+						}
+						m_apModelParts[nModelCnt]->SetPos(pos);
+						m_apModelParts[nModelCnt]->SetRot(rot);
+
+						m_apModelParts[nModelCnt]->SetDefault();
+						m_apModelParts[nModelCnt]->SetIndex(nIndex);
+						if (nParent != -1)
+						{
+							m_apModelParts[nModelCnt]->SetParent(m_apModelParts[nParent]);
+						}
+						++nModelCnt;
+					}
+				}
+			}
+
+			//モーションの読み込み開始
+			if (!strcmp(LoadData, "MOTIONSET"))
+			{
+				while (1)
+				{
+					fscanf(pFile, "%s", LoadData);
+
+					if (!strcmp(LoadData, "END_MOTIONSET"))//読み込みを終了
+					{
+						break;
+					}
+					//ループの判断
+					else if (!strcmp(LoadData, "LOOP"))
+					{
+						fscanf(pFile, "%s", LoadData);
+						fscanf(pFile, "%d", &m_aMotion[nMotionCnt].bLoop);
+					}
+
+					//全体のキー数の読み込み
+					else  if (!strcmp(LoadData, "NUM_KEY"))
+					{
+						fscanf(pFile, "%s", LoadData);
+						fscanf(pFile, "%d", &m_aMotion[nMotionCnt].nKeyNum);
+					}
+
+					//各キーを読み込み
+					if (!strcmp(LoadData, "KEYSET"))
+					{
+						while (1)
+						{
+							fscanf(pFile, "%s", LoadData);
+
+							if (LoadData[0] == '#')
+							{//文字飛ばし
+								fgets(LoadData, 100, pFile);
+								continue;
+							}
+
+							if (!strcmp(LoadData, "END_KEYSET"))
+							{
+								//読み込みを終了
+								break;
+							}
+
+							//現在のキーのフレーム数を読み込み
+							else if (!strcmp(LoadData, "FRAME"))
+							{
+								fscanf(pFile, "%s", LoadData);
+								fscanf(pFile, "%d", &m_aMotion[nMotionCnt].aKetSet[nKeySet].nFrame);
+							}
+
+							//現在のキーの読み込み
+							if (!strcmp(LoadData, "KEY"))
+							{
+								while (1)
+								{
+									fscanf(pFile, "%s", LoadData);
+
+									if (!strcmp(LoadData, "END_KEY"))
+									{
+										// 読み込みを終了
+										break;
+									}
+
+									//各パーツのモーションpos値
+									else if (!strcmp(LoadData, "POS"))
+									{
+										fscanf(pFile, "%s", LoadData);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.x);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.y);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].pos.z);
+									}
+
+									//各パーツのモーションrot値
+									else if (!strcmp(LoadData, "ROT"))
+									{
+										fscanf(pFile, "%s", LoadData);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.x);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.y);
+										fscanf(pFile, "%f", &m_aMotion[nMotionCnt].aKetSet[nKeySet].aKey[nKey].rot.z);
+									}
+								}
+								//キー番号を進める
+								++nKey;
+							}
+						}
+						//キー番号を初期化、キーセット番号を進める
+						nKey = 0;
+						++nKeySet;
+					}
+				}
+				//キーセット番号を初期化、モーション番号を進める
+				nKeySet = 0;
+				++nMotionCnt;
+			}
+		}
+	}
+	else
+	{
+		assert(pFile == nullptr);
+	}
 }
