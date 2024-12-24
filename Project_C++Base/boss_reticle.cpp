@@ -10,7 +10,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBossReticle::CBossReticle()
+CBossReticle::CBossReticle(int nPriority) : CBillboard(nPriority)
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\reticle001.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));

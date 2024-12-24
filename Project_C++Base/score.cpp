@@ -35,7 +35,7 @@ void CScore::Init()
 	for (int i = 0; i < MAX_DIGIT; i++)
 	{
 		m_number[i] = CNumber::Create(pos, MAX_HEIGHT, MAX_WIDTH);
-		pos.x -= MAX_WIDTH / 1.75f;
+		pos.x -= MAX_WIDTH / 1.95f;
 	}
 }
 

@@ -18,18 +18,30 @@
 
 namespace BulletOption {
 	//各弾の発射地点の位置
-	D3DXVECTOR3 setpos1 = { -500.0f,300.0f,-500.0f };
-	D3DXVECTOR3	setpos2 = { -300.0f,300.0f,-500.0f };
-	D3DXVECTOR3	setpos3 = { -70.0f,300.0f,0.0f };
-	D3DXVECTOR3	setpos4 = { 70.0f,300.0f,0.0f };
-	D3DXVECTOR3	setpos5 = { 300.0f,300.0f,-500.0f };
-	D3DXVECTOR3	setpos6 = { 500.0f,300.0f,-500.0f };
+	int WeaponsIdx[B_MUZZLE_CUR] = {
+		15,		//左腰キャノン
+		16,		//右腰キャノン
+		18,		//背面キャノン
+		18,		//背面キャノン
+		19,		//左手ライフル
+		20		//右手ライフル
+	};
+	D3DXVECTOR3 WeaponsMuzzlePos[B_MUZZLE_CUR] = {
+		{150.0f,-400.0f,0.0f},
+		{-150.0f,-400.0f,0.0f},
+		{ 200.0f, -400.0f,150.0f},
+		{-200.0f,-400.0f,150.0f},
+		{500.0f,0.0f,-50.0f},
+		{-500.0f,0.0f,-50.0f}
+	};
 
 	int Life = 60;
 	float Radius = 150;
 	float EffectSize = 100;
-	D3DXCOLOR color1 = { 0.2f,0.2f,0.8f,1.0f };
-	D3DXCOLOR color2 = { 0.8f,0.1f,0.1f,1.0f };
+	D3DXCOLOR color[2] = {
+		{ 0.2f,0.2f,0.8f,1.0f },
+		{ 0.8f,0.1f,0.1f,1.0f }
+	};
 	D3DXCOLOR DamagingColor = { 1.0f,0.1f,0.2,0.8f };
 }
 
@@ -43,6 +55,10 @@ CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamagi
 	for (int i = 0; i < B_MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i] = nullptr;
+	}
+	for (int j = 0; j < B_MUZZLE_CUR; ++j)
+	{
+		m_mtxWeapon[j] = {};
 	}
 }
 
@@ -105,6 +121,8 @@ void CBossTerra::Update()
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_V) == true)
 	{
 		SetNextMotion(MOTION_ROBO_BURST);
+		m_Reticle[0] = CBossReticle::Create(Playerpos, 120, 80, 0.08f);
+		m_Reticle[1] = CBossReticle::Create(Playerpos, 90, 80, -0.06f);
 	}
 	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_B) == true)
 	{
@@ -150,7 +168,8 @@ void CBossTerra::Update()
 	}
 	else
 	{
-		m_Gauge->SetPos({ m_pos.x,m_pos.y + 1700.0f ,m_pos.z });
+		m_Gauge->SetPos({ m_pos.x,m_pos.y + 1100.0f ,m_pos.z });
+		m_rot.y = atan2f((m_pos.x - Playerpos.x), (m_pos.z - Playerpos.z));
 	}
 	DeathCheck();
 	if(m_bDead)
@@ -309,26 +328,54 @@ void CBossTerra::Attack(D3DXVECTOR3& Playerpos)
 {
 	if (AttackRateCheck())
 	{
-		std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
-		std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-		std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
-		switch (rand_num(mt))
+		if (!m_bTransformed)
 		{
-		case 0:
-			CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
-
-			m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
-			m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
-			break;
-		case 1:
-			SetStatue();
-			break;
-		case 2:
-			for (int i = 0; i < 5; ++i)
+			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+			std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
+			switch (rand_num(mt))
 			{
-				CBossEnemySpawner::Create(m_pos, i);
+			case 0:
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
+
+				m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 50, 0.08f);
+				m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
+				break;
+			case 1:
+				SetStatue();
+				break;
+			case 2:
+				for (int i = 0; i < 5; ++i)
+				{
+					CBossEnemySpawner::Create(m_pos, i);
+				}
+				break;
 			}
-			break;
+		}
+		else
+		{
+			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
+			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
+			std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
+			switch (rand_num(mt))
+			{
+			case 0:
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
+				SetNextMotion(MOTION_ROBO_BURST);
+				m_Reticle[0] = CBossReticle::Create(Playerpos, 120, 80, 0.08f);
+				m_Reticle[1] = CBossReticle::Create(Playerpos, 90, 80, -0.06f);
+				break;
+			case 1:
+				SetNextMotion(MOTION_ROBO_SHOOT);
+				break;
+			case 2:
+				SetNextMotion(MOTION_ROBO_FUNNEL);
+				for (int i = 0; i < 5; ++i)
+				{
+					CBossFunnel::Create(m_pos, i);
+				}
+				break;
+			}
 		}
 	}
 
@@ -383,12 +430,69 @@ void CBossTerra::DeathCheck()
 };
 
 //==========================================================================================
+//すべての武器の銃口オフセットを設定
+//==========================================================================================
+void CBossTerra::SetWeaponMtx()
+{
+	using namespace BulletOption;
+	for (int i = 0; i < B_MUZZLE_CUR; ++i)
+	{
+		int T = WeaponsIdx[i];
+		D3DXMATRIX RifleMtx = m_apModelParts[T]->GetWorldMatrix();
+		D3DXMATRIX UseMtx;
+		D3DXVECTOR3 Addpos = WeaponsMuzzlePos[i];
+		D3DXVECTOR3 Addrot = { 0.0f,0.0f,0.0f };
+
+		//計算用マトリックス
+		D3DXMATRIX mtxRot, mtxTrans;
+
+		//ワールドマトリックスの初期化
+		D3DXMatrixIdentity(&UseMtx);
+
+		//向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot,
+			Addrot.y,
+			Addrot.x,
+			Addrot.z);
+		D3DXMatrixMultiply(&UseMtx,
+			&UseMtx,
+			&mtxRot);
+		//位置を反映
+		D3DXMatrixTranslation(&mtxTrans,
+			Addpos.x,
+			Addpos.y,
+			Addpos.z);
+		D3DXMatrixMultiply(&UseMtx,
+			&UseMtx,
+			&mtxTrans);
+
+		//ワールド行列を親の行列に掛ける
+		D3DXMatrixMultiply(&UseMtx,
+			&UseMtx,
+			&RifleMtx);
+
+		m_mtxWeapon[i] = UseMtx;
+	}
+}
+
+//==========================================================================================
 //弾の発射を設定
 //==========================================================================================
 void CBossTerra::SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos)
 {
 	using namespace BulletOption;
+	D3DXVECTOR3 SetMtxpos[B_MUZZLE_CUR];
+	D3DXVECTOR3 value[B_MUZZLE_CUR];
+	SetWeaponMtx();
 
+	for (int i = 0; i < B_MUZZLE_CUR; ++i)
+	{
+		SetMtxpos[i] = { m_mtxWeapon[i]._41, m_mtxWeapon[i]._42, m_mtxWeapon[i]._43 };
+		value[i] = Playerpos - SetMtxpos[i];
+		D3DXVec3Normalize(&value[i], &value[i]);
+		CBossBullet::Create(SetMtxpos[i], value[i], color[i % 2], Life, Radius, EffectSize);
+	}
+	/*
 	D3DXVECTOR3 pos1 = setpos1 + pos;
 	D3DXVECTOR3 pos2 = setpos2 + pos;
 	D3DXVECTOR3 pos3 = setpos3 + pos;
@@ -410,12 +514,12 @@ void CBossTerra::SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos)
 	D3DXVec3Normalize(&value5, &value5);
 	D3DXVec3Normalize(&value6, &value6);
 
-	CBossBullet::Create(pos1, value1, color1, Life, Radius, EffectSize);
 	CBossBullet::Create(pos2, value2, color2, Life, Radius, EffectSize);
 	CBossBullet::Create(pos3, value3, color1, Life, Radius, EffectSize);
 	CBossBullet::Create(pos4, value4, color2, Life, Radius, EffectSize);
 	CBossBullet::Create(pos5, value5, color1, Life, Radius, EffectSize);
 	CBossBullet::Create(pos6, value6, color2, Life, Radius, EffectSize);
+	*/
 }
 
 //==========================================================================================
@@ -502,6 +606,7 @@ void CBossStatue::SetYPos()
 	}
 }
 
+//
 //==========================================================================================================================
 //敵を放出するクラスの処理群
 
@@ -602,6 +707,145 @@ void CBossEnemySpawner::SetEnemy()
 	return;
 }
 
+//==========================================================================================
+//ボスが出す敵の生成処理
+//==========================================================================================
+CBossFunnel* CBossFunnel::Create(D3DXVECTOR3 pos, int num)
+{
+	CBossFunnel* statue = new CBossFunnel;
+
+	statue->BindModel("data\\MODEL\\Boss_Funnel.x");
+	statue->SetModelParam(pos);
+	statue->Init(num);
+	return statue;
+}
+//
+////==========================================================================================
+////動かす処理
+////==========================================================================================
+//void CBossFunnel::Move()
+//{
+//	D3DXVECTOR3 pos = CObjectX::GetPos();
+//
+//	pos += m_moveVec;
+//
+//	if (pos.x >= WORLD_WALL_X)
+//	{
+//		pos.x = WORLD_WALL_X;
+//	}
+//	else if (pos.x <= -WORLD_WALL_X)
+//	{
+//		pos.x = -WORLD_WALL_X;
+//	}
+//
+//	if (pos.y >= WORLD_WALL_Y)
+//	{
+//		pos.y = WORLD_WALL_Y;
+//	}
+//	else if (pos.y <= -WORLD_WALL_Y)
+//	{
+//		pos.y = -WORLD_WALL_Y;
+//	}
+//	CParticle3D::Create(pos, { 0.2f,0.0f,1.0f,0.7f }, 90, 120, true);
+//
+//	CObjectX::SetPos(pos);
+//}
+//
+////==========================================================================================
+////本物の敵に置き換える処理
+////==========================================================================================
+//void CBossFunnel::SetEnemy()
+//{
+//	CObjectX::SetSize({ 0.8f,0.8f ,0.8f });
+//
+//	CEnemyBase::Create(CObjectX::GetPos());
+//	CObject::Release();
+//	return;
+//}
+
+//==========================================================================================================================
+
+//==========================================================================================
+//敵投げナイフの初期化
+//==========================================================================================
+void CBossKnife::Init()
+{
+	m_Sec = 0;
+	m_vecAxis = { 1.0f,0.0f,0.0f };
+	m_RotValue = -B_KNIFE_ROTSPEED;
+	D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
+	
+	CObject::SetType(TYPE_3D_BOSSWEAPONS);
+
+
+	CObjectX::Init();
+}
+
+//==========================================================================================
+//敵投げナイフの更新
+//==========================================================================================
+void CBossKnife::Update()
+{
+	//回転量
+	float m_fValueRot  = m_Sec * m_RotValue;	
+
+	//クオータニオンを作成
+	D3DXQuaternionRotationAxis(
+		&m_quat,
+		&m_vecAxis,
+		m_fValueRot);
+
+	//クオータニオンから回転マトリックスを作成
+	D3DXMatrixRotationQuaternion(
+		&m_mtxRot,
+		&m_quat);
+
+	D3DXVECTOR3 Playerpos = CPlayerObserver::GetInstance()->GetPlayerPos();
+
+	m_Target1 = { m_StartPos.x - 2300,m_StartPos.y - 1700,m_StartPos.z - 320 };
+	m_Target2 = { Playerpos.x - 2300,Playerpos.y - 1700,Playerpos.z + 280 };
+	D3DXVECTOR3 DigitPos = {0.0f,0.0f,0.0f};
+	float rate = (float)((1.0 / m_Reach) * m_Sec);
+	
+	D3DXVec3CatmullRom(&DigitPos, &m_Target1,& m_StartPos, &Playerpos, &m_Target2,rate);
+
+	CObjectX::SetPos(DigitPos);
+
+	++m_Sec;
+
+	if (m_Reach < m_Sec)
+	{
+		CObject::Release();
+		return;
+	}
+	CObjectX::Update();
+}
+
+//==========================================================================================
+//敵投げナイフの生成
+//==========================================================================================
+CBossKnife* CBossKnife::Create(D3DXVECTOR3 startPos, int Reach, bool Side)
+{
+	CBossKnife* knife = new CBossKnife();
+
+	knife->BindModel("data\\MODEL\\Boss_Knife.x");
+	knife->SetModelParam(startPos);
+	knife->m_StartPos = startPos;
+	knife->m_Reach = Reach;
+	if (Side)
+	{
+		knife->AddRot({ 0.0f,0.0f,D3DX_PI * 0.25 });
+	}
+	else
+	{
+		knife->AddRot({ 0.0f,0.0f,-D3DX_PI * 0.25 });
+	}
+	knife->Init();
+	return knife;
+}
+
+//======================================================================================================================================
+//モーション関連処理
 
 //==========================================================================================
 //モーションの初期化処理
@@ -714,7 +958,15 @@ void CBossTerra::SetNextKey()
 					m_CurMotion == MOTION_ROBO_FUNNEL ||
 					m_CurMotion == MOTION_ROBO_SHOOT )
 				{
-
+					if (m_CurMotion == MOTION_ROBO_SHOOT)
+					{
+						D3DXVECTOR3 Handpos = {
+							m_apModelParts[5]->GetWorldMatrix()._41,
+							m_apModelParts[5]->GetWorldMatrix()._42,
+							m_apModelParts[5]->GetWorldMatrix()._43,
+						};
+						CBossKnife::Create(Handpos, 120, false);
+					}
 					--m_CurKey;
 					m_bMotion = false;
 					SetNextMotion(MOTION_ROBO_NUTO);

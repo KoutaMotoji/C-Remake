@@ -10,8 +10,13 @@
 #include "manager.h"
 
 //静的メンバ初期化
-const float CGaugeLife::OBJ_HEIGHT = 70.0f;
-const float CGaugeLife::OBJ_WIDTH = SCREEN_WIDTH * 0.7f;
+const float CGaugeLife::OBJ_HEIGHT = 45.0f;
+const float CGaugeLife::OBJ_WIDTH = SCREEN_WIDTH * 0.3f;
+
+namespace MainUIState
+{
+	D3DXVECTOR3 UIpos = { SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f };
+}
 
 //==========================================================================================
 //コンストラクタ
@@ -75,7 +80,7 @@ void CGaugeLife::Draw()
 CGaugeLife* CGaugeLife::Create(int nMaxGauge)
 {
 	CGaugeLife* gauge = new CGaugeLife;
-	D3DXVECTOR3 pos = { OBJ_WIDTH * 0.5f,SCREEN_HEIGHT - (OBJ_HEIGHT * 0.5f),0.0f };
+	D3DXVECTOR3 pos = { OBJ_WIDTH * 0.5f,OBJ_HEIGHT * 0.5f + 25.0f,0.0f };
 	gauge->SetPolygonParam(pos, OBJ_HEIGHT, OBJ_WIDTH, nMaxGauge, false);
 	gauge->Init();
 	return gauge;
@@ -138,4 +143,66 @@ CGaugeLiBack* CGaugeLiBack::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
 	gauge->SetPolygonParam(pos, fHeight, fWidth, { 0.2f,0.4f,0.9f,1.0f });
 	gauge->Init();
 	return gauge;
+}
+
+//==========================================================================================
+//メインUIの初期化処理
+//==========================================================================================
+void CMainUI::Init()
+{
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\mainUI_A.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
+
+	CObject::SetType(TYPE_2D_UI);
+	CObject2D::Init();
+}
+
+//==========================================================================================
+//メインUIの生成処理
+//==========================================================================================
+CMainUI* CMainUI::Create()
+{
+	using namespace MainUIState;
+	CMainUI* UI = new CMainUI;
+	UI->SetPolygonParam(UIpos, SCREEN_HEIGHT, SCREEN_WIDTH);
+	UI->Init();
+	return UI;
+}
+
+//==========================================================================================
+//攻撃不可UIの初期化処理
+//==========================================================================================
+void CMainBlock::Init()
+{
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\mainBlock.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
+
+	CObject::SetType(TYPE_2D_UI);
+	CObject2D::Init();
+}
+
+//==========================================================================================
+//攻撃不可UIの初期化処理
+//==========================================================================================
+void CMainBlock::Update()
+{
+	if (CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_X) == true)
+	{
+		CObject::Release();
+		return;
+	}
+	CObject2D::Update();
+}
+
+
+//==========================================================================================
+//攻撃不可UIの生成処理
+//==========================================================================================
+CMainBlock* CMainBlock::Create()
+{
+	using namespace MainUIState;
+	CMainBlock* UI = new CMainBlock;
+	UI->SetPolygonParam(UIpos, SCREEN_HEIGHT, SCREEN_WIDTH);
+	UI->Init();
+	return UI;
 }

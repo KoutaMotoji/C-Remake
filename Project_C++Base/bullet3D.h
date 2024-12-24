@@ -14,7 +14,7 @@
 class CBullet3D :public CBillboard
 {
 public:
-	CBullet3D();				//コンストラクタ
+	CBullet3D(int nPriority = 4);				//コンストラクタ
 	~CBullet3D()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

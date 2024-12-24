@@ -11,6 +11,8 @@
 #include "particle3D.h"
 #include "bullet3D.h"
 #include "enemy_base.h"
+#include "boss_bullet.h"
+#include "mesh_Boss_Terra.h"
 #include "mesh_ground.h" 
 #include "mesh_obstacle.h"
 #include "mesh_cylinder.h"
@@ -50,6 +52,8 @@ void CPlayerX::Init()
 	CObject::SetType(TYPE_3D_PLAYER);
 	m_pShadow = CShadow::Create({ 0.0f,0.0f,0.0f });
 	CGaugeLife::Create(MAX_LIFE);
+	CMainUI::Create();
+	CMainBlock::Create();
 }
 
 //==========================================================================================
@@ -101,13 +105,9 @@ void CPlayerX::Update()
 	}
 	GetItem();
 
-	if (MeshObstacle() &&
-		!m_bDamaged)
+	if (MeshObstacle() )
 	{
-		m_bDamaged = true;
-		CManager::GetInstance()->GetCamera()->SetShake(20, 40);
-		DamageAdd(1000 * 0.125);
-		m_DamageTime = 0;
+		SetDamageState();
 	}
 	if (!TestUseMeshCollision())
 	{
@@ -141,6 +141,17 @@ void CPlayerX::Update()
 	CManager::GetInstance()->GetCamera()->SetPlayerPos(CameraPos);
 
 	//GoalCheck();
+}
+
+void CPlayerX::SetDamageState()
+{
+	if (!m_bDamaged)
+	{
+		m_bDamaged = true;
+		CManager::GetInstance()->GetCamera()->SetShake(20, 40);
+		DamageAdd(1000 * 0.125);
+		m_DamageTime = 0;
+	}
 }
 
 
@@ -433,7 +444,10 @@ void CPlayerX::SetNextKey()
 					m_CurMotion == MOTION_ROBO_SHOT || 
 					m_CurMotion == MOTION_ROBO_SLASH)
 				{
-
+					if (m_CurMotion == MOTION_TRANS_ROBO_TO_JET)
+					{
+						CMainBlock::Create();
+					}
 					--m_CurKey;
 					m_bMotion = false;
 				}
@@ -1004,7 +1018,6 @@ D3DXVECTOR3 CPlayerX::LockOnEnemy()
 						if (pTest->GetPos().z - m_pos.z < 4000.0f &&
 							pTest->GetPos().z - m_pos.z > 1000.0f)
 						{
-
 							if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), dirM, dirM))
 							{
 								pTest->LockOned();
@@ -1026,6 +1039,7 @@ D3DXVECTOR3 CPlayerX::LockOnEnemy()
 void CPlayerX::ShootBullet()
 {
 	D3DXVECTOR3 lockonVec;
+	BossAttackCollision();
 	if (m_bTransformed)
 	{
 		lockonVec = LockOnEnemy();
@@ -1107,9 +1121,47 @@ void CPlayerX::AttackCollisionToEnemy()
 					if (pTest != nullptr) {
 						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
 						{
-							//SetNextMotion(MOTION_ROBO_NUTO);
 							m_bAttack = false;
 							pTest->Damaged();
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+//==========================================================================================
+// É{ÉXÇÃçUåÇÇ∆ÇÃîªíËèàóù
+//==========================================================================================
+void CPlayerX::BossAttackCollision()
+{
+	std::unique_ptr<CCollision> pCollision = std::make_unique<CCollision>();
+
+	for (int j = 0; j < SET_PRIORITY; ++j) {
+		for (int i = 0; i < MAX_OBJECT; ++i) {
+			CObject* pObj = CObject::GetObjects(j, i);
+			if (pObj != nullptr) {
+				CObject::TYPE type = pObj->GetType();
+				if (type == CObject::TYPE::TYPE_3D_BOSSBILLET) {
+					CBossBullet *pTest = dynamic_cast<CBossBullet*>(pObj);
+					D3DXVECTOR3 SetRadius = { 50.0f,0.0f,0.0f };
+					if (pTest != nullptr) {
+						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
+						{
+							SetDamageState();
+							return;
+						}
+					}
+				}
+				if (type == CObject::TYPE::TYPE_3D_BOSSWEAPONS) {
+					CBossKnife* pTest = dynamic_cast<CBossKnife*>(pObj);
+					D3DXVECTOR3 SetRadius = { 100.0f,0.0f,0.0f };
+					if (pTest != nullptr) {
+						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
+						{
+							SetDamageState();
+							return;
 						}
 					}
 				}

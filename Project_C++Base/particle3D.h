@@ -13,7 +13,7 @@
 class CParticle3D :public CBillboard
 {
 public:
-	CParticle3D();				//コンストラクタ
+	CParticle3D(int nPriority = 4);				//コンストラクタ
 	~CParticle3D()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

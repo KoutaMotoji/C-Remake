@@ -10,7 +10,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CGaugeBoss::CGaugeBoss() {
+CGaugeBoss::CGaugeBoss(int nPriority) : CBillboard(nPriority) {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\boss_gauge.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 8,2 });
 }

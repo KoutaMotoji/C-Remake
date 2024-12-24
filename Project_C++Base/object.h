@@ -42,7 +42,8 @@ public:
 		TYPE_3D_BOSSTERRA,
 		TYPE_3D_MADEMESH,
 		TYPE_3D_TITLEOBJ,
-		
+		TYPE_3D_BOSSWEAPONS,
+		TYPE_3D_BOSSBILLET
 	}TYPE;
 
 	CObject(int nPriority = 3);		//コンストラクタ

@@ -38,7 +38,7 @@ CBossBullet::~CBossBullet()
 //==========================================================================================
 void CBossBullet::Init()
 {
-	CObject::SetType(TYPE_BILLBOARD);
+	CObject::SetType(TYPE_3D_BOSSBILLET);
 	CBillboard::Init();
 }
 

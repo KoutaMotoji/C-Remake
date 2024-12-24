@@ -21,7 +21,9 @@ public:
 	void Uninit()override;		//終了
 	void Update()override;		//更新
 	void Draw()override;		//描画
-	void Draw(D3DXCOLOR col);		//描画
+	void Draw(D3DXCOLOR col);		//描画(色変更用オーバーロード)
+	void Draw(D3DXMATRIX RotMtx);	//描画(クオータニオン回転用オーバーロード)
+
 
 	D3DXVECTOR3 GetPos() { return m_pos; };				//座標取得
 	void AddPos(D3DXVECTOR3 pos) { m_pos += pos; };		//座標移動

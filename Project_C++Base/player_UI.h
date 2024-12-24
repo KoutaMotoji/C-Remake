@@ -10,7 +10,6 @@
 #include "main.h"
 #include "object2D.h"
 
-
 class CGaugeLife :public CObject2D
 {
 public:
@@ -48,6 +47,28 @@ public:
 	void Init()override;		//初期化
 
 	static CGaugeLiBack* Create(D3DXVECTOR3 pos, float fWidth, float fHeight);
+private:
+};
+
+class CMainUI :public CObject2D
+{
+public:
+	CMainUI(int nPriority = 5) : CObject2D(nPriority) {};		//コンストラクタ
+	~CMainUI()override = default;				//デストラクタ
+	void Init()override;		//初期化
+
+	static CMainUI* Create();
+private:
+};
+
+class CMainBlock :public CObject2D
+{
+public:
+	CMainBlock(int nPriority = 5) : CObject2D(nPriority) {};		//コンストラクタ
+	~CMainBlock()override = default;				//デストラクタ
+	void Init()override;		//初期化
+	void Update()override;
+	static CMainBlock* Create();
 private:
 };
 

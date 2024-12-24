@@ -13,7 +13,7 @@
 class CBossReticle :public CBillboard
 {
 public:
-	CBossReticle();				//コンストラクタ
+	CBossReticle(int nPriority = 4);				//コンストラクタ
 	~CBossReticle()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

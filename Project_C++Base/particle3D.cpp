@@ -10,7 +10,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CParticle3D::CParticle3D():m_bSizeDown(true), m_move({0.0f,0.0f,0.0f})
+CParticle3D::CParticle3D(int nPriority) : CBillboard(nPriority) ,m_bSizeDown(true), m_move({0.0f,0.0f,0.0f})
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));

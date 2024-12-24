@@ -25,6 +25,10 @@ static constexpr int B_MAX_PARTS = 21;
 static constexpr int B_MAX_KEYSET = 21;
 static constexpr int B_MAX_MOTION = 7;
 
+static constexpr int B_MUZZLE_CUR = 6;
+static constexpr float B_KNIFE_ROTSPEED = 0.75f;
+
+
 class CBossTerra :public CObject
 {
 public:
@@ -53,8 +57,8 @@ private:
 	D3DXVECTOR3 m_pos, m_rot, m_size;	//座標・回転・大きさ
 	D3DXVECTOR3 m_move;				//移動量
 	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
-	//D3DXMATRIX m_mtxWeaponWorld;	//武器のワールドマトリックス
-	//D3DXVECTOR3 m_WeaponCollisionPos;		//武器の角度をもとに算出する当たり判定の相対位置
+	D3DXMATRIX m_mtxWeapon[B_MUZZLE_CUR];	//武器のワールドマトリックス
+	void SetWeaponMtx();
 
 	CBossReticle* m_Reticle[2];
 	CGaugeBoss* m_Gauge;
@@ -150,12 +154,48 @@ public:
 	void Init(int num);
 	void Update()override;
 	static CBossEnemySpawner* Create(D3DXVECTOR3 pos,int num);
-private:
+protected:
 	void Move();
 	void SetEnemy();
 	D3DXVECTOR3 m_moveVec;
 	int m_Lifetime;
 	int m_CntTime;
+};
+
+class CBossFunnel : public CBossEnemySpawner
+{
+public:
+	CBossFunnel() : m_moveVec({ 0.0f,0.0f,0.0f }), m_Lifetime(), m_CntTime(0) {};
+	~CBossFunnel()override = default;
+
+	static CBossFunnel* Create(D3DXVECTOR3 pos, int num);
+protected:
+	//void Move()override;
+	//void SetEnemy()override;
+	D3DXVECTOR3 m_moveVec;
+	int m_Lifetime;
+	int m_CntTime;
+};
+
+class CBossKnife : public CObjectX
+{
+public:
+	CBossKnife() :m_Reach(0), m_Sec(0), m_StartPos({ 0.0f,0.0f,0.0f }), m_Target1({ 0.0f,0.0f,0.0f }) , m_Target2({ 0.0f,0.0f,0.0f }), m_RotValue(0){};
+	~CBossKnife()override = default;
+
+	void Init()override;
+	void Update()override;
+	void Draw()override { CObjectX::Draw(m_mtxRot); }
+	static CBossKnife* Create(D3DXVECTOR3 startPos,int Reach,bool Side);
+private:
+	D3DXVECTOR3 m_StartPos,m_Target1,m_Target2;
+	int m_Reach;
+	int m_Sec;
+	float m_RotValue;
+
+	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)
+	D3DXQUATERNION m_quat;		//クオータニオン
+	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
 };
 
 #endif

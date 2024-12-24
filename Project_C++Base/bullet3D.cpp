@@ -20,7 +20,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CBullet3D::CBullet3D() :m_nLife(1), Poly_Size(0.0f),m_EffectSize(0.0f)
+CBullet3D::CBullet3D(int nPriority) : CBillboard(nPriority),m_nLife(1), Poly_Size(0.0f),m_EffectSize(0.0f)
 {
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));

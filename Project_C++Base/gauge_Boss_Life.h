@@ -12,7 +12,7 @@
 class CGaugeBoss : public CBillboard
 {
 public:
-	CGaugeBoss();
+	CGaugeBoss(int nPriority = 4);
 	~CGaugeBoss();
 
 	void Init()override;		//‰Šú‰»

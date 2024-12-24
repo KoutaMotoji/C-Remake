@@ -39,6 +39,7 @@ public:
 	void Init()override;		//初期化
 	void Uninit()override;		//終了
 	void Update()override;		//更新
+	void SetDamageState();
 	void ShootBullet();
 	void Draw()override;		//描画
 
@@ -60,7 +61,8 @@ private:
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
 	void DamageAdd(int nDmg);	//ダメージ加算、生存確認
 	D3DXVECTOR3 LockOnEnemy();						//敵のロックオン
-	void AttackCollisionToEnemy();
+	void AttackCollisionToEnemy();		//敵への攻撃判定
+	void BossAttackCollision();		//ボスの攻撃判定
 
 	void DeadCheck();
 	float m_fWeaponRadius;
