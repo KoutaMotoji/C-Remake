@@ -33,7 +33,7 @@ HRESULT CResult::Init()
 {
 	CScene::Init();
 	CResultBG::Create();
-	m_pScore = CScore::Create({SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f});
+	m_pScore = CScore::Create({SCREEN_WIDTH * 0.6f,SCREEN_HEIGHT * 0.5f,0.0f});
 	m_pScore->LoadLastScore();
 	return S_OK;
 }
@@ -60,7 +60,6 @@ void CResult::Update()
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN)|| CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A))
 	{
 		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
-
 	}
 	CScene::Update();
 }
@@ -79,7 +78,7 @@ void CResult::Draw()
 //==========================================================================================
 void CResultBG::Init()
 {
-	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\result.png");
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\resut.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
 	CObject::SetType(TYPE_2D_UI);

@@ -74,10 +74,6 @@ void CPlayerX::Update()
 {
 	D3DXVECTOR3 CameraPos;
 	m_pShadow->SetShadowGround(m_pos);
-	if (CManager::GetInstance()->GetKeyboard()->GetTrigger(DIK_P) == true)
-	{
-		m_pos = { m_pos.x,m_pos.y,170000.0f };
-	}
 	ReticleController();
 	if (!MotionBlending())
 	{
@@ -1156,11 +1152,18 @@ void CPlayerX::BossAttackCollision()
 				}
 				if (type == CObject::TYPE::TYPE_3D_BOSSWEAPONS) {
 					CBossKnife* pTest = dynamic_cast<CBossKnife*>(pObj);
-					D3DXVECTOR3 SetRadius = { 100.0f,0.0f,0.0f };
+					D3DXVECTOR3 SetRadius = { 70.0f,0.0f,0.0f };
 					if (pTest != nullptr) {
 						if (pCollision->SphireCollosion(m_pos, pTest->GetPos(), SetRadius, SetRadius))
 						{
-							SetDamageState();
+							if (m_CurMotion == MOTION_ROBO_SLASH)
+							{
+								pTest->Braking();
+							}
+							else
+							{
+								SetDamageState();
+							}
 							return;
 						}
 					}

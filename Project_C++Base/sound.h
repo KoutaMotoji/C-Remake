@@ -32,6 +32,7 @@ public:
 		SOUND_LABEL_GAMESE_TRANSFORM1,
 		SOUND_LABEL_GAMESE_TRANSFORM2,
 		SOUND_LABEL_GAMESE_TRANSFORM3,
+		SOUND_LABEL_GAMESE_BIGBOMB,
 		SOUND_LABEL_MAX
 
 	} SOUND_LABEL;
@@ -76,6 +77,8 @@ private:
 		{"data/SOUND/Metal1.wav", 0},	//変形時の効果音1
 		{"data/SOUND/Metal2.wav", 0},	//変形時の効果音2
 		{"data/SOUND/Metal3.wav", 0},	//変形時の効果音2
+		{"data/SOUND/BigBomb.wav", 0},	//変形時の効果音2
+
 
 	};
 };

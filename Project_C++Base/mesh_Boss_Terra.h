@@ -13,6 +13,7 @@
 #include "mesh_obstacle.h"
 #include "boss_reticle.h"
 #include "modelparts.h"
+#include "lockon_enemy.h"
 
 #include "shadow.h"
 
@@ -23,12 +24,12 @@ static constexpr float WORLD_WALL_Y = 600;
 static constexpr int B_MAX_MODELPARTS = 21;
 static constexpr int B_MAX_PARTS = 21;
 static constexpr int B_MAX_KEYSET = 21;
-static constexpr int B_MAX_MOTION = 7;
+static constexpr int B_MAX_MOTION = 9;
 
 static constexpr int B_MUZZLE_CUR = 6;
 static constexpr float B_KNIFE_ROTSPEED = 0.75f;
 
-
+class CBossBomb;
 class CBossTerra :public CObject
 {
 public:
@@ -70,6 +71,8 @@ private:
 	int m_nAttackFrame;
 	bool m_bTransformed;
 	bool m_bDamaging;
+
+	CBossBomb* m_Bomb;
 
 	CModelParts* m_apModelParts[B_MAX_MODELPARTS];
 
@@ -120,11 +123,11 @@ private:
 		MOTION_ROBO_BURST,
 		MOTION_ROBO_FUNNEL,
 		MOTION_ROBO_SHOOT,
-		MOTION_ROBO_DIE
+		MOTION_ROBO_DIE,
+		MOTION_ROBO_SHOT1,
+		MOTION_ROBO_SHOT2,
 	};
-
 	CShadow* m_pShadow;
-
 };
 
 class CBossStatue : public CMeshObstacle
@@ -180,22 +183,38 @@ protected:
 class CBossKnife : public CObjectX
 {
 public:
-	CBossKnife() :m_Reach(0), m_Sec(0), m_StartPos({ 0.0f,0.0f,0.0f }), m_Target1({ 0.0f,0.0f,0.0f }) , m_Target2({ 0.0f,0.0f,0.0f }), m_RotValue(0){};
+	CBossKnife() :m_Reach(0), m_Sec(0), m_StartPos({ 0.0f,0.0f,0.0f }), m_Target1({ 0.0f,0.0f,0.0f }), m_Target2({ 0.0f,0.0f,0.0f }), m_RotValue(0) { lockon = nullptr; };
 	~CBossKnife()override = default;
 
 	void Init()override;
 	void Update()override;
-	void Draw()override { CObjectX::Draw(m_mtxRot); }
+	void Draw()override { CObjectX::Draw(m_mtxRot); lockon->Draw(); }
 	static CBossKnife* Create(D3DXVECTOR3 startPos,int Reach,bool Side);
+	void Braking();
 private:
 	D3DXVECTOR3 m_StartPos,m_Target1,m_Target2;
 	int m_Reach;
 	int m_Sec;
 	float m_RotValue;
+	CLockonEnemy* lockon;
 
 	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)
 	D3DXQUATERNION m_quat;		//クオータニオン
 	D3DXVECTOR3 m_vecAxis;		//回転軸のベクトル
 };
+
+class CBossBomb : public CObjectX
+{
+public:
+	CBossBomb(){};
+	~CBossBomb()override = default;
+
+	void Init()override;
+	void Update()override;
+	void Draw()override;
+	static CBossBomb* Create(D3DXVECTOR3 pos);
+private:
+};
+
 
 #endif
