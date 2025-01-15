@@ -13,7 +13,7 @@
 class CMeshCylinder :public CObject
 {
 public:
-	CMeshCylinder();				//コンストラクタ
+	CMeshCylinder(int nPliority = 0);				//コンストラクタ
 	~CMeshCylinder()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

@@ -81,7 +81,7 @@ void CMeshGround::Draw()
 CMeshGround* CMeshGround::Create(D3DXVECTOR3 pos)
 {
 	CMeshGround* enemy = new CMeshGround;
-	enemy->BindModel("data\\MODEL\\Field5481646924940.x");
+	enemy->BindModel("data\\MODEL\\GameField.x");
 	enemy->SetModelParam(pos);
 	enemy->Init();
 	return enemy;

@@ -4,8 +4,8 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#ifndef _PLAYERX_H_
-#define _PLAYERX_H_
+#ifndef _T_PLAYERX_H_
+#define _T_PLAYERX_H_
 
 #include "main.h"
 #include "object.h"
@@ -24,7 +24,7 @@
 class CTitlePlayer :public CObject
 {
 public:
-	CTitlePlayer();					//コンストラクタ
+	CTitlePlayer(int nPriority = 0);					//コンストラクタ
 	~CTitlePlayer()override;		//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了
@@ -33,6 +33,7 @@ public:
 
 	void AddMove(D3DXVECTOR3 move) { m_move += move; }
 	static CTitlePlayer* Create(D3DXVECTOR3 pos);
+	static CTitlePlayer* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
 	D3DXVECTOR3 GetPos() { return m_pos; };
 private:

@@ -258,7 +258,7 @@ bool CPlayerX::PMove(float fCamRotZ)
 
 		m_fValueRot = (2 * sqrtf((m_move.x * m_move.x) + (m_move.y* m_move.y)) * 10) / (120 * D3DX_PI);
 
-		m_pReticle->SetPos({ m_pos.x + m_move.x * 10,m_pos.y + m_move.y * 10, m_pos.z + 500 });
+		m_pReticle->SetPos({ m_pos.x + m_move.x * RETICLE_VALUE,m_pos.y + m_move.y * RETICLE_VALUE, m_pos.z + 500 });
 	}
 
 	return true;
@@ -320,7 +320,7 @@ void CPlayerX::DeadCheck()
 {
 	if (m_nLife <= 0)
 	{
-		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_RESULT);
+		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAMEOVER);
 	}
 }
 

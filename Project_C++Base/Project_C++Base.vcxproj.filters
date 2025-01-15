@@ -273,6 +273,12 @@
     <ClCompile Include="eff_bomb.cpp">
       <Filter>ソース ファイル\2D</Filter>
     </ClCompile>
+    <ClCompile Include="gameover.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="eff_smoke.cpp">
+      <Filter>ソース ファイル\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -444,6 +450,12 @@
       <Filter>ヘッダー ファイル\2D\PlayerUI</Filter>
     </ClInclude>
     <ClInclude Include="eff_bomb.h">
+      <Filter>ヘッダー ファイル\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="gameover.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="eff_smoke.h">
       <Filter>ヘッダー ファイル\2D</Filter>
     </ClInclude>
   </ItemGroup>

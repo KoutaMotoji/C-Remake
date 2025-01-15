@@ -157,10 +157,12 @@
     <ClInclude Include="EDIT_particle.h" />
     <ClInclude Include="eff_bomb.h" />
     <ClInclude Include="eff_explosion.h" />
+    <ClInclude Include="eff_smoke.h" />
     <ClInclude Include="enemy_base.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="fog.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameover.h" />
     <ClInclude Include="gauge_Boss_Life.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="joypad.h" />
@@ -216,10 +218,12 @@
     <ClCompile Include="EDIT_particle.cpp" />
     <ClCompile Include="eff_bomb.cpp" />
     <ClCompile Include="eff_explosion.cpp" />
+    <ClCompile Include="eff_smoke.cpp" />
     <ClCompile Include="enemy_base.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fog.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="gameover.cpp" />
     <ClCompile Include="gauge_Boss_Life.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="joypad.cpp" />

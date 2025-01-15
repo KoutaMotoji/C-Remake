@@ -12,7 +12,7 @@ const float CTitlePlayer::MOVE_SPEED = 0.55f;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTitlePlayer::CTitlePlayer()
+CTitlePlayer::CTitlePlayer(int nPriority) : CObject(nPriority)
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
@@ -127,7 +127,21 @@ CTitlePlayer* CTitlePlayer::Create(D3DXVECTOR3 pos)
 	return player;
 }
 
+//==========================================================================================
+//生成処理
+//==========================================================================================
+CTitlePlayer* CTitlePlayer::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
+{
+	CTitlePlayer* player = new CTitlePlayer;
+	player->Init();
 
+	player->m_pos = pos;
+	player->m_move = { 0.0f,0.0f,0.0f };
+	player->m_rot = rot;
+	player->m_size = { 1.0f,1.0f,1.0f };
+	player->m_OldPos = pos;
+	return player;
+}
 
 //==========================================================================================
 //床当たり判定

@@ -22,7 +22,7 @@ const int CMeshCylinder::MAX_INDEX = MAX_VTX  + 2;
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CMeshCylinder::CMeshCylinder(): m_pos({0.0f,0.0f,0.0f}), m_rot({0.0f,0.0f,0.0f})
+CMeshCylinder::CMeshCylinder(int nPriority): CObject(nPriority),m_pos({0.0f,0.0f,0.0f}), m_rot({0.0f,0.0f,0.0f})
 {
 
 }

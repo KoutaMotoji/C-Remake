@@ -22,11 +22,12 @@ static constexpr int MAX_KEYSET = 20;
 static constexpr int MAX_MOTION = 7;
 
 //ステータス用定数
-static constexpr int MAX_LIFE = 1000;		//体力
+static constexpr int MAX_LIFE = 1000;			//体力
 static constexpr float MOVE_JET_SPEED = 3.45f;	//移動スピードの設定
 static constexpr float MOVE_ROBO_SPEED = 2.00f;	//移動スピードの設定
 
-static constexpr float SCROLL_SPEED = 5.5f;	//自動スクロールスピードの設定
+static constexpr float SCROLL_SPEED = 5.5f;		//自動スクロールスピードの設定
+static constexpr float RETICLE_VALUE = 8.5f;	//レティクルの移動ギャップ
 
 class CEnemyBase;
 class CCollision;
@@ -56,13 +57,13 @@ private:
 	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
 	D3DXMATRIX m_mtxWeaponWorld;	//武器のワールドマトリックス
 	D3DXVECTOR3 m_WeaponCollisionPos;		//武器の角度をもとに算出する当たり判定の相対位置
-	void FloorCollision();			//床との当たり判定
+	void FloorCollision();					//床との当たり判定
 
 	void SetWeaponRot(D3DXVECTOR2 rot);		//武器の方向を設定
-	void DamageAdd(int nDmg);	//ダメージ加算、生存確認
-	D3DXVECTOR3 LockOnEnemy();						//敵のロックオン
-	void AttackCollisionToEnemy();		//敵への攻撃判定
-	void BossAttackCollision();		//ボスの攻撃判定
+	void DamageAdd(int nDmg);				//ダメージ加算、生存確認
+	D3DXVECTOR3 LockOnEnemy();				//敵のロックオン
+	void AttackCollisionToEnemy();			//敵への攻撃判定
+	void BossAttackCollision();				//ボスの攻撃判定
 
 	void DeadCheck();
 	float m_fWeaponRadius;
