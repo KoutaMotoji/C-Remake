@@ -42,7 +42,7 @@ HRESULT CGameover::Init()
 	CGameoverBG::Create();
 	m_pScore = CScore::Create({ SCREEN_WIDTH - 580.0f,SCREEN_HEIGHT - 80.0f,0.0f });
 	m_pScore->LoadLastScore();
-	m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 280.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
+	m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 250.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
 	CGameOverPlayer::Create({ 0.0f, -150.0f, 0.0f });
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0 });
 
@@ -74,11 +74,18 @@ void CGameover::Update()
 {
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN) || CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_A))
 	{
-		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
+		if (!m_bSelect)
+		{
+			CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
+		}
+		else
+		{
+			CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
+		}
 	}
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_4))
 	{
-		CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f,100.0f,-2000 }, { 0.0f,-200.0f,0.0f }, 150);
+		CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f,100.0f,-400 }, { 0.0f,0.0f,0.0f }, 150);
 	}
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_5))
 	{
@@ -91,9 +98,9 @@ void CGameover::Update()
 	{
 		m_bSelect = !m_bSelect;
 		m_pGOUI->ThisDelete();
-		m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 280.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
+		m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 250.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
 	}
-	CEffSmoke::Create({ 0.0f,-100.0f,0.0f }, 3, 240);
+	CEffSmoke::Create({ 0.0f,-180.0f,0.0f }, 3, 240);
 	CScene::Update();
 }
 

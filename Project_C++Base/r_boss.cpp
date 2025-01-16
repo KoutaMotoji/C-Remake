@@ -4,17 +4,18 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
-#include "go_player.h"
+#include "r_boss.h"
 #include "shadow.h"
 
-const float CGameOverPlayer::MOVE_SPEED = 0.55f;
+const float CResultBoss::MOVE_SPEED = 0.55f;
+
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CGameOverPlayer::CGameOverPlayer(int nPriority) : CObject(nPriority)
+CResultBoss::CResultBoss(int nPriority) : CObject(nPriority)
 {
-	for (int i = 0; i < GO_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < RB_MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i] = nullptr;
 	}
@@ -23,7 +24,7 @@ CGameOverPlayer::CGameOverPlayer(int nPriority) : CObject(nPriority)
 //==========================================================================================
 //デストラクタ
 //==========================================================================================
-CGameOverPlayer::~CGameOverPlayer()
+CResultBoss::~CResultBoss()
 {
 
 }
@@ -31,11 +32,10 @@ CGameOverPlayer::~CGameOverPlayer()
 //==========================================================================================
 //初期化処理
 //==========================================================================================
-void CGameOverPlayer::Init()
+void CResultBoss::Init()
 {
 	ModelDataLoad();
 	CObject::SetType(TYPE_3D_PLAYER);
-	m_pShadow = CShadow::Create(m_pos, 50);
 
 	//CManager::GetInstance()->GetCamera()->SetRotz(D3DX_PI);
 }
@@ -43,9 +43,9 @@ void CGameOverPlayer::Init()
 //==========================================================================================
 //終了処理
 //==========================================================================================
-void CGameOverPlayer::Uninit()
+void CResultBoss::Uninit()
 {
-	for (int i = 0; i < GO_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < RB_MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i]->Uninit();
 	}
@@ -54,10 +54,8 @@ void CGameOverPlayer::Uninit()
 //==========================================================================================
 //更新処理
 //==========================================================================================
-void CGameOverPlayer::Update()
+void CResultBoss::Update()
 {
-	m_pShadow->SetShadowGround(m_pos);
-
 	m_pos += m_move;
 	//移動量を更新
 	m_move.x += (0.0f - m_move.x) * 0.017f;
@@ -68,7 +66,7 @@ void CGameOverPlayer::Update()
 //==========================================================================================
 //描画処理
 //==========================================================================================
-void CGameOverPlayer::Draw()
+void CResultBoss::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice;
 	//デバイスの取得
@@ -106,7 +104,7 @@ void CGameOverPlayer::Draw()
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtxWorld);
-	for (int i = 0; i < GO_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < RB_MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i]->Draw();
 	}
@@ -115,32 +113,24 @@ void CGameOverPlayer::Draw()
 //==========================================================================================
 //生成処理
 //==========================================================================================
-CGameOverPlayer* CGameOverPlayer::Create(D3DXVECTOR3 pos)
+CResultBoss* CResultBoss::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 {
-	CGameOverPlayer* player = new CGameOverPlayer;
+	CResultBoss* player = new CResultBoss;
 	player->Init();
 
 	player->m_pos = pos;
 	player->m_move = { 0.0f,0.0f,0.0f };
-	player->m_rot = { 0.0f,0.0f,0.0f };
+	player->m_rot = rot;
 	player->m_size = { 1.0f,1.0f,1.0f };
 	player->m_OldPos = pos;
 	return player;
-}
-
-//==========================================================================================
-//床当たり判定
-//==========================================================================================
-void CGameOverPlayer::FloorCollision()
-{
-
 }
 
 
 //==========================================================================================
 //モーションをファイルから読み込み
 //==========================================================================================
-void CGameOverPlayer::ModelDataLoad()
+void CResultBoss::ModelDataLoad()
 {
 	char LoadData[128];
 	char ModelPath[128];
@@ -159,7 +149,7 @@ void CGameOverPlayer::ModelDataLoad()
 	int nIndex = 0;
 	int nModelCnt = 0;
 
-	pFile = fopen("data\\TEXT\\motion_gameover_player.txt", "r");
+	pFile = fopen("data\\TEXT\\motion_result_boss.txt", "r");
 
 	if (pFile != nullptr)
 	{
