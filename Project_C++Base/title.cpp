@@ -64,12 +64,14 @@ HRESULT CTitle::Init()
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
 	CSkyBg::Create({ 0.0f,-200.0f,0.0f });
 
+	CManager::GetInstance()->GetCamera()->DefuseFreeCam();
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(600.0f);
 	CFog::SetFogLinear(2000.0f, 14000.0f);
 
 	CTitleUI::Create(LogoPos, 0, LogoSize);
 	CTitleUI::Create(ButtonPos, 1, ButtonSize);
 
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_BGM_TITLE);
 	return S_OK;
 }
 

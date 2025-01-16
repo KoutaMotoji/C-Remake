@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  C++使った3D(result.cpp)
+//  C++使った3D(gameover.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -11,7 +11,7 @@
 #include "gameover.h"
 #include "player_observer.h"
 
-#include "t_player.h"
+#include "go_player.h"
 #include "eff_smoke.h"
 #include "sky_bg.h"
 #include "mesh_cylinder.h"
@@ -20,7 +20,7 @@
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CGameover::CGameover()
+CGameover::CGameover():m_pGOUI(nullptr),m_pScore(nullptr), m_bSelect(false)
 {
 
 }
@@ -40,14 +40,16 @@ HRESULT CGameover::Init()
 {
 	CScene::Init();
 	CGameoverBG::Create();
-	m_pScore = CScore::Create({ SCREEN_WIDTH - 80.0f,SCREEN_HEIGHT - 80.0f,0.0f });
+	m_pScore = CScore::Create({ SCREEN_WIDTH - 580.0f,SCREEN_HEIGHT - 80.0f,0.0f });
 	m_pScore->LoadLastScore();
-	CTitlePlayer::Create({ 0.0f, -120.0f, 0.0f },{ -1.1f, 1.0f, 0.0f });
+	m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 280.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
+	CGameOverPlayer::Create({ 0.0f, -150.0f, 0.0f });
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0 });
 
 	CMeshGround::Create({500.0f, -200.0f, 0.0f});
 	CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f,50.0f,-300 }, { 0.0f,-100.0f,0.0f }, 150);
 
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_BGM_RESULT);
 	return S_OK;
 }
 
@@ -74,18 +76,6 @@ void CGameover::Update()
 	{
 		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
 	}
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_1))
-	{
-		CManager::GetInstance()->GetCamera()->SetFreeCam({ 200.0f,1300.0f,500 }, { 200.0f,1300.0f,500 }, 150);
-	}
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_2))
-	{
-		CManager::GetInstance()->GetCamera()->SetFreeCam({ -200.0f,500.0f,1600 }, { -200.0f,500.0f,1600 }, 150);
-	}
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_3))
-	{
-		CManager::GetInstance()->GetCamera()->SetFreeCam({ 1200.0f,0.0f,-500 }, { 1200.0f,0.0f,-500 }, 150);
-	}
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_4))
 	{
 		CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f,100.0f,-2000 }, { 0.0f,-200.0f,0.0f }, 150);
@@ -94,7 +84,16 @@ void CGameover::Update()
 	{
 		CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f,100.0f,-200 }, { 0.0f,-100.0f,0.0f }, 150);
 	}
-	CEffSmoke::Create({ 0.0f,-120.0f,0.0f }, 3, 240);
+	if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) ||
+		CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) ||
+		CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_DPAD_LEFT) ||
+		CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_DPAD_RIGHT))
+	{
+		m_bSelect = !m_bSelect;
+		m_pGOUI->ThisDelete();
+		m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 280.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
+	}
+	CEffSmoke::Create({ 0.0f,-100.0f,0.0f }, 3, 240);
 	CScene::Update();
 }
 
@@ -117,7 +116,6 @@ void CGameoverBG::Init()
 	CObject::SetType(TYPE_2D_UI);
 	CObject2D::Init();
 }
-
 
 //==========================================================================================
 //枠の生成処理

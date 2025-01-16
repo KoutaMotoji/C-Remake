@@ -46,6 +46,7 @@ HRESULT CScene::Init()
 //==========================================================================================
 void CScene::Uninit()
 {
+	CManager::GetInstance()->GetSound()->StopSound();
 	CObject::ReleaseAll();
 }
 

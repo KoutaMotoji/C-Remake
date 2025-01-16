@@ -164,6 +164,8 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gameover.h" />
     <ClInclude Include="gauge_Boss_Life.h" />
+    <ClInclude Include="go_player.h" />
+    <ClInclude Include="go_UI.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="joypad.h" />
     <ClInclude Include="keyboard.h" />
@@ -225,6 +227,8 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameover.cpp" />
     <ClCompile Include="gauge_Boss_Life.cpp" />
+    <ClCompile Include="go_player.cpp" />
+    <ClCompile Include="go_UI.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="joypad.cpp" />
     <ClCompile Include="keyboard.cpp" />

@@ -35,6 +35,8 @@ HRESULT CResult::Init()
 	CResultBG::Create();
 	m_pScore = CScore::Create({SCREEN_WIDTH * 0.6f,SCREEN_HEIGHT * 0.5f,0.0f});
 	m_pScore->LoadLastScore();
+
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_BGM_RESULT);
 	return S_OK;
 }
 

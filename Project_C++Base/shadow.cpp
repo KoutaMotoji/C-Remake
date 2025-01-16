@@ -129,8 +129,11 @@ void CShadow::SetShadowGround(D3DXVECTOR3 pos)
 							{
 								// “–‚½‚Á‚½ƒ|ƒŠƒSƒ“Žæ“¾
 								VERTEX_3D* pVertex;
-
-								float size = 2.0 + (4.0f / fLandDistance);
+								if (fLandDistance < 0.2)
+								{
+									break;
+								}
+								float size = 2.0 - (4.0f / fLandDistance);
 
 								CObject3D::SetPos({ objpos.x,objpos.y - fLandDistance,objpos.z });
 								CObject3D::SetSize(size);

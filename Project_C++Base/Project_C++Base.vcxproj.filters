@@ -103,6 +103,24 @@
     <Filter Include="ヘッダー ファイル\3D\Model\Enemy\Enemy_UI">
       <UniqueIdentifier>{7e8fb155-c023-43a0-887e-345c5637fb70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D\GameOverObj">
+      <UniqueIdentifier>{22332164-acd8-4021-ba93-04a2724dbd47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\GameOverObj">
+      <UniqueIdentifier>{dde61e96-5dd4-463e-885b-c49acbff046d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\GameOverObj\UI">
+      <UniqueIdentifier>{75c863e1-9211-492b-a2f9-fe3cd29a0cae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\GameOverObj\UI">
+      <UniqueIdentifier>{834c802d-b97c-46aa-822b-6d8a2e638f67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\ResultObj">
+      <UniqueIdentifier>{77009e24-3b15-4458-8f73-337c0e27ca00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3D\ResultObj">
+      <UniqueIdentifier>{4c98d97b-c842-449d-8109-d493f3852aa7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -278,6 +296,12 @@
     </ClCompile>
     <ClCompile Include="eff_smoke.cpp">
       <Filter>ソース ファイル\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="go_player.cpp">
+      <Filter>ソース ファイル\3D\GameOverObj</Filter>
+    </ClCompile>
+    <ClCompile Include="go_UI.cpp">
+      <Filter>ソース ファイル\3D\GameOverObj\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -457,6 +481,12 @@
     </ClInclude>
     <ClInclude Include="eff_smoke.h">
       <Filter>ヘッダー ファイル\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="go_player.h">
+      <Filter>ヘッダー ファイル\3D\GameOverObj</Filter>
+    </ClInclude>
+    <ClInclude Include="go_UI.h">
+      <Filter>ヘッダー ファイル\3D\GameOverObj\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
