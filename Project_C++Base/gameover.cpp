@@ -43,7 +43,7 @@ HRESULT CGameover::Init()
 	m_pScore = CScore::Create({ SCREEN_WIDTH - 580.0f,SCREEN_HEIGHT - 80.0f,0.0f });
 	m_pScore->LoadLastScore();
 	m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 250.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
-	CGameOverPlayer::Create({ 0.0f, -150.0f, 0.0f });
+	CGameOverPlayer::Create({ 0.0f, -130.0f, 0.0f });
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0 });
 
 	CMeshGround::Create({500.0f, -200.0f, 0.0f});

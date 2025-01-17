@@ -37,6 +37,7 @@ public:
 	void AddCameraHeigjt(float Height) { m_camHeight += Height; };
 
 	void SetShake(int nFlame, float fShake);
+	void SetCamPos(D3DXVECTOR3 PosV, D3DXVECTOR3 PosR) { m_posV = PosV; m_posR = PosR; }	//éãì_ / íçéãì_ÇÃê›íË
 	void SetCamDefault() {
 		m_posV = D3DXVECTOR3(0.0f, 100.0f, -300.0f);
 		m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);

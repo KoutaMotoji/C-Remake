@@ -93,7 +93,7 @@ CTitleUI* CTitleUI::Create(D3DXVECTOR3 pos,int Type, D3DXVECTOR2 PolySize)
 //初期化オーバーロード
 void CTitleLogo::Init()
 {
-	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\title_logo.png");
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\title_logo_A.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
 	CObject::SetType(TYPE_3D_TITLEOBJ);

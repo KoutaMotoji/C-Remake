@@ -13,7 +13,7 @@
 class CGameOverUI : CObject2D
 {
 public:
-	CGameOverUI(int nPriority = 1);			//コンストラクタ
+	CGameOverUI(int nPriority = 5);			//コンストラクタ
 	~CGameOverUI()override;		//デストラクタ
 	void Init()override;					//初期化
 	void Uninit()override;					//終了
