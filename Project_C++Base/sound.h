@@ -65,10 +65,10 @@ private:
 	// サウンドの情報
 	SOUNDINFO m_aSoundInfo[SOUND_LABEL_MAX] =
 	{
-		{"data/SOUND/BGM_title.wav", 1},	//タイトル画面BGM
-		{"data/SOUND/BGM_tutorial.wav", 1},	//チュートリアル画面BGM
-		{"data/SOUND/BGM_game.wav", 1},		//ゲーム画面BGM
-		{"data/SOUND/BGM_result.wav", 1},	//リザルト画面BGM
+		{"data/SOUND/BGM_title.wav", -1},	//タイトル画面BGM
+		{"data/SOUND/BGM_tutorial.wav", -1},	//チュートリアル画面BGM
+		{"data/SOUND/BGM_game.wav", -1},		//ゲーム画面BGM
+		{"data/SOUND/BGM_result.wav", -1},	//リザルト画面BGM
 		{"data/SOUND/opener1.wav", 0},	//開く音
 		{"data/SOUND/lift2.wav", 0},	//リフトが動く音
 		{"data/SOUND/rider1.wav", 0},	//ブースターが上がる音

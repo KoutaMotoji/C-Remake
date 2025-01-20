@@ -25,7 +25,9 @@
 //コンストラクタ
 //==========================================================================================
 CPlayerX::CPlayerX():m_nLife(1000),m_fWeaponRadius(25), 
-					m_bMotion(false), m_SecZrot(0.8f), m_bTransformed(false), m_bDamaged(false), m_DamageTime(0), m_bBlend(false), m_bAttack(false)
+					m_bMotion(false), m_SecZrot(0.8f), 
+					m_bTransformed(false), m_bDamaged(false),
+					m_DamageTime(0), m_bBlend(false), m_bAttack(false)
 {
 	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{

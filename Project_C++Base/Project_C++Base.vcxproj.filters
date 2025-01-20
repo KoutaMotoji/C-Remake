@@ -309,6 +309,9 @@
     <ClCompile Include="r_boss.cpp">
       <Filter>ソース ファイル\3D\ResultObj</Filter>
     </ClCompile>
+    <ClCompile Include="tutorial.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -499,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="r_boss.h">
       <Filter>ヘッダー ファイル\3D\ResultObj</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
