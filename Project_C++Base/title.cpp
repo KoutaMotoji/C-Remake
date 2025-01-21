@@ -63,7 +63,7 @@ HRESULT CTitle::Init()
 	CStarter::Create({ 0.0f, -70.0f, 0.0f });
 	CMeshCylinder::Create({ 0.0f,1000.0f,0.0f });
 	CSkyBg::Create({ 0.0f,-200.0f,0.0f });
-
+	CT_Obj::Create({ -750.0f,-150.0f,-100.0f }, {0.0f,0.0f,0.0f});
 	CManager::GetInstance()->GetCamera()->DefuseFreeCam();
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(600.0f);
 	CFog::SetFogLinear(2000.0f, 14000.0f);
@@ -146,4 +146,15 @@ void CTitle::UpdateAnim()
 	{
 		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_GAME);
 	}
+}
+
+CT_Obj* CT_Obj::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
+{
+	CT_Obj* obj = new CT_Obj();
+
+	obj->BindModel("data\\MODEL\\warehouse.x");
+	obj->SetModelParam(pos);
+	obj->SetRot(rot);
+
+	return obj;
 }

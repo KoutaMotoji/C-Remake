@@ -213,7 +213,6 @@ void CTutorialSky::Draw()
 	m_pMesh->DrawSubset(0);
 
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);	//ƒJƒŠƒ“ƒO–ß‚µ
-
 }
 
 

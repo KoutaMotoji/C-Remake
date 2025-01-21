@@ -52,7 +52,6 @@ HRESULT CTutorial::Init()
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 },1);
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 },1);
 
-	//CMapEdit::SetLoadMap();
 
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(50.0f);
 	CManager::GetInstance()->GetCamera()->DefuseFreeCam();

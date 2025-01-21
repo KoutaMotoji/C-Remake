@@ -9,7 +9,7 @@
 
 #include "scene.h"
 #include "t_player.h"
-
+#include "objectX.h"
 
 class CTitle : public CScene
 {
@@ -25,6 +25,15 @@ private:
 	int m_AnimTimer;
 	bool m_bNowAnim;
 	CTitlePlayer* m_tPl;
+};
+
+class CT_Obj : public CObjectX
+{
+public:
+	CT_Obj() {};
+	~CT_Obj()override = default;
+
+	static CT_Obj* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 };
 
 #endif
