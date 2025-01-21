@@ -22,6 +22,7 @@ public:
 	void Draw()override;		//•`‰æ
 
 	static CSkyBg* Create(D3DXVECTOR3 pos);
+
 private:
 };
 

@@ -121,6 +121,12 @@
     <Filter Include="ソース ファイル\3D\ResultObj">
       <UniqueIdentifier>{4c98d97b-c842-449d-8109-d493f3852aa7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\3D\TutorialObj">
+      <UniqueIdentifier>{98cd678c-e32b-4b0c-ba16-857dcb42de06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\3D\TutorialObj">
+      <UniqueIdentifier>{be87f108-4269-4aef-8b21-59c6e94676a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -311,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="tutorial.cpp">
       <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="tu_sky.cpp">
+      <Filter>ソース ファイル\3D\TutorialObj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -505,6 +514,9 @@
     </ClInclude>
     <ClInclude Include="tutorial.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="tu_sky.h">
+      <Filter>ヘッダー ファイル\3D\TutorialObj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

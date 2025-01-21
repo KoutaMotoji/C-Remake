@@ -134,6 +134,7 @@ private:
 	bool MeshObstacle();
 	void GetItem();
 	bool CheckLockonBlocking();
+	bool PushRSholder();
 
 	bool CheckToObs(CEnemyBase* pEnemy);
 	CShadow* m_pShadow;

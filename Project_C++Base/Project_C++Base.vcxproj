@@ -206,6 +206,7 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="tree_billboard.h" />
     <ClInclude Include="tutorial.h" />
+    <ClInclude Include="tu_sky.h" />
     <ClInclude Include="t_anim_border.h" />
     <ClInclude Include="t_base.h" />
     <ClInclude Include="t_player.h" />
@@ -271,6 +272,7 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tree_billboard.cpp" />
     <ClCompile Include="tutorial.cpp" />
+    <ClCompile Include="tu_sky.cpp" />
     <ClCompile Include="t_anim_border.cpp" />
     <ClCompile Include="t_base.cpp" />
     <ClCompile Include="t_player.cpp" />

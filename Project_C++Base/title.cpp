@@ -109,6 +109,10 @@ void CTitle::Update()
 	{
 		UpdateAnim();
 	}
+	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_O))
+	{
+		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TUTORIAL);
+	}
 	CScene::Update();
 }
 

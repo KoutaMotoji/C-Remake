@@ -129,6 +129,10 @@ void CPlayerX::Update()
 	m_pReticle->SetPos({ m_pReticle->GetPos().x,m_pReticle->GetPos().y,m_pos.z + 500 });
 
 	m_pos += m_move;
+	if (PushRSholder())
+	{
+		m_pos -= {m_move.x, m_move.y, 0.0f};
+	}
 	//移動量を更新
 	m_move.x += (0.0f - m_move.x) * 0.17f;
 	m_move.y += (0.0f - m_move.y) * 0.17f;
@@ -1239,4 +1243,19 @@ void CPlayerX::DamageAdd(int nDmg)
 	DeadCheck(); 
 	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_EXPLOAD); 
 	CEffBomb::Create(m_pos); 
-}	
+}
+
+//==========================================================================================
+// ダメージ加算、生存確認、ヒット音ならして爆発エフェクト生成
+//==========================================================================================
+bool CPlayerX::PushRSholder()
+{
+	if (!m_bTransformed)
+	{
+		if (CManager::GetInstance()->GetJoypad()->GetRepeat(CJoypad::JOYPAD_RIGHT_TRIGGER) == true)
+		{
+			return true;
+		}
+	}
+	return false;
+}
