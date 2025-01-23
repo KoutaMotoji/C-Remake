@@ -40,9 +40,11 @@ namespace BulletOption {
 	int Life = 60;
 	float Radius = 150;
 	float EffectSize = 100;
-	D3DXCOLOR color[2] = {
+	D3DXCOLOR color[3] = {
 		{ 0.2f,0.2f,0.8f,1.0f },
-		{ 0.8f,0.1f,0.1f,1.0f }
+		{ 0.8f,0.1f,0.1f,1.0f },
+		{ 0.5f,0.0f,0.9f,1.0f },
+
 	};
 	D3DXCOLOR DamagingColor = { 1.0f,0.1f,0.2,0.8f };
 }
@@ -364,7 +366,6 @@ void CBossTerra::Attack(D3DXVECTOR3& Playerpos)
 		}
 	}
 
-
 	if (m_Reticle[0] != nullptr &&
 		m_Reticle[1] != nullptr)
 	{
@@ -479,34 +480,6 @@ void CBossTerra::SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos)
 		D3DXVec3Normalize(&value[i], &value[i]);
 		CBossBullet::Create(SetMtxpos[i], value[i], color[i % 2], Life, Radius, EffectSize);
 	}
-	/*
-	D3DXVECTOR3 pos1 = setpos1 + pos;
-	D3DXVECTOR3 pos2 = setpos2 + pos;
-	D3DXVECTOR3 pos3 = setpos3 + pos;
-	D3DXVECTOR3 pos4 = setpos4 + pos;
-	D3DXVECTOR3 pos5 = setpos5 + pos;
-	D3DXVECTOR3 pos6 = setpos6 + pos;
-
-	D3DXVECTOR3 value1 = Playerpos - pos1;
-	D3DXVECTOR3 value2 = Playerpos - pos2;
-	D3DXVECTOR3 value3 = Playerpos - pos3;
-	D3DXVECTOR3 value4 = Playerpos - pos4;
-	D3DXVECTOR3 value5 = Playerpos - pos5;
-	D3DXVECTOR3 value6 = Playerpos - pos6;
-
-	D3DXVec3Normalize(&value1, &value1);
-	D3DXVec3Normalize(&value2, &value2);
-	D3DXVec3Normalize(&value3, &value3);
-	D3DXVec3Normalize(&value4, &value4);
-	D3DXVec3Normalize(&value5, &value5);
-	D3DXVec3Normalize(&value6, &value6);
-
-	CBossBullet::Create(pos2, value2, color2, Life, Radius, EffectSize);
-	CBossBullet::Create(pos3, value3, color1, Life, Radius, EffectSize);
-	CBossBullet::Create(pos4, value4, color2, Life, Radius, EffectSize);
-	CBossBullet::Create(pos5, value5, color1, Life, Radius, EffectSize);
-	CBossBullet::Create(pos6, value6, color2, Life, Radius, EffectSize);
-	*/
 }
 
 //==========================================================================================
@@ -641,6 +614,7 @@ void CBossEnemySpawner::Update()
 {
 	if (m_CntTime >= m_Lifetime)
 	{
+		CBossBullet::Create(CObjectX::GetPos(), { 0.0f,0.0f,-1.0f }, BulletOption::color[2], BulletOption::Life, BulletOption::Radius, BulletOption::EffectSize);
 		SetEnemy();
 	}
 	else
@@ -988,7 +962,7 @@ void CBossTerra::SetNextKey()
 							m_mtxWeapon[5]._42,
 							m_mtxWeapon[5]._43,
 						};
-						CBossBullet::Create(Weaponpos, {0.0f,0.0f,-1.0f}, BulletOption::color[0], BulletOption::Life, BulletOption::Radius, BulletOption::EffectSize);
+						CBossBullet::Create(Weaponpos, {0.0f,0.0f,-1.0f}, BulletOption::color[2], BulletOption::Life, BulletOption::Radius, BulletOption::EffectSize);
 
 					}
 					else if (MOTION_ROBO_SHOT1)

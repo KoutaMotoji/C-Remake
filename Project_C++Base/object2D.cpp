@@ -208,6 +208,7 @@ void CObject2D::SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth, in
 void CObject2D::BindTexture(LPDIRECT3DTEXTURE9 pTex, int AnimU, int AnimV)
 {
 	m_pTextureObject2D = pTex;
+	
 	m_TexSliceU = AnimU;
 	m_TexSliceV = AnimV;
 }

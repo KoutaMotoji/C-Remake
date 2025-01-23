@@ -54,8 +54,7 @@ void CPlayerX::Init()
 	CObject::SetType(TYPE_3D_PLAYER);
 	m_pShadow = CShadow::Create({ 0.0f,0.0f,0.0f });
 	CGaugeLife::Create(MAX_LIFE);
-	CMainUI::Create();
-	CMainBlock::Create();
+	m_pMainUI = CMainUI::Create();
 }
 
 //==========================================================================================
@@ -446,10 +445,9 @@ void CPlayerX::SetNextKey()
 					m_CurMotion == MOTION_ROBO_SHOT || 
 					m_CurMotion == MOTION_ROBO_SLASH)
 				{
-					if (m_CurMotion == MOTION_TRANS_ROBO_TO_JET)
-					{
-						CMainBlock::Create();
-					}
+					
+					m_pMainUI->ChangeUI((int)m_bTransformed);
+					
 					--m_CurKey;
 					m_bMotion = false;
 				}

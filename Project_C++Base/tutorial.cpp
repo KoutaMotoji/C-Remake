@@ -76,10 +76,10 @@ void CTutorial::Uninit()
 void CTutorial::Update()
 {
 #if _DEBUG
-
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN))
 	{
 		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
+		return;
 	}
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_F3))
 	{

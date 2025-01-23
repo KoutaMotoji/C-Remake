@@ -31,6 +31,7 @@ static constexpr float RETICLE_VALUE = 8.5f;	//レティクルの移動ギャップ
 
 class CEnemyBase;
 class CCollision;
+class CMainUI;
 
 class CPlayerX :public CObject
 {
@@ -138,6 +139,7 @@ private:
 
 	bool CheckToObs(CEnemyBase* pEnemy);
 	CShadow* m_pShadow;
+	CMainUI* m_pMainUI;
 
 	//=====================			クオータニオン用		====================================
 	D3DXMATRIX m_mtxRot;		//回転マトリックス(保存用)

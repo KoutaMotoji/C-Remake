@@ -20,7 +20,6 @@ public:
 	void Update()override;		//XV
 	void Draw()override;		//•`‰æ
 	static CMeshCylinder* Create(D3DXVECTOR3 pos);
-	static CMeshCylinder* Create(D3DXVECTOR3 pos,int i);
 
 	LPD3DXMESH GetMesh() { return m_pMesh; };
 	D3DXVECTOR3 GetPos() { return m_pos; }
