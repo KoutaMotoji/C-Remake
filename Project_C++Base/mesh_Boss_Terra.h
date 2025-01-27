@@ -30,6 +30,7 @@ static constexpr int B_MUZZLE_CUR = 6;
 static constexpr float B_KNIFE_ROTSPEED = 0.75f;
 
 class CBossBomb;
+
 class CBossTerra :public CObject
 {
 public:
@@ -55,9 +56,9 @@ public:
 protected:
 
 private:
-	D3DXVECTOR3 m_pos, m_rot, m_size;	//座標・回転・大きさ
-	D3DXVECTOR3 m_move;				//移動量
-	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
+	D3DXVECTOR3 m_pos, m_rot, m_size;		//座標・回転・大きさ
+	D3DXVECTOR3 m_move;						//移動量
+	D3DXMATRIX m_mtxWorld;					//ワールドマトリックス
 	D3DXMATRIX m_mtxWeapon[B_MUZZLE_CUR];	//武器のワールドマトリックス
 	void SetWeaponMtx();
 

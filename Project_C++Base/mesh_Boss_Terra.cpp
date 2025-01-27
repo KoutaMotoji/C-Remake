@@ -12,6 +12,7 @@
 #include "enemy_base.h"
 #include "particle3D.h"
 #include "eff_bomb.h"
+#include "eff_smoke.h"
 
 #include "mesh_ground.h"
 #include "manager.h"
@@ -43,7 +44,7 @@ namespace BulletOption {
 	D3DXCOLOR color[3] = {
 		{ 0.2f,0.2f,0.8f,1.0f },
 		{ 0.8f,0.1f,0.1f,1.0f },
-		{ 0.5f,0.0f,0.9f,1.0f },
+		{ 1.0f,0.0f,0.3f,1.0f },
 
 	};
 	D3DXCOLOR DamagingColor = { 1.0f,0.1f,0.2,0.8f };
@@ -169,7 +170,12 @@ void CBossTerra::Update()
 	float disPos = m_pos.z - Playerpos.z;
 	if (disPos < 1500)
 	{
-		m_move.z += 2500;
+		if (!m_bTransformed)
+		{
+			SetStatue();
+		}
+
+		m_move.z += 3000;
 	}
 
 	m_pos += m_move;
@@ -329,7 +335,9 @@ void CBossTerra::Attack(D3DXVECTOR3& Playerpos)
 				m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 50, -0.06f);
 				break;
 			case 1:
-				SetStatue();
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOSSLOCKON);
+				m_Reticle[0] = CBossReticle::Create(Playerpos, 150, 35, 0.08f);
+				m_Reticle[1] = CBossReticle::Create(Playerpos, 100, 35, -0.06f);
 				break;
 			case 2:
 				for (int i = 0; i < 5; ++i)
@@ -415,7 +423,7 @@ void CBossTerra::DeathCheck()
 			pGame->GetScore()->AddScore(5000);
 		}
 	}
-};
+}
 
 //==========================================================================================
 //すべての武器の銃口オフセットを設定
@@ -492,7 +500,7 @@ void CBossTerra::SetStatue()
 	std::random_device rnd;			// 非決定的な乱数生成器でシード生成機を生成
 	std::mt19937 mt(rnd());			//  メルセンヌツイスターの32ビット版、引数は初期シード
 	std::uniform_int_distribution<> rand_x(-2500, 2500);	 // [-3000, 3000] 範囲の一様乱数
-	std::uniform_int_distribution<> rand_y(2000, 5000);		 // [2000, 5000] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_y(3000, 7000);		 // [3000, 7000] 範囲の一様乱数
 
 	for (int i = 0; i < 4; ++i)
 	{
@@ -746,6 +754,9 @@ void CBossKnife::Update()
 	CObjectX::Update();
 }
 
+//==========================================================================================
+//敵投げナイフの破棄
+//==========================================================================================
 void CBossKnife::Braking()
 {
 	CEffExplosion::Create(CObjectX::GetPos(),240.0f);
@@ -777,17 +788,17 @@ CBossKnife* CBossKnife::Create(D3DXVECTOR3 startPos, int Reach, bool Side)
 }
 
 //==========================================================================================
-//敵投げナイフの初期化
+//死亡時爆発の初期化
 //==========================================================================================
 void CBossBomb::Init()
 {
-	CObject::SetType(TYPE_BILLBOARD);
+	CObject::SetType(TYPE_3D_MADEMESH);
 
 	CObjectX::Init();
 }
 
 //==========================================================================================
-//敵投げナイフの更新
+//死亡時爆発の更新
 //==========================================================================================
 void CBossBomb::Update()
 {
@@ -797,7 +808,7 @@ void CBossBomb::Update()
 }
 
 //==========================================================================================
-//敵投げナイフの更新
+//死亡時爆発の描画
 //==========================================================================================
 void CBossBomb::Draw()
 {
@@ -818,7 +829,7 @@ void CBossBomb::Draw()
 
 
 //==========================================================================================
-//敵投げナイフの生成
+//死亡時爆発の生成
 //==========================================================================================
 CBossBomb* CBossBomb::Create(D3DXVECTOR3 pos)
 {
