@@ -19,8 +19,11 @@
 #include "game.h"
 
 namespace BulletOption {
+
+	static constexpr int MUZZLE_CUR = 6;
+
 	//各弾の発射地点の位置
-	int WeaponsIdx[B_MUZZLE_CUR] = {
+	int WeaponsIdx[MUZZLE_CUR] = {
 		15,		//左腰キャノン
 		16,		//右腰キャノン
 		18,		//背面キャノン
@@ -29,7 +32,7 @@ namespace BulletOption {
 		20		//右手ライフル
 	};
 
-	D3DXVECTOR3 WeaponsMuzzlePos[B_MUZZLE_CUR] = {
+	D3DXVECTOR3 WeaponsMuzzlePos[MUZZLE_CUR] = {
 		{150.0f,-400.0f,0.0f},
 		{-150.0f,-400.0f,0.0f},
 		{ 200.0f, -400.0f,150.0f},
@@ -57,11 +60,11 @@ CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamagi
 {
 	m_Reticle[0] = nullptr;
 	m_Reticle[1] = nullptr;
-	for (int i = 0; i < B_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i] = nullptr;
 	}
-	for (int j = 0; j < B_MUZZLE_CUR; ++j)
+	for (int j = 0; j < MUZZLE_CUR; ++j)
 	{
 		m_mtxWeapon[j] = {};
 	}
@@ -106,7 +109,7 @@ void CBossTerra::Uninit()
 	{
 		m_Gauge->Uninit();
 	}
-	for (int i = 0; i < B_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i]->Uninit();
 	}
@@ -228,7 +231,7 @@ void CBossTerra::Draw()
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtxWorld);
-	for (int i = 0; i < B_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		if (m_bDamaging || m_bDead)
 		{
@@ -431,7 +434,7 @@ void CBossTerra::DeathCheck()
 void CBossTerra::SetWeaponMtx()
 {
 	using namespace BulletOption;
-	for (int i = 0; i < B_MUZZLE_CUR; ++i)
+	for (int i = 0; i < MUZZLE_CUR; ++i)
 	{
 		int T = WeaponsIdx[i];
 		D3DXMATRIX RifleMtx = m_apModelParts[T]->GetWorldMatrix();
@@ -477,11 +480,11 @@ void CBossTerra::SetWeaponMtx()
 void CBossTerra::SetBullet(D3DXVECTOR3& pos, D3DXVECTOR3& Playerpos)
 {
 	using namespace BulletOption;
-	D3DXVECTOR3 SetMtxpos[B_MUZZLE_CUR];
-	D3DXVECTOR3 value[B_MUZZLE_CUR];
+	D3DXVECTOR3 SetMtxpos[MUZZLE_CUR];
+	D3DXVECTOR3 value[MUZZLE_CUR];
 	SetWeaponMtx();
 
-	for (int i = 0; i < B_MUZZLE_CUR; ++i)
+	for (int i = 0; i < MUZZLE_CUR; ++i)
 	{
 		SetMtxpos[i] = { m_mtxWeapon[i]._41, m_mtxWeapon[i]._42, m_mtxWeapon[i]._43 };
 		value[i] = Playerpos - SetMtxpos[i];
@@ -698,7 +701,7 @@ void CBossKnife::Init()
 {
 	m_Sec = 0;
 	m_vecAxis = { 1.0f,0.0f,0.0f };
-	m_RotValue = -B_KNIFE_ROTSPEED;
+	m_RotValue = -KNIFE_ROTSPEED;
 	D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
 	
 	CObject::SetType(TYPE_3D_BOSSWEAPONS);

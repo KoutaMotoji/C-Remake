@@ -20,6 +20,10 @@
 #include "game.h"
 #include "collision.h"
 
+namespace
+{
+	float Damage_Ratio = 0.2f;
+};
 
 //==========================================================================================
 //コンストラクタ
@@ -150,7 +154,7 @@ void CPlayerX::SetDamageState()
 	{
 		m_bDamaged = true;
 		CManager::GetInstance()->GetCamera()->SetShake(20, 40);
-		DamageAdd(1000 * 0.125);
+		DamageAdd(1000 * Damage_Ratio);
 		m_DamageTime = 0;
 	}
 }
@@ -271,7 +275,7 @@ bool CPlayerX::PMove(float fCamRotZ)
 
 
 //==========================================================================================
-//床当たり判定
+// プレイヤーの移動制限判定
 //==========================================================================================
 void CPlayerX::FloorCollision()
 {

@@ -1,6 +1,6 @@
 //===============================================================================
 //
-//  C++使った3D(game.cpp)
+//  C++使った3D(tutorial.cpp)
 //								制作：元地弘汰
 // 
 //===============================================================================
@@ -10,7 +10,7 @@
 #include "object.h"
 #include "sky_bg.h"
 
-#include "mesh_Boss_Terra.h"
+#include "enemy_base.h"
 #include "tu_sky.h"
 
 #include "fog.h"
@@ -21,11 +21,30 @@
 
 #include "playerX.h"
 
+namespace TutorialSceneInfo
+{
+	int TIME_TARGETOBJ = 240;
+	int HALFTIME_TARGETOBJ = TIME_TARGETOBJ * 0.5f;
+
+	float TargetToPlauerDistance = 6000.0f;
+	D3DXVECTOR2 EnemyPosBeside[2] =
+	{
+		{
+			600.0f,
+			400.0f
+		},
+		{
+			-600.0f,
+			400.0f
+		}
+	};
+
+};
 
 //==========================================================================================
 //コンストラクタ
 //==========================================================================================
-CTutorial::CTutorial()
+CTutorial::CTutorial():m_nSetTimer(0)
 {
 }
 
@@ -51,6 +70,9 @@ HRESULT CTutorial::Init()
 	CMeshGround::Create({ 0.0f,-1000.0f,0.0f },1);
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 },1);
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 },1);
+
+	CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[0].x,TutorialSceneInfo::EnemyPosBeside[0].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
+	CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[1].x,TutorialSceneInfo::EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
 
 
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(50.0f);
@@ -87,6 +109,16 @@ void CTutorial::Update()
 		return;
 	}
 #endif // _DEBUG
+	++m_nSetTimer;
+	if (m_nSetTimer == TutorialSceneInfo::TIME_TARGETOBJ)
+	{
+		CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[1].x,TutorialSceneInfo::EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
+		m_nSetTimer = 0;
+	}
+	else if(m_nSetTimer == TutorialSceneInfo::HALFTIME_TARGETOBJ)
+	{
+		CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[0].x,TutorialSceneInfo::EnemyPosBeside[0].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
+	}
 	CScene::Update();
 }
 

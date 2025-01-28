@@ -15,19 +15,6 @@
 
 #include "manager.h"
 
-//モーション用定数
-static constexpr int MAX_MODELPARTS = 20;
-static constexpr int MAX_PARTS = 20;
-static constexpr int MAX_KEYSET = 20;
-static constexpr int MAX_MOTION = 7;
-
-//ステータス用定数
-static constexpr int MAX_LIFE = 1000;			//体力
-static constexpr float MOVE_JET_SPEED = 3.45f;	//移動スピードの設定
-static constexpr float MOVE_ROBO_SPEED = 2.00f;	//移動スピードの設定
-
-static constexpr float SCROLL_SPEED = 5.5f;		//自動スクロールスピードの設定
-static constexpr float RETICLE_VALUE = 8.5f;	//レティクルの移動ギャップ
 
 class CEnemyBase;
 class CCollision;
@@ -52,6 +39,21 @@ public:
 	D3DXVECTOR3 GetPos() { return m_pos; };
 	D3DXVECTOR3 GetMove() { return m_move; };
 private:
+
+	//モーション用定数
+	static constexpr int MAX_MODELPARTS = 20;
+	static constexpr int MAX_PARTS = 20;
+	static constexpr int MAX_KEYSET = 20;
+	static constexpr int MAX_MOTION = 7;
+
+	//ステータス用定数
+	static constexpr int MAX_LIFE = 1000;			//体力
+	static constexpr float MOVE_JET_SPEED = 3.45f;	//移動スピードの設定
+	static constexpr float MOVE_ROBO_SPEED = 2.00f;	//移動スピードの設定
+
+	static constexpr float SCROLL_SPEED = 5.5f;		//自動スクロールスピードの設定
+	static constexpr float RETICLE_VALUE = 8.5f;	//レティクルの移動ギャップ
+
 	D3DXVECTOR3 m_pos,m_rot,m_size;	//座標・回転・大きさ
 	D3DXVECTOR3 m_move;				//移動量
 	D3DXVECTOR3 m_OldPos;			//過去の位置

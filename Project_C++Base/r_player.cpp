@@ -15,7 +15,7 @@ const float CResultPlayer::MOVE_SPEED = 0.55f;
 //==========================================================================================
 CResultPlayer::CResultPlayer(int nPriority) : CObject(nPriority)
 {
-	for (int i = 0; i < RP_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i] = nullptr;
 	}
@@ -43,7 +43,7 @@ void CResultPlayer::Init()
 //==========================================================================================
 void CResultPlayer::Uninit()
 {
-	for (int i = 0; i < RP_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i]->Uninit();
 	}
@@ -103,7 +103,7 @@ void CResultPlayer::Draw()
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtxWorld);
-	for (int i = 0; i < RP_MAX_MODELPARTS; ++i)
+	for (int i = 0; i < MAX_MODELPARTS; ++i)
 	{
 		m_apModelParts[i]->Draw();
 	}
@@ -174,7 +174,7 @@ void CResultPlayer::SetNextKey()
 	int nNextKey = (m_CurKey + 1) % m_aMotion[nNowMotion].nKeyNum;
 	float fRatioFrame = (float)m_NowFrame / (float)m_aMotion[nNowMotion].aKetSet[nNowKey].nFrame;
 
-	for (int nCntParts = 0; nCntParts < RP_MAX_PARTS; ++nCntParts)
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; ++nCntParts)
 	{
 		//現在の向きと位置の情報
 		NowPos = m_aMotion[nNowMotion].aKetSet[nNowKey].aKey[nCntParts].pos;
@@ -271,7 +271,7 @@ bool CResultPlayer::MotionBlending()
 
 	float fRatioFrame = ((float)m_NowFrame / (float)m_aMotion[m_NextMotion].aKetSet[0].nFrame);
 
-	for (int nCntParts = 0; nCntParts < RP_MAX_PARTS; ++nCntParts)
+	for (int nCntParts = 0; nCntParts < MAX_PARTS; ++nCntParts)
 	{
 		//現在の向きと位置の情報
 		NowPos = m_aMotion[nNowMotion].aKetSet[nLastKey].aKey[nCntParts].pos;

@@ -51,7 +51,7 @@ void CTutorialSky::Init()
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\sky_bg003.png",
+		"data\\TEXTURE\\sky_bg005.png",
 		&m_apTexMeshCylinder);
 
 	D3DXCreateMeshFVF(
@@ -168,8 +168,6 @@ void CTutorialSky::Uninit()
 //==========================================================================================
 void CTutorialSky::Update()
 {
-	VERTEX_3D* pVtx;	//頂点情報のポインタ
-
 	m_pos.z = CPlayerObserver::GetInstance()->GetPlayerPos().z;
 }
 
@@ -181,6 +179,8 @@ void CTutorialSky::Draw()
 	LPDIRECT3DDEVICE9 pDevice;
 	//デバイスの取得
 	pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+
+
 	//計算用マトリックス
 	D3DXMATRIX mtxRot, mtxTrans;
 	//ワールドマトリックス
@@ -207,11 +207,29 @@ void CTutorialSky::Draw()
 
 	pDevice->SetTexture(0, m_apTexMeshCylinder);
 
-
+	// 法線の自動正規化を有効に
+	pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);	//カリングを両面に
+
+		//加算合成の設定
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	 
+		//アルファテスト設定
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
 	m_pMesh->DrawSubset(0);
 
+	//通常の合成に戻す設定
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	// 法線の自動正規化を無効に
+	pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, FALSE);
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);	//カリング戻し
 }
 

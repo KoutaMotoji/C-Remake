@@ -14,11 +14,7 @@
 #include "manager.h"
 
 
-static constexpr int RP_MAX_MODELPARTS = 20;
 
-static constexpr int RP_MAX_PARTS = 20;
-static constexpr int RP_MAX_KEYSET = 20;
-static constexpr int RP_MAX_MOTION = 7;
 
 class CResultPlayer :public CObject
 {
@@ -32,10 +28,15 @@ public:
 
 	void AddMove(D3DXVECTOR3 move) { m_move += move; }
 	static CResultPlayer* Create(D3DXVECTOR3 pos);
-	static CResultPlayer* Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
 	D3DXVECTOR3 GetPos() { return m_pos; };
 private:
+	static constexpr int MAX_MODELPARTS = 20;
+
+	static constexpr int MAX_PARTS = 20;
+	static constexpr int MAX_KEYSET = 20;
+	static constexpr int MAX_MOTION = 7;
+
 	D3DXVECTOR3 m_pos, m_rot, m_size;	//座標・回転・大きさ
 	D3DXVECTOR3 m_move;				//移動量
 	D3DXVECTOR3 m_OldPos;			//過去の位置
@@ -43,11 +44,11 @@ private:
 
 	static const float MOVE_SPEED;			//移動スピードの設定
 
-	CModelParts* m_apModelParts[RP_MAX_MODELPARTS];
+	CModelParts* m_apModelParts[MAX_MODELPARTS];
 
 	void ModelDataLoad();
 
-	char* m_pModelFileName[RP_MAX_MODELPARTS];
+	char* m_pModelFileName[MAX_MODELPARTS];
 	int m_ModelParts;	//モデルパーツ数
 	int m_CurKey;		//現在のキー番号
 	int m_CurMotion;	//現在のモーション番号
@@ -68,15 +69,15 @@ private:
 	{
 
 		int nFrame;
-		Key aKey[RP_MAX_PARTS];
+		Key aKey[MAX_PARTS];
 	};
 	struct Motion
 	{
 		int bLoop;
 		int nKeyNum;
-		KeySet aKetSet[RP_MAX_KEYSET];
+		KeySet aKetSet[MAX_KEYSET];
 	};
-	Motion m_aMotion[RP_MAX_MOTION];
+	Motion m_aMotion[MAX_MOTION];
 
 	void MotionInit();
 	void MotionDataLoad();
