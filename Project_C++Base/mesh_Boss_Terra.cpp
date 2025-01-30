@@ -132,10 +132,8 @@ void CBossTerra::Update()
 	{
 		m_bMove = !m_bMove;
 	}
-	if (!m_bDead)
-	{
-		if (m_bMove)
-		{
+	if (!m_bDead)	{
+		if (m_bMove)	{
 			m_pos += { 5.0f,0.0f,0.0f };
 		}
 		else
@@ -328,7 +326,7 @@ void CBossTerra::Attack(D3DXVECTOR3& Playerpos)
 		{
 			std::random_device rnd;				// 非決定的な乱数生成器でシード生成機を生成
 			std::mt19937 mt(rnd());				//  メルセンヌツイスターの32ビット版、引数は初期シード
-			std::uniform_int_distribution<> rand_num(0, 2);     // [0, 1] 範囲の一様乱数
+			std::uniform_int_distribution<> rand_num(0, 2);     // [0, 2] 範囲の一様乱数
 			switch (rand_num(mt))
 			{
 			case 0:

@@ -71,7 +71,6 @@ HRESULT CTutorial::Init()
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 },1);
 	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 },1);
 
-	CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[0].x,TutorialSceneInfo::EnemyPosBeside[0].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
 	CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[1].x,TutorialSceneInfo::EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
 
 

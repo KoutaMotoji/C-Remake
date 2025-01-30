@@ -11,6 +11,10 @@
 #include "t_player.h"
 #include "objectX.h"
 
+class CStarter;
+class CTitleButton;
+class CTitleUI;
+
 class CTitle : public CScene
 {
 public:
@@ -21,10 +25,21 @@ public:
 	void Update()override;
 	void Draw()override;
 private:
-	void UpdateAnim();
+	void UpdateAnim(int m);
 	int m_AnimTimer;
 	bool m_bNowAnim;
 	CTitlePlayer* m_tPl;
+	int m_nSelect;
+	CStarter* m_tSt;
+	CTitleButton* m_tBut;
+	CTitleUI* m_tUI;
+
+	enum
+	{
+		SELECT_GAME = 0,
+		SELECT_TUTORIAL,
+		SELECT_FINISH
+	};
 };
 
 class CT_Obj : public CObjectX

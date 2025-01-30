@@ -54,11 +54,11 @@ private:
 	static constexpr float SCROLL_SPEED = 5.5f;		//自動スクロールスピードの設定
 	static constexpr float RETICLE_VALUE = 8.5f;	//レティクルの移動ギャップ
 
-	D3DXVECTOR3 m_pos,m_rot,m_size;	//座標・回転・大きさ
-	D3DXVECTOR3 m_move;				//移動量
-	D3DXVECTOR3 m_OldPos;			//過去の位置
-	D3DXMATRIX m_mtxWorld;			//ワールドマトリックス
-	D3DXMATRIX m_mtxWeaponWorld;	//武器のワールドマトリックス
+	D3DXVECTOR3 m_pos,m_rot,m_size;			//座標・回転・大きさ
+	D3DXVECTOR3 m_move;						//移動量
+	D3DXVECTOR3 m_OldPos;					//過去の位置
+	D3DXMATRIX m_mtxWorld;					//ワールドマトリックス
+	D3DXMATRIX m_mtxWeaponWorld;			//武器のワールドマトリックス
 	D3DXVECTOR3 m_WeaponCollisionPos;		//武器の角度をもとに算出する当たり判定の相対位置
 	void FloorCollision();					//床との当たり判定
 
