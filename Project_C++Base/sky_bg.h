@@ -24,6 +24,7 @@ public:
 	static CSkyBg* Create(D3DXVECTOR3 pos);
 
 private:
+	static constexpr float FLOOR_SIZE = 15000.0f;
 };
 
 

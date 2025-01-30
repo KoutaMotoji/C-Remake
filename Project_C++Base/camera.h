@@ -41,7 +41,6 @@ public:
 	void SetCamDefault() {
 		m_posV = D3DXVECTOR3(0.0f, 100.0f, -300.0f);
 		m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_posU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		m_PlayerPos = { 0.0f,0.0f,0.0f };
 		m_camDistance = 600.0f;
