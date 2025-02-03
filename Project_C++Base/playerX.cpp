@@ -137,8 +137,8 @@ void CPlayerX::Update()
 		m_pos -= {m_move.x, m_move.y, 0.0f};
 	}
 	//ˆÚ“®—Ê‚ðXV
-	m_move.x += (0.0f - m_move.x) * 0.17f;
-	m_move.y += (0.0f - m_move.y) * 0.17f;
+	m_move.x += (0.0f - m_move.x) * 0.14f;
+	m_move.y += (0.0f - m_move.y) * 0.14f;
 	m_move.z += (0.0f - m_move.z) * 0.17f;
 
 	CameraPos = CameraPosDigit();
@@ -158,7 +158,6 @@ void CPlayerX::SetDamageState()
 		m_DamageTime = 0;
 	}
 }
-
 
 //==========================================================================================
 //•`‰æˆ—
@@ -238,7 +237,6 @@ CPlayerX* CPlayerX::Create(D3DXVECTOR3 pos)
 	CPlayerX* player = new CPlayerX;
 	player->Init();
 
-
 	player->m_pos = pos;
 	player->m_move = { 0.0f,0.0f,0.0f };
 	player->m_rot = { 0.0f,D3DX_PI,0.0f };
@@ -255,20 +253,18 @@ bool CPlayerX::PMove(float fCamRotZ)
 	if (!m_bTransformed)
 	{
 		m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * MOVE_JET_SPEED, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * MOVE_JET_SPEED, 0.0f};
+		m_vecAxis = { m_move.y,0.0f,m_move.x };
 	}
 	else
 	{
 		m_move += {CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().x * MOVE_ROBO_SPEED, CManager::GetInstance()->GetJoypad()->GetJoyStickVecL().y * MOVE_ROBO_SPEED, 0.0f};
-	}
-	if (CManager::GetInstance()->GetJoypad()->GetJoyStickVecL() > 0)
-	{
 		m_vecAxis = { m_move.y,m_move.x,0.0f };
-		D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
-
-		m_fValueRot = (2 * sqrtf((m_move.x * m_move.x) + (m_move.y * m_move.y)) * 10) / (120 * D3DX_PI);
-		m_pReticle->SetPos({ m_pos.x + m_move.x * RETICLE_VALUE,m_pos.y + m_move.y * RETICLE_VALUE, m_pos.z + 500 });
-		
 	}
+
+	D3DXVec3Normalize(&m_vecAxis, &m_vecAxis);
+
+	m_fValueRot = (2 * sqrtf((m_move.x * m_move.x) + (m_move.y * m_move.y)) * 10) / (120 * D3DX_PI);
+	m_pReticle->SetPos({ m_pos.x + m_move.x * RETICLE_VALUE,m_pos.y + m_move.y * RETICLE_VALUE, m_pos.z + 500 });
 
 	return true;
 }

@@ -73,6 +73,7 @@ HRESULT CTutorial::Init()
 
 	CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[1].x,TutorialSceneInfo::EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
 
+	CTu_MoveButton::Create();
 
 	CManager::GetInstance()->GetCamera()->SetCameraHeigjt(50.0f);
 	CManager::GetInstance()->GetCamera()->DefuseFreeCam();
@@ -127,4 +128,85 @@ void CTutorial::Update()
 void CTutorial::Draw()
 {
 	CScene::Draw();
+}
+
+//----------------------------------------------------------------------------------------------------------
+
+//==========================================================================================
+//‰Šú‰»
+//==========================================================================================
+void CTu_MoveButton::Init()
+{
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\returnGauge.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
+
+	CObject::SetType(TYPE_3D_TITLEOBJ);
+
+	CTu_MoveButtonBack::Create(CObject2D::GetPos());
+	CObject2D::Init();
+	CObject2D::SetColor({ 1.0f,1.0f,1.0f,0.7f });
+}
+
+//==========================================================================================
+//XV
+//==========================================================================================
+void CTu_MoveButton::Update()
+{
+	if (CManager::GetInstance()->GetKeyboard()->GetRepeat(DIK_RETURN) == true ||
+		CManager::GetInstance()->GetJoypad()->GetRepeat(CJoypad::JOYPAD_START) == true)
+	{
+		++m_Gauge;
+	}
+	if (CManager::GetInstance()->GetKeyboard()->GetRelease(DIK_RETURN) == true && m_Gauge <= PUSHING_TIME ||
+		CManager::GetInstance()->GetJoypad()->GetRelease(CJoypad::JOYPAD_START) == true && m_Gauge <= PUSHING_TIME)
+	{
+		m_Gauge = 0;
+	}
+
+	CObject2D::SetGauge(m_Gauge);
+
+	if (m_Gauge > PUSHING_TIME)
+	{
+		CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
+		return;
+	}
+	CObject2D::Update();
+}
+
+
+//==========================================================================================
+//¶¬ˆ—
+//==========================================================================================
+CTu_MoveButton* CTu_MoveButton::Create()
+{
+	CTu_MoveButton* background = new CTu_MoveButton;
+	D3DXVECTOR3 pos = { SCREEN_WIDTH * 0.5f,PushGaugeHeight * 0.5f,0.0f };
+	background->SetPolygonParam(pos, PushGaugeHeight, PushGaugeWidth, PUSHING_TIME, false);
+	background->Init();
+	return background;
+}
+
+//==========================================================================================
+//‰Šú‰»
+//==========================================================================================
+void CTu_MoveButtonBack::Init()
+{
+	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\returnGaugeBack.png");
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
+
+	CObject::SetType(TYPE_3D_TITLEOBJ);
+	CObject2D::Init();
+	CObject2D::SetColor({ 1.0f,1.0f,1.0f,0.7f });
+}
+
+//==========================================================================================
+//¶¬ˆ—
+//==========================================================================================
+CTu_MoveButtonBack* CTu_MoveButtonBack::Create(D3DXVECTOR3 pos)
+{
+	CTu_MoveButtonBack* background = new CTu_MoveButtonBack;
+
+	background->SetPolygonParam(pos, PushGaugeHeight, PushGaugeWidth);
+	background->Init();
+	return background;
 }

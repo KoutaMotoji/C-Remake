@@ -60,7 +60,7 @@ private:
 	D3DXVECTOR3 m_pos, m_rot, m_size;		//座標・回転・大きさ
 	D3DXVECTOR3 m_move;						//移動量
 	D3DXMATRIX m_mtxWorld;					//ワールドマトリックス
-	D3DXMATRIX m_mtxWeapon[MUZZLE_CUR];	//武器のワールドマトリックス
+	D3DXMATRIX m_mtxWeapon[MUZZLE_CUR];		//武器のワールドマトリックス
 	void SetWeaponMtx();
 
 	CBossReticle* m_Reticle[2];
