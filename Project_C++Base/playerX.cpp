@@ -144,8 +144,6 @@ void CPlayerX::Update()
 	CameraPos = CameraPosDigit();
 
 	CManager::GetInstance()->GetCamera()->SetPlayerPos(CameraPos);
-
-	//GoalCheck();
 }
 
 void CPlayerX::SetDamageState()
@@ -193,6 +191,7 @@ void CPlayerX::Draw()
 	D3DXMatrixMultiply(&m_mtxWorld,
 		&m_mtxWorld,
 		&mtxSize);
+
 	//向きを反映
 	D3DXMatrixRotationYawPitchRoll(&mtxRot,
 		m_rot.y,
@@ -204,6 +203,7 @@ void CPlayerX::Draw()
 	D3DXMatrixMultiply(&m_mtxWorld,
 		&m_mtxWorld,
 		&mtxRot);
+
 	//位置を反映
 	D3DXMatrixTranslation(&mtxTrans,
 		m_pos.x,
@@ -212,6 +212,7 @@ void CPlayerX::Draw()
 	D3DXMatrixMultiply(&m_mtxWorld,
 		&m_mtxWorld,
 		&mtxTrans);
+
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD,
 		&m_mtxWorld);

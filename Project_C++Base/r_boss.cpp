@@ -35,7 +35,7 @@ CResultBoss::~CResultBoss()
 void CResultBoss::Init()
 {
 	ModelDataLoad();
-	CObject::SetType(TYPE_3D_PLAYER);
+	CObject::SetType(TYPE_3D_RESULTOBJ);
 
 	//CManager::GetInstance()->GetCamera()->SetRotz(D3DX_PI);
 }

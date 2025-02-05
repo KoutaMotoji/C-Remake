@@ -83,14 +83,6 @@ void CGameover::Update()
 			CManager::GetInstance()->GetFade()->SetFade(CFade::FADE_IN, CScene::MODE_TITLE);
 		}
 	}
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_4))
-	{
-		CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f,100.0f,-400 }, { 0.0f,0.0f,0.0f }, 150);
-	}
-	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_5))
-	{
-		CManager::GetInstance()->GetCamera()->SetFreeCam({ 0.0f,100.0f,-200 }, { 0.0f,-100.0f,0.0f }, 150);
-	}
 	if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) ||
 		CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) ||
 		CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_DPAD_LEFT) ||
@@ -100,7 +92,7 @@ void CGameover::Update()
 		m_pGOUI->ThisDelete();
 		m_pGOUI = CGameOverUI::Create({ SCREEN_WIDTH - 250.0f,SCREEN_HEIGHT - 80.0f,0.0f }, m_bSelect);
 	}
-	CEffSmoke::Create({ 0.0f,-180.0f,0.0f }, 3, 240);
+	CEffSmoke::Create({ 0.0f,-240.0f,20.0f }, 2, 360);
 	CScene::Update();
 }
 

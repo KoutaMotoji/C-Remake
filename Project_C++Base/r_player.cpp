@@ -35,7 +35,7 @@ CResultPlayer::~CResultPlayer()
 void CResultPlayer::Init()
 {
 	MotionInit();
-	CObject::SetType(TYPE_3D_PLAYER);
+	CObject::SetType(TYPE_3D_RESULTOBJ);
 }
 
 //==========================================================================================
