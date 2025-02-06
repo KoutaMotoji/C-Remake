@@ -1010,7 +1010,6 @@ void CBossTerra::SetNextKey()
 					--m_CurKey;
 					m_bMotion = false;
 					SetNextMotion(MOTION_ROBO_NUTO);
-
 				}
 				else if (m_CurMotion == MOTION_ROBO_DIE)
 				{
