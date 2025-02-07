@@ -192,7 +192,7 @@ void CMapEdit::EditObj()
 void CMapEdit::SaveFile()
 {
 	FILE* pFile;
-	pFile = fopen("data\\TEXT\\Data001.txt", "w");
+	pFile = fopen("data\\TEXT\\Data002.txt", "w");
 	if (pFile != nullptr)
 	{
 		fprintf(pFile, "%d\n", m_MaxObj);
@@ -222,7 +222,7 @@ void CMapEdit::SaveFile()
 void CMapEdit::LoadFile()
 {
 	FILE* pFile;
-	pFile = fopen("data\\TEXT\\Data001.txt", "r");
+	pFile = fopen("data\\TEXT\\Data002.txt", "r");
 	if (pFile != nullptr)
 	{
 		int nGetCnt = 0;
@@ -483,6 +483,7 @@ void CMapEdit::SetEditScale()
 //
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
+
 //==========================================================================================
 //デバッグ表示用初期化処理
 //==========================================================================================
@@ -556,7 +557,7 @@ void CMapEdit::SetLoadMap()
 	SetInfo ObjInfo[1024] = {};
 	int MaxObj = 0;
 	FILE* pFile;
-	pFile = fopen("data\\TEXT\\Data001.txt", "r");
+	pFile = fopen("data\\TEXT\\Data002.txt", "r");
 
 	if (pFile != nullptr)
 	{
