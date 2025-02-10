@@ -20,7 +20,7 @@ static constexpr float OBJ_DESTROY_DIS = 12000.0f;
 class CMeshObstacle :public CObjectX
 {
 public:
-	static int GetMaxType()	{	return MAX_MODELTYPE;	}
+	inline static int GetMaxType()	{	return MAX_MODELTYPE;	}
 
 	CMeshObstacle(int nPriority = 1);				//コンストラクタ
 	~CMeshObstacle()override;		//デストラクタ

@@ -37,7 +37,7 @@ public:
 	void Draw()override;
 	void LoadFile();	//ファイルから読み込んで配置(一括)
 
-	D3DXVECTOR3 GetThisPos() { return m_thisPos; };
+	inline D3DXVECTOR3 GetThisPos() { return m_thisPos; };
 	static void SetLoadMap();
 private:
 	void SaveFile();	//配置情報を保存

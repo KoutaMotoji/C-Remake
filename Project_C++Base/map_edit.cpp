@@ -4,6 +4,7 @@
 //								制作：元地弘汰
 // 
 //===============================================================================
+#include "inicpp.h"
 
 #include "manager.h"
 #include "fade.h"
@@ -537,7 +538,6 @@ void CMapEdit::DrawFont()
 		D3DCOLOR_RGBA(255, 255, 255, 255));
 
 	//memset(&str[0], NULL, sizeof(str));
-
 }
 //
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -547,6 +547,20 @@ void CMapEdit::DrawFont()
 //==========================================================================================
 void CMapEdit::SetLoadMap()
 {
+	ini::IniFile myIni;
+
+	std::string MapData;
+	std::string filename = "data\\TEXT\\Config.ini";
+
+	//INIファイルを読み込む
+	myIni.load(filename);
+
+	std::string temp3 = myIni["LoadMap"]["MapTextName"].as<std::string>();
+	if (!temp3.empty())
+	{
+		MapData = temp3;
+	}
+
 	typedef struct
 	{
 		D3DXVECTOR3 pos;
@@ -557,7 +571,7 @@ void CMapEdit::SetLoadMap()
 	SetInfo ObjInfo[1024] = {};
 	int MaxObj = 0;
 	FILE* pFile;
-	pFile = fopen("data\\TEXT\\Data002.txt", "r");
+	pFile = fopen(MapData.c_str(), "r");
 
 	if (pFile != nullptr)
 	{

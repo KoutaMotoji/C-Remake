@@ -165,8 +165,10 @@
     <ClInclude Include="gauge_Boss_Life.h" />
     <ClInclude Include="go_player.h" />
     <ClInclude Include="go_UI.h" />
+    <ClInclude Include="inicpp.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="joypad.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="lockon_enemy.h" />

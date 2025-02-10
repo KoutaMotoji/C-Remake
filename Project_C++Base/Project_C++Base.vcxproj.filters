@@ -127,6 +127,9 @@
     <Filter Include="ヘッダー ファイル\3D\TutorialObj">
       <UniqueIdentifier>{be87f108-4269-4aef-8b21-59c6e94676a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Library">
+      <UniqueIdentifier>{ab382d09-bca0-4872-8aff-1e372210f855}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -502,6 +505,12 @@
     </ClInclude>
     <ClInclude Include="tu_sky.h">
       <Filter>ヘッダー ファイル\3D\TutorialObj</Filter>
+    </ClInclude>
+    <ClInclude Include="inicpp.h">
+      <Filter>ヘッダー ファイル\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>ヘッダー ファイル\Library</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
