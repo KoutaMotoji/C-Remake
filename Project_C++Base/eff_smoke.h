@@ -13,7 +13,7 @@
 class CEffSmoke :public CBillboard
 {
 public:
-	CEffSmoke(int nPriority = 1);	//コンストラクタ
+	CEffSmoke(int nPriority = 2);	//コンストラクタ
 	~CEffSmoke()override;			//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

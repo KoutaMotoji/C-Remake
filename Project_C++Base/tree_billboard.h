@@ -25,7 +25,7 @@ public:
 	void Init()override;				//‰Šú‰»
 	void Uninit()override;				//I—¹
 	void Update()override;				//XV
-	void Draw()override { CBillboard::Draw(); };		//•`‰æ
+	void Draw()override;		//•`‰æ
 
 	static CTreeBillboard* Create(D3DXVECTOR3 pos,int TexIdx);
 	void SetPosGround(float HalfRadius);

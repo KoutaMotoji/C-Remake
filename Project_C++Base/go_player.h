@@ -32,7 +32,7 @@ public:
 	void Update()override;		//çXêV
 	void Draw()override;		//ï`âÊ
 
-	void AddMove(D3DXVECTOR3 move) { m_move += move; }
+	inline void AddMove(D3DXVECTOR3 move) { m_move += move; }
 	static CGameOverPlayer* Create(D3DXVECTOR3 pos);
 
 	D3DXVECTOR3 GetPos() { return m_pos; };

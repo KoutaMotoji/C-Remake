@@ -70,7 +70,7 @@ void CParticle3D::Update()
 //==========================================================================================
 void CParticle3D::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
 
 	//‰ÁŽZ‡¬‚ÌÝ’è
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);

@@ -67,6 +67,7 @@ private:
 	void DrawFont();
 
 	CGizmo* m_Gizmo;
+	std::string LoadFilename;
 };
 
 class CGizmo : public CObjectX

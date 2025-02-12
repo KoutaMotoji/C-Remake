@@ -21,8 +21,8 @@ public:
 	void Draw()override;		//•`‰æ
 	static CMeshCylinder* Create(D3DXVECTOR3 pos);
 
-	LPD3DXMESH GetMesh() { return m_pMesh; };
-	D3DXVECTOR3 GetPos() { return m_pos; }
+	inline LPD3DXMESH GetMesh() { return m_pMesh; };
+	inline D3DXVECTOR3 GetPos() { return m_pos; }
 private:
 	
 	D3DXVECTOR3 m_pos, m_rot;

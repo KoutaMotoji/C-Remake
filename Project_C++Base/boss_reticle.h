@@ -20,7 +20,7 @@ public:
 	void Update()override;		//XV
 	void Draw()override;		//•`‰æ
 	static CBossReticle* Create(D3DXVECTOR3 pos,float Radius,int nLife,float Rotate);
-	bool GetLifeState() { return m_nLife <= 0; }
+	inline bool GetLifeState() { return m_nLife <= 0; }
 private:
 	int m_nLife;
 	float m_RotateSpeed;
