@@ -45,6 +45,7 @@ namespace
 //==========================================================================================
 CMapEdit::CMapEdit() :m_MaxObj(0), MOVE_SCALE(20.0f), m_CamDis(3000.0f), m_SaveDis(3000.0f),LoadFilename({})
 {
+	//マップオブジェクトの初期化
 	for (int i = 0; i < MAX_EDITOBJ; ++i)
 	{
 		ObjInfo[i].pos = { 0.0f,0.0f,0.0f };
@@ -116,10 +117,6 @@ void CMapEdit::Uninit()
 	if (m_SelectObject != nullptr)
 	{
 		m_SelectObject->Release();
-	}
-	if (m_LastObj != nullptr)
-	{
-		m_LastObj->Release();
 	}
 	if (m_Gizmo != nullptr)
 	{

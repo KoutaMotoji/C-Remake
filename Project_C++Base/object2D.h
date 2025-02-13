@@ -34,11 +34,11 @@ public:
 	inline D3DXVECTOR2 GetAnim() { return { (float)m_AnimU,(float)m_AnimV }; }					//アニメーション取得
 	inline void SetAnim(D3DXVECTOR2 Anim) {m_AnimU = (int)Anim.x; m_AnimV = (int)Anim.y;}		//アニメーション移動
 	inline float GetSize() {return m_fLength * m_fZoom;}					//大きさ取得
-	inline void SetZoom(float Zoom) { m_fZoom = Zoom; }			//大きさ変更
-	inline D3DXCOLOR GetColor() { return m_col; }			//カラーを取得
-	inline void SetColor(D3DXCOLOR col) { m_col = col; }	//カラーを設定
-	inline void SetGauge(int value) { m_nCharge = value; }			//ゲージのサイズ変更
-	inline void SetGaugeAnim(D3DXVECTOR2 value) { m_GaugeAnim += value; }
+	inline void SetZoom(float Zoom) { m_fZoom = Zoom; }						//大きさ変更
+	inline D3DXCOLOR GetColor() { return m_col; }							//カラーを取得
+	inline void SetColor(D3DXCOLOR col) { m_col = col; }					//カラーを設定
+	inline void SetGauge(int value) { m_nCharge = value; }					//ゲージのサイズ変更
+	inline void SetGaugeAnim(D3DXVECTOR2 value) { m_GaugeAnim += value; }	//ゲージのテクスチャアニメーション
 	static CObject2D* Create(D3DXVECTOR3 pos);
 	void SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth);					//初期設定
 	void SetPolygonParam(D3DXVECTOR3 pos, float fHeight, float fWidth,D3DXCOLOR col);	//初期設定(オーバーロード)
