@@ -7,18 +7,22 @@
 #include "eff_bomb.h"
 #include "manager.h"
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+namespace
+{
+	int LOOP_TIME = 2;		//何フレームでアニメーションを切り替えるか
+	D3DXVECTOR2 TEX_SLICE = { 5,3 };	//テクスチャの分割数
+	int TEX_X = TEX_SLICE.x - 1;		//テクスチャの横分割数-1
+	int TEX_Y = TEX_SLICE.y - 1;		//テクスチャの縦分割数-1
+	float DEF_POLYSIZE = 60.0f;			//デフォルト時のテクスチャサイズ
+};
+
 CEffBomb::CEffBomb(int nPriority) :CBillboard(nPriority), m_nTime(0)
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\bomb001.png");
-	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 5,3 });
+	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), TEX_SLICE);		//横5、縦3に分割
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CEffBomb::~CEffBomb()
 {
 
@@ -29,7 +33,7 @@ CEffBomb::~CEffBomb()
 //==========================================================================================
 void CEffBomb::Init()
 {
-	CObject::SetType(TYPE_BILLBOARD);
+	CObject::SetType(TYPE_BILLBOARD);		//オブジェクト検索用のタグ付け
 	CManager::GetInstance()->GetSound()->PlaySound(CSound::SOUND_LABEL_GAMESE_BOMB);
 	CBillboard::Init();
 }
@@ -47,23 +51,23 @@ void CEffBomb::Uninit()
 //==========================================================================================
 void CEffBomb::Update()
 {
-	if (m_nTime > 2)
+	//テクスチャアニメーション処理
+	if (m_nTime > LOOP_TIME)	
 	{
 		D3DXVECTOR2 Anim = CBillboard::GetAnim();
-
 		m_nTime = 0;
 
-		if (Anim.x >= 4)
+		if (Anim.x >= TEX_X)	//テクスチャのX座標を動かす
 		{
-			CBillboard::AddAnim({ -5,1 });
+			CBillboard::AddAnim({ -TEX_SLICE.x,1 });
 		}
-		if (Anim.y >= 2 && Anim.x >= 4)
+		if (Anim.y >= TEX_Y && Anim.x >= TEX_X)
 		{
 			Release();
 			return;
 		}
-		if (Anim.x < 5 &&
-			Anim.y <= 2)
+		if (Anim.x < TEX_SLICE.x &&
+			Anim.y <= TEX_Y)	//テクスチャのY座標を動かす
 		{
 			CBillboard::AddAnim({ 1,0 });
 		}
@@ -82,13 +86,13 @@ void CEffBomb::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 
-	//Zアルファ
+	//深度バッファを無視して描画する
 	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	CBillboard::Draw();
 
-	//Zアルファ
+	//深度バッファの設定を戻す
 	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -101,7 +105,7 @@ CEffBomb* CEffBomb::Create(D3DXVECTOR3 pos)
 {
 	CEffBomb* Effect = new CEffBomb;
 
-	Effect->SetPolygonParam(pos, 60.0f, 60.0f);
+	Effect->SetPolygonParam(pos, DEF_POLYSIZE, DEF_POLYSIZE);
 	Effect->Init();
 	Effect->m_nTime = 0;
 

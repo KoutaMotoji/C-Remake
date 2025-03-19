@@ -40,9 +40,7 @@ namespace
 	int SizeDownScale = 150.0f;
 }
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CMapEdit::CMapEdit() :m_MaxObj(0), MOVE_SCALE(20.0f), m_CamDis(3000.0f), m_SaveDis(3000.0f),LoadFilename({})
 {
 	//マップオブジェクトの初期化
@@ -57,9 +55,6 @@ CMapEdit::CMapEdit() :m_MaxObj(0), MOVE_SCALE(20.0f), m_CamDis(3000.0f), m_SaveD
 
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CMapEdit::~CMapEdit()
 {
 
@@ -240,8 +235,12 @@ void CMapEdit::LoadFile()
 {
 	FILE* pFile;
 	pFile = fopen(LoadFilename.c_str(), "r");
-	if (pFile != nullptr)
+	// ガード節 早期リターン（アーリーリターン）
+	// Tidy First? に書かれてます
+	if (pFile == nullptr)
 	{
+
+	}
 		int nGetCnt = 0;
 		fscanf(pFile, "%d\n", &nGetCnt);
 		m_MaxObj = nGetCnt;
@@ -276,7 +275,7 @@ void CMapEdit::LoadFile()
 			CMeshObstacle::Create(ObjInfo[j].pos, ObjInfo[j].rot, ObjInfo[j].scale,ObjInfo[j].SelType);
 		}
 		fclose(pFile);
-	}
+	
 }
 //==========================================================================================
 //オブジェクトの種類を選択する処理

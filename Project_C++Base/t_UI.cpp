@@ -7,17 +7,12 @@
 #include "t_UI.h"
 #include "manager.h"
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CTitleUI::CTitleUI(int nPriority) :CObject2D(nPriority)
 {
 
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CTitleUI::~CTitleUI()
 {
 
@@ -87,6 +82,7 @@ CTitleUI* CTitleUI::Create(D3DXVECTOR3 pos,int Type, D3DXVECTOR2 PolySize)
 //==========================================================================================
 void CTitleLogo::Init()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\title_logo_A.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
@@ -107,10 +103,12 @@ void CTitleLogo::Update()
 //==========================================================================================
 void CTitleButton::Init()
 {
+	//テクスチャの登録
 	m_TexIdx[0] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\TitleSelect000.png");
 	m_TexIdx[1] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\TitleSelect001.png");
 	m_TexIdx[2] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\TitleSelect002.png");
 
+	//初期のテクスチャ番号を割り当て
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(m_TexIdx[0]), 1, 1);
 
 	CObject::SetType(TYPE_3D_TITLEOBJ);
@@ -156,6 +154,7 @@ void CTitleButton::SetTex(int num)
 //==========================================================================================
 void CMoveButton::Init()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\skip_over.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
@@ -211,6 +210,7 @@ CMoveButton* CMoveButton::Create(CScene::MODE mode)
 //==========================================================================================
 void CMoveButtonBack::Init()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\skip_Under.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
@@ -236,6 +236,7 @@ CMoveButtonBack* CMoveButtonBack::Create(D3DXVECTOR3 pos)
 //==========================================================================================
 void CFinishCheck::Init()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\TitleFinish.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 

@@ -9,26 +9,17 @@
 #include "player_observer.h"
 #include "manager.h"
 
-//静的メンバ初期化
-const float CGaugeLife::OBJ_HEIGHT = 45.0f;
-const float CGaugeLife::OBJ_WIDTH = SCREEN_WIDTH * 0.3f;
-
-namespace MainUIState
+namespace MainUIState		//UI関連の定数
 {
 	D3DXVECTOR3 UIpos = { SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f,0.0f };
 }
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CGaugeLife::CGaugeLife(int nPriority) :CObject2D(nPriority)
 {
 
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CGaugeLife::~CGaugeLife()
 {
 
@@ -39,6 +30,7 @@ CGaugeLife::~CGaugeLife()
 //==========================================================================================
 void CGaugeLife::Init()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\hp_bar.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
@@ -103,6 +95,7 @@ void CGaugeLife::SetGauge()
 //==========================================================================================
 void CGaugeLiFrame::Init()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\hp_frame.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
@@ -127,6 +120,7 @@ CGaugeLiFrame* CGaugeLiFrame::Create(D3DXVECTOR3 pos, float fWidth, float fHeigh
 //==========================================================================================
 void CGaugeLiBack::Init()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\hp_back.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), 1, 1);
 
@@ -151,6 +145,7 @@ CGaugeLiBack* CGaugeLiBack::Create(D3DXVECTOR3 pos, float fWidth, float fHeight)
 //==========================================================================================
 void CMainUI::Init()
 {
+	//テクスチャの登録・割り当て
 	m_TexIdx[0] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\mainUI_B.png");
 	m_TexIdx[1] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\mainUI_A.png");
 

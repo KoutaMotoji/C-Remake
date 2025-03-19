@@ -9,9 +9,7 @@
 
 const float CGameOverPlayer::MOVE_SPEED = 0.55f;
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CGameOverPlayer::CGameOverPlayer(int nPriority) : CObject(nPriority)
 {
 	for (int i = 0; i < GO_MAX_MODELPARTS; ++i)
@@ -20,9 +18,6 @@ CGameOverPlayer::CGameOverPlayer(int nPriority) : CObject(nPriority)
 	}
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CGameOverPlayer::~CGameOverPlayer()
 {
 
@@ -36,8 +31,6 @@ void CGameOverPlayer::Init()
 	ModelDataLoad();
 	CObject::SetType(TYPE_3D_GAMEOVEROBJ);
 	m_pShadow = CShadow::Create(m_pos, 50);
-
-	//CManager::GetInstance()->GetCamera()->SetRotz(D3DX_PI);
 }
 
 //==========================================================================================

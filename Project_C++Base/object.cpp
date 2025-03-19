@@ -12,11 +12,10 @@
 int CObject::m_nNumAll = 0;
 CObject* CObject::m_apObject[SET_PRIORITY][MAX_OBJECT] = {};
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CObject::CObject(int nPriority)
 {
+	//描画順を設定、一括管理用に登録
 	m_nPriority = nPriority;
 	assert(!(m_nPriority < 0 || m_nPriority > SET_PRIORITY));
 	

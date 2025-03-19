@@ -10,9 +10,6 @@
 #include "main.h"
 #include "number.h"
 
-static constexpr int MAX_DIGIT = 8;
-static constexpr float MAX_HEIGHT = 50.0f;
-static constexpr float MAX_WIDTH = 80.0f;
 
 class CScore
 {
@@ -33,6 +30,10 @@ public:
 	inline void SetScore(int nScore) { m_Score = nScore; GetLastNum(); SaveScore = m_Score; }
 	inline void AddScore(int nScore) { m_Score += nScore; GetLastNum(); SaveScore = m_Score;}
 private:
+	static constexpr int MAX_DIGIT = 8;
+	static constexpr float MAX_HEIGHT = 50.0f;
+	static constexpr float MAX_WIDTH = 80.0f;
+
 	void GetLastNum();
 	int m_Score;
 

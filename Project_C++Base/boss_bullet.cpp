@@ -15,19 +15,13 @@
 #include "manager.h"
 
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
 CBossBullet::CBossBullet()
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
-
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CBossBullet::~CBossBullet()
 {
 
@@ -38,7 +32,7 @@ CBossBullet::~CBossBullet()
 //==========================================================================================
 void CBossBullet::Init()
 {
-	CObject::SetType(TYPE_3D_BOSSBILLET);
+	CObject::SetType(TYPE_3D_BOSSBULLET);
 	CBillboard::Init();
 }
 
@@ -112,39 +106,41 @@ bool CBossBullet::MeshCollision()
 	for (int j = 0; j < SET_PRIORITY; j++) {
 		for (int i = 0; i < MAX_OBJECT; i++) {
 			CObject* pObj = CObject::GetObjects(j, i);
-			if (pObj != nullptr) {
-				CObject::TYPE type = pObj->GetType();
-				if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
-					CMeshGround* pTest = dynamic_cast<CMeshGround*>(pObj);
-					if (pTest != nullptr) {
-						pMesh = pTest->GetMesh();
-						D3DXVECTOR3 pos = CBillboard::GetPos();
-						D3DXVec3Normalize(&dir, &m_move);
+			if (pObj == nullptr)
+			{
+				continue;
+			}
+			CObject::TYPE type = pObj->GetType();
+			if (type == CObject::TYPE::TYPE_3D_MESHOBJECT) {
+				CMeshGround* pTest = dynamic_cast<CMeshGround*>(pObj);
+				if (pTest != nullptr) {
+					pMesh = pTest->GetMesh();
+					D3DXVECTOR3 pos = CBillboard::GetPos();
+					D3DXVec3Normalize(&dir, &m_move);
 
-						D3DXVECTOR3 objpos = pos - pTest->GetPos();
-						float ChedkDis = 20.0f;
-						// ----- 接地時処理 -----
-						if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
-						{
-							return true;
-						}
+					D3DXVECTOR3 objpos = pos - pTest->GetPos();
+					float ChedkDis = 20.0f;
+					// ----- 接地時処理 -----
+					if (pCollision->MeshToIntersectCollision(pMesh, objpos, dir, ChedkDis))
+					{
+						return true;
 					}
 				}
-				else if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
+			}
+			else if (type == CObject::TYPE::TYPE_3D_OBSTACLE) {
 
-					CMeshObstacle* pTest = dynamic_cast<CMeshObstacle*>(pObj);
-					if (pTest != nullptr) {
+				CMeshObstacle* pTest = dynamic_cast<CMeshObstacle*>(pObj);
+				if (pTest != nullptr) {
 
-						pMesh = pTest->GetMesh();
-						D3DXVECTOR3 pos = CBillboard::GetPos();
-						D3DXVec3Normalize(&dir, &m_move);
+					pMesh = pTest->GetMesh();
+					D3DXVECTOR3 pos = CBillboard::GetPos();
+					D3DXVec3Normalize(&dir, &m_move);
 
-						float ChedkDis = 20.0f;
+					float ChedkDis = 20.0f;
 
-						if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
-						{
-							return true;
-						}
+					if (pCollision->MeshToIntersectCollision(pTest, pos, dir, ChedkDis))
+					{
+						return true;
 					}
 				}
 			}

@@ -10,7 +10,6 @@
 #include "main.h"
 #include "objectX.h"
 
-
 class CTitleBase :public CObjectX
 {
 public:

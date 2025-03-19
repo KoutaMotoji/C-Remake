@@ -10,7 +10,6 @@
 #include "main.h"
 #include "billboard.h"
 
-
 static const float POLY_RADIUS = 120.0f;
 
 class CLockonEnemy :public CBillboard

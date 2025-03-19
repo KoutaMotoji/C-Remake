@@ -15,18 +15,14 @@ namespace
 	};
 };
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CGameOverUI::CGameOverUI(int nPriority) :CObject2D(nPriority)
 {
+	//テクスチャの登録
 	m_TexIdx[0] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\GO_select_A.png");
 	m_TexIdx[1] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\GO_select_B.png");
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CGameOverUI::~CGameOverUI()
 {
 
@@ -53,14 +49,6 @@ void CGameOverUI::Uninit()
 //==========================================================================================
 void CGameOverUI::Update()
 {
-	//if (CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DRIGHT) ||
-	//	CManager::GetInstance()->GetJoypad()->GetJoyStickTrigger(CJoypad::JOYPAD_LEFT_THUMB, CJoypad::JOYSTICK_DLEFT) ||
-	//	CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_DPAD_LEFT) ||
-	//	CManager::GetInstance()->GetJoypad()->GetTrigger(CJoypad::JOYPAD_DPAD_RIGHT))
-	//{
-	//	CObject::Release();
-	//	return;
-	//}
 	CObject2D::Update();
 }
 
@@ -81,6 +69,7 @@ CGameOverUI* CGameOverUI::Create(D3DXVECTOR3 pos,bool bSwitch)
 
 	background->SetPolygonParam(pos, PolySize.y, PolySize.x);
 	background->Init();
+	//タイプごとにテクスチャを割り当て
 	background->BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(background->m_TexIdx[(int)bSwitch]),1,1);
 	return background;
 }

@@ -11,19 +11,16 @@
 #include "manager.h"
 
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CTreeBillboard::CTreeBillboard(int nPriority):CBillboard(nPriority)
 {
+	//テクスチャの登録・割り当て
+
 	m_snTexIdx[0] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\Tree000.png");
 	m_snTexIdx[1] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\Tree001.png");
 	m_snTexIdx[2] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\Tree002.png");
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CTreeBillboard::~CTreeBillboard()
 {
 
@@ -67,6 +64,7 @@ void CTreeBillboard::Update()
 void CTreeBillboard::Draw() 
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+
 	//アルファテスト設定
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);

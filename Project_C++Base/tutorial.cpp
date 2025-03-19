@@ -21,7 +21,7 @@
 
 #include "playerX.h"
 
-namespace TutorialSceneInfo
+namespace TutorialSceneInfo		//チュートリアルシーン用定数まとめ
 {
 	int TIME_TARGETOBJ = 240;
 	int HALFTIME_TARGETOBJ = TIME_TARGETOBJ * 0.5f;
@@ -38,19 +38,18 @@ namespace TutorialSceneInfo
 			400.0f
 		}
 	};
-
+	float MESH_Y_POS = 1000.0f;
+	float GROUND_Z_SIZE = 5940.0f;
+	float GROUND_Z_SIZE_D = GROUND_Z_SIZE * 2;
+	float GROUND_Z_SIZE_Q = GROUND_Z_SIZE_D * 4;
+	D3DXCOLOR SET_COLOR = { 1.0f,1.0f,1.0f,0.7f };
 };
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CTutorial::CTutorial():m_nSetTimer(0)
 {
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CTutorial::~CTutorial()
 {
 
@@ -61,17 +60,18 @@ CTutorial::~CTutorial()
 //==========================================================================================
 HRESULT CTutorial::Init()
 {
+	using namespace TutorialSceneInfo;
 	CScene::Init();
 
 	CPlayerX::Create({ 0.0f,0.0f,0.0f });
 	CPlayerObserver::GetInstance()->PlayerSearch();
 
-	CTutorialSky::Create({ 0.0f,1000.0f,0.0f });
-	CMeshGround::Create({ 0.0f,-1000.0f,0.0f },1);
-	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 2 },1);
-	CMeshGround::Create({ 0.0f,-1000.0f,5940 * 4 },1);
+	CTutorialSky::Create({ 0.0f,MESH_Y_POS,0.0f });
+	CMeshGround::Create({ 0.0f,-MESH_Y_POS,0.0f },1);
+	CMeshGround::Create({ 0.0f,-MESH_Y_POS,GROUND_Z_SIZE_D },1);
+	CMeshGround::Create({ 0.0f,-MESH_Y_POS,GROUND_Z_SIZE_Q },1);
 
-	CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[1].x,TutorialSceneInfo::EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
+	CEnemyBase::Create({ EnemyPosBeside[1].x,EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TargetToPlauerDistance },1);
 
 	CTu_MoveButton::Create();
 
@@ -97,6 +97,7 @@ void CTutorial::Uninit()
 //==========================================================================================
 void CTutorial::Update()
 {
+	using namespace TutorialSceneInfo;
 #if _DEBUG
 	if (CManager::GetInstance()->GetKeyboard()->CKeyboard::GetTrigger(DIK_RETURN))
 	{
@@ -110,14 +111,14 @@ void CTutorial::Update()
 	}
 #endif // _DEBUG
 	++m_nSetTimer;
-	if (m_nSetTimer == TutorialSceneInfo::TIME_TARGETOBJ)
+	if (m_nSetTimer == TIME_TARGETOBJ)
 	{
-		CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[1].x,TutorialSceneInfo::EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
+		CEnemyBase::Create({EnemyPosBeside[1].x,EnemyPosBeside[1].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TargetToPlauerDistance },1);
 		m_nSetTimer = 0;
 	}
-	else if(m_nSetTimer == TutorialSceneInfo::HALFTIME_TARGETOBJ)
+	else if(m_nSetTimer == HALFTIME_TARGETOBJ)
 	{
-		CEnemyBase::Create({ TutorialSceneInfo::EnemyPosBeside[0].x,TutorialSceneInfo::EnemyPosBeside[0].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TutorialSceneInfo::TargetToPlauerDistance },1);
+		CEnemyBase::Create({EnemyPosBeside[0].x,EnemyPosBeside[0].y, CPlayerObserver::GetInstance()->GetPlayerPos().z + TargetToPlauerDistance },1);
 	}
 	CScene::Update();
 }
@@ -144,7 +145,7 @@ void CTu_MoveButton::Init()
 
 	CTu_MoveButtonBack::Create(CObject2D::GetPos());
 	CObject2D::Init();
-	CObject2D::SetColor({ 1.0f,1.0f,1.0f,0.7f });
+	CObject2D::SetColor(TutorialSceneInfo::SET_COLOR);
 }
 
 //==========================================================================================
@@ -196,7 +197,7 @@ void CTu_MoveButtonBack::Init()
 
 	CObject::SetType(TYPE_3D_TITLEOBJ);
 	CObject2D::Init();
-	CObject2D::SetColor({ 1.0f,1.0f,1.0f,0.7f });
+	CObject2D::SetColor(TutorialSceneInfo::SET_COLOR);
 }
 
 //==========================================================================================

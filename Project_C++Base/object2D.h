@@ -20,7 +20,7 @@ public:
 		TYPE_MAX,
 	}TYPE_2D;
 
-	CObject2D(int nPriority = 3);						//コンストラクタ
+	CObject2D(int nPriority = 3);		//コンストラクタ
 	~CObject2D()override;				//デストラクタ
 	void Init()override;		//初期化
 	void Uninit()override;		//終了

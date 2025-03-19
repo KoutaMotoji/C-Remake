@@ -10,17 +10,12 @@
 #include "manager.h"
 #include "game.h"
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CMeshGround::CMeshGround(int nPriority) :CObjectX(nPriority), m_mode(0)
 {
 
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CMeshGround::~CMeshGround()
 {
 
@@ -77,10 +72,7 @@ void CMeshGround::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 
-	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	CObjectX::Draw();
-	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-
 }
 
 //==========================================================================================

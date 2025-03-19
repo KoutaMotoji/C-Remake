@@ -23,8 +23,8 @@ public:
 private:
 	void SetGauge();
 
-	static const float OBJ_HEIGHT;
-	static const float OBJ_WIDTH;
+	static constexpr float OBJ_HEIGHT = 45.0f;
+	static constexpr float OBJ_WIDTH = SCREEN_WIDTH * 0.3f;
 
 };
 

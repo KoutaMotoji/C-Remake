@@ -13,8 +13,6 @@
 
 #include "manager.h"
 
-
-
 class CResultBoss :public CObject
 {
 public:

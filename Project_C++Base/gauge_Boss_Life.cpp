@@ -7,17 +7,13 @@
 #include "gauge_Boss_Life.h"
 #include "manager.h"
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CGaugeBoss::CGaugeBoss(int nPriority) : CBillboard(nPriority) {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\boss_gauge.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 8,2 });
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CGaugeBoss::~CGaugeBoss()	{
 }
 

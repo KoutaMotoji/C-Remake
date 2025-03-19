@@ -12,6 +12,7 @@
 //==========================================================================================
 CReticle::CReticle(int nPriority):CBillboard(nPriority)
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\reticle000.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
 }

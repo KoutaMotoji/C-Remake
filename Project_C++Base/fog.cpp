@@ -14,9 +14,9 @@ CFog::CFog()
 CFog::~CFog()
 {
 }
-/// <summary>
-/// 範囲指定でフォグを作成
-/// </summary>
+//===============================================================================
+// 範囲指定でフォグを作成
+//===============================================================================
 void CFog::SetFogLinear(float Start, float End)
 {
 	float fStart, fEnd;
@@ -39,9 +39,9 @@ void CFog::SetFogLinear(float Start, float End)
 	pDevice->SetRenderState(D3DRS_FOGEND, *(DWORD*)(&fEnd));
 }
 
-/// <summary>
+//===============================================================================
 /// 密度指定でフォグを作成
-/// </summary>
+//===============================================================================
 void CFog::SetFogDensity(float Density)
 {
 	float fDentisy;
@@ -60,9 +60,9 @@ void CFog::SetFogDensity(float Density)
 
 }
 
-/// <summary>
+//===============================================================================
 /// フォグを終了
-/// </summary>
+//===============================================================================
 void CFog::FinishFog()
 {
 	LPDIRECT3DDEVICE9 pDevice;

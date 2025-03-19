@@ -12,6 +12,7 @@
 //==========================================================================================
 CParticle3D::CParticle3D(int nPriority) : CBillboard(nPriority) ,m_bSizeDown(true), m_move({0.0f,0.0f,0.0f})
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
 

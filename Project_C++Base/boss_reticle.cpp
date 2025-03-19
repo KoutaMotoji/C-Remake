@@ -7,19 +7,14 @@
 #include "boss_reticle.h"
 #include "manager.h"
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
 CBossReticle::CBossReticle(int nPriority) : CBillboard(nPriority)
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\reticle001.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx));
 
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CBossReticle::~CBossReticle()
 {
 

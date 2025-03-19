@@ -15,18 +15,15 @@ const float CBillboard::MAX_OBJ3DWIDTH = 500.0f;
 const int CBillboard::MAX_VERTEX = 4;
 const int CBillboard::MAX_POLYGON = 2;
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
-CBillboard::CBillboard(int nPriority) :CObject(nPriority), m_fWidth(0), m_fHeight(0)
+
+CBillboard::CBillboard(int nPriority) :CObject(nPriority), 
+			m_fWidth(0),
+			m_fHeight(0)
 {
 	m_pVtxBuffBillboard = nullptr;
 	m_pTextureBillboard = nullptr;
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CBillboard::~CBillboard()
 {
 }

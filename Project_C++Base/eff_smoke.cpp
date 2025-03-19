@@ -7,18 +7,21 @@
 #include "eff_smoke.h"
 #include "manager.h"
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+namespace
+{
+
+
+
+};
+
+
 CEffSmoke::CEffSmoke(int nPriority) :CBillboard(nPriority), m_nTime(0)
 {
+	//テクスチャの登録・割り当て
 	int nIdx = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\smoke.png");
 	BindTexture(CManager::GetInstance()->GetTexture()->GetAddress(nIdx), { 1,1 });
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CEffSmoke::~CEffSmoke()
 {
 
@@ -48,12 +51,15 @@ void CEffSmoke::Uninit()
 void CEffSmoke::Update()
 {
 	--m_nLife;
-	if (m_nLife < 0)
+	if (m_nLife < 0)	//残留時間が0以下の時
 	{
+		//オブジェクトを解放
 		CObject::Release();
 		return;
 	}
-	CBillboard::AddPos(m_moveValue);
+
+	//演出用処理
+	CBillboard::AddPos(m_moveValue);				
 	CBillboard::AddRot({ 0.0f,0.0f,m_fRotValue });
 	CBillboard::AddScale(0.05f);
 
@@ -84,7 +90,7 @@ void CEffSmoke::Draw()
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	// 法線の自動正規化を無効に
 	pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, FALSE);
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);	//カリングをもどすに
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);	//カリングをもどす
 
 }
 
@@ -107,18 +113,18 @@ CEffSmoke* CEffSmoke::Create(D3DXVECTOR3 pos, float Radius,int nLife)
 //==========================================================================================
 D3DXVECTOR3 CEffSmoke::SetRandValue()
 {
-	D3DXVECTOR3 p;
+	D3DXVECTOR3 vec;
 	CEffSmoke* Effect = new CEffSmoke;
 
 	std::random_device rnd;			// 非決定的な乱数生成器でシード生成機を生成
 	std::mt19937 mt(rnd());			//  メルセンヌツイスターの32ビット版、引数は初期シード
-	std::uniform_int_distribution<> rand_x(-8, 8);	// [-3000, 3000] 範囲の一様乱数
-	std::uniform_int_distribution<> rand_y(10, 30);		// [2000, 5000] 範囲の一様乱数
-	std::uniform_int_distribution<> rand_z(-8, 8);	// [2000, 5000] 範囲の一様乱数
-	std::uniform_int_distribution<> rotV(800, 1500);	// [2000, 5000] 範囲の一様乱数
-	std::uniform_int_distribution<> addSize(80, 150);	// [2000, 5000] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_x(-8, 8);		// [-8, 8] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_y(10, 30);		// [10, 30] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_z(-8, 8);		// [-8, 8] 範囲の一様乱数
+	std::uniform_int_distribution<> rotV(800, 1500);	// [800, 1500] 範囲の一様乱数
+	std::uniform_int_distribution<> addSize(80, 150);	// [80, 150] 範囲の一様乱数
 
-	p = {
+	vec = {
 		(float)(rand_x(mt))* 0.15f,
 		(float)(rand_y(mt))* 0.15f,
 		(float)(rand_z(mt))* 0.15f
@@ -126,5 +132,5 @@ D3DXVECTOR3 CEffSmoke::SetRandValue()
 
 	m_fRotValue = ((float)rotV(mt) * 0.0001);
 	AddScale((float)(addSize(mt) * 0.008f));
-	return p;
+	return vec;
 }

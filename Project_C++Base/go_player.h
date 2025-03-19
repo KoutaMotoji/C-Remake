@@ -14,11 +14,7 @@
 
 #include "manager.h"
 
-static constexpr int GO_MAX_MODELPARTS = 20;
 
-static constexpr int GO_MAX_PARTS = 20;
-static constexpr int GO_MAX_KEYSET = 20;
-static constexpr int GO_MAX_MOTION = 7;
 
 class CShadow;
 
@@ -40,6 +36,12 @@ public:
 	CShadow* m_pShadow;
 
 private:
+	static constexpr int GO_MAX_MODELPARTS = 20;
+
+	static constexpr int GO_MAX_PARTS = 20;
+	static constexpr int GO_MAX_KEYSET = 20;
+	static constexpr int GO_MAX_MOTION = 7;
+
 	D3DXVECTOR3 m_pos, m_rot, m_size;	//座標・回転・大きさ
 	D3DXVECTOR3 m_move;				//移動量
 	D3DXVECTOR3 m_OldPos;			//過去の位置

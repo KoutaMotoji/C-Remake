@@ -10,7 +10,6 @@
 #include "main.h"
 #include "object2D.h"
 
-
 class CTAnimBorder :public CObject2D
 {
 public:

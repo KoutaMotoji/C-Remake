@@ -13,7 +13,6 @@
 
 #include "manager.h"
 
-
 static constexpr int MAX_MODELPARTS = 11;
 
 static constexpr int MAX_PARTS = 11;

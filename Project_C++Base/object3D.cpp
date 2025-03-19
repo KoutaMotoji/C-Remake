@@ -15,18 +15,13 @@ const float CObject3D::MAX_OBJ3DWIDTH = 500.0f;
 const int CObject3D::MAX_VERTEX = 4;
 const int CObject3D::MAX_POLYGON = 2;
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CObject3D::CObject3D(int nPriority) : CObject(nPriority) ,m_fWidth(0), m_fHeight(0)
 {
 	m_pVtxBuffObject3D = nullptr;
 	m_pTextureObject3D = nullptr;
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CObject3D::~CObject3D()
 {
 }

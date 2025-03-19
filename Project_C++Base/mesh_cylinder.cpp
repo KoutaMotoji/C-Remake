@@ -19,17 +19,15 @@ const int CMeshCylinder::MAX_CORNER = 8;
 const int CMeshCylinder::MAX_VTX = MAX_CORNER * 2;
 const int CMeshCylinder::MAX_INDEX = MAX_VTX  + 2;
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
-CMeshCylinder::CMeshCylinder(int nPriority): CObject(nPriority),m_pos({0.0f,0.0f,0.0f}), m_rot({0.0f,0.0f,0.0f})
+
+CMeshCylinder::CMeshCylinder(int nPriority): CObject(nPriority),
+				m_pos({0.0f,0.0f,0.0f}), 
+				m_rot({0.0f,0.0f,0.0f})
 {
 
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
+
 CMeshCylinder::~CMeshCylinder()
 {
 
@@ -43,8 +41,6 @@ void CMeshCylinder::Init()
 	//各ポインタの初期化
 	m_apTexMeshCylinder = nullptr;
 	m_pMesh = nullptr;
-	//m_pVtxBuffMeshCylinder = nullptr;
-	//m_pIdxBuffMeshCylinder = nullptr;
 
 	CObject::SetType(TYPE_3D_MADEMESH);
 

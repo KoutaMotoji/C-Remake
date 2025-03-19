@@ -19,17 +19,13 @@ const int CTutorialSky::MAX_CORNER = 8;
 const int CTutorialSky::MAX_VTX = MAX_CORNER * 2;
 const int CTutorialSky::MAX_INDEX = MAX_VTX + 2;
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
-CTutorialSky::CTutorialSky(int nPriority) : CObject(nPriority), m_pos({ 0.0f,0.0f,0.0f }), m_rot({ 0.0f,0.0f,0.0f })
+CTutorialSky::CTutorialSky(int nPriority) : CObject(nPriority),
+		m_pos({ 0.0f,0.0f,0.0f }),
+		m_rot({ 0.0f,0.0f,0.0f })
 {
 
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
 CTutorialSky::~CTutorialSky()
 {
 
@@ -43,8 +39,6 @@ void CTutorialSky::Init()
 	//各ポインタの初期化
 	m_apTexMeshCylinder = nullptr;
 	m_pMesh = nullptr;
-	//m_pVtxBuffMeshCylinder = nullptr;
-	//m_pIdxBuffMeshCylinder = nullptr;
 
 	CObject::SetType(TYPE_3D_MADEMESH);
 
@@ -67,7 +61,7 @@ void CTutorialSky::Init()
 	//メッシュの頂点バッファのロック
 	m_pMesh->LockVertexBuffer(0, (LPVOID*)&pVtx);
 
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 2; ++i) {	//頂点座標の設定
 		for (int j = 0; j < MAX_CORNER; ++j) {
 			float radian = (((float)j) / (float)MAX_CORNER);
 			int nNum = ((i * MAX_CORNER) + j);
@@ -76,13 +70,13 @@ void CTutorialSky::Init()
 			pVtx[nNum].pos.y = m_pos.y + i * -MAX_HEIGHT;
 		}
 	}
-	for (int i = 0; i < MAX_VTX; ++i)
+	for (int i = 0; i < MAX_VTX; ++i)	//法線とカラーの設定
 	{
 		pVtx[i].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		pVtx[i].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 	}
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 2; ++i)			//テクスチャ座標の設定
 	{
 		for (int j = 0; j < MAX_CORNER; ++j) {
 			int nNum = ((i * MAX_CORNER) + j);
@@ -103,7 +97,7 @@ void CTutorialSky::Init()
 	//メッシュのインデックスバッファのロック
 	m_pMesh->LockIndexBuffer(0, (LPVOID*)&pIdx);
 
-	for (int X = 0; X < MAX_CORNER - 1; ++X)
+	for (int X = 0; X < MAX_CORNER - 1; ++X)	//メッシュのインデックス番号の設定
 	{
 		pIdx[nLoop] = (X + MAX_CORNER);
 		++nLoop;
@@ -151,12 +145,12 @@ void CTutorialSky::Init()
 //==========================================================================================
 void CTutorialSky::Uninit()
 {
-	if (m_apTexMeshCylinder != nullptr)
+	if (m_apTexMeshCylinder != nullptr)	//テクスチャの破棄
 	{
 		m_apTexMeshCylinder->Release();
 		m_apTexMeshCylinder = nullptr;
 	}
-	if (m_pMesh != nullptr)
+	if (m_pMesh != nullptr)				//メッシュの破棄
 	{
 		m_pMesh->Release();
 		m_pMesh = nullptr;
@@ -168,6 +162,7 @@ void CTutorialSky::Uninit()
 //==========================================================================================
 void CTutorialSky::Update()
 {
+	//Z座標をプレイヤーに追従させる
 	m_pos.z = CPlayerObserver::GetInstance()->GetPlayerPos().z;
 }
 
@@ -211,12 +206,12 @@ void CTutorialSky::Draw()
 	pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);	//カリングを両面に
 
-		//加算合成の設定
+	//加算合成の設定
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	 
-		//アルファテスト設定
+	//アルファテスト設定
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);

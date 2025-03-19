@@ -53,9 +53,7 @@ namespace BulletOption {
 	D3DXCOLOR DamagingColor = { 1.0f,0.1f,0.2,0.8f };
 }
 
-//==========================================================================================
-//コンストラクタ
-//==========================================================================================
+
 CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamaging(false), m_nDamageFrame(0),m_nDeadFrame(0),m_nAttackFrame(0), m_move({0.0f,0.0f,0.0f}), m_bBlend(false), m_bMotion(false), m_bTransformed(false)
 {
 	m_Reticle[0] = nullptr;
@@ -70,9 +68,7 @@ CBossTerra::CBossTerra():m_bMove(false), m_nLife(400), m_bDead(false), m_bDamagi
 	}
 }
 
-//==========================================================================================
-//デストラクタ
-//==========================================================================================
+
 CBossTerra::~CBossTerra()
 {
 }

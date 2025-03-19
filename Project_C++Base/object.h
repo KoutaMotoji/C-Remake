@@ -47,7 +47,7 @@ public:
 		TYPE_3D_GAMEOVEROBJ,
 
 		TYPE_3D_BOSSWEAPONS,
-		TYPE_3D_BOSSBILLET
+		TYPE_3D_BOSSBULLET
 	}TYPE;
 
 	CObject(int nPriority = 3);		//コンストラクタ
