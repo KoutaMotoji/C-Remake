@@ -48,7 +48,7 @@ private:
 
 	//ステータス用定数
 	static constexpr int MAX_LIFE = 1000;			//体力
-	static constexpr float MOVE_JET_SPEED = 3.45f;	//移動スピードの設定
+	static constexpr float MOVE_JET_SPEED = 3.5f;	//移動スピードの設定
 	static constexpr float MOVE_ROBO_SPEED = 2.00f;	//移動スピードの設定
 
 	static constexpr float SCROLL_SPEED = 5.5f;		//自動スクロールスピードの設定

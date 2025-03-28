@@ -44,12 +44,16 @@ void CMeshCylinder::Init()
 
 	CObject::SetType(TYPE_3D_MADEMESH);
 
+	//--------------------------------------
+	//Intersect関数で当たり判定を取れるようにメッシュ構造体を使用してメッシュシリンダーを作成(当たり判定の取得には失敗しています)
+
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();;
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\sky_bg001.png",
 		&m_apTexMeshCylinder);
 
+	//メッシュ構造体の生成
 	D3DXCreateMeshFVF(
 		(DWORD)MAX_VTX,
 		(DWORD)MAX_VTX,

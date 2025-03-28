@@ -1148,7 +1148,7 @@ void CPlayerX::BossAttackCollision()
 			CObject* pObj = CObject::GetObjects(j, i);
 			if (pObj != nullptr) {
 				CObject::TYPE type = pObj->GetType();
-				if (type == CObject::TYPE::TYPE_3D_BOSSBILLET) {
+				if (type == CObject::TYPE::TYPE_3D_BOSSBULLET) {
 					CBossBullet *pTest = dynamic_cast<CBossBullet*>(pObj);
 					D3DXVECTOR3 SetRadius = { 50.0f,0.0f,0.0f };
 					if (pTest != nullptr) {

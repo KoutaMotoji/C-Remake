@@ -9,7 +9,11 @@
 
 const D3DXVECTOR3 CScore::DEFAULT_POSITION = { SCREEN_WIDTH - MAX_WIDTH / 2,MAX_HEIGHT,0.0f };
 int CScore::SaveScore = 0;
-
+namespace			//定数用無名名前空間
+{
+	float POS_INTERVAL = 80.0f / 1.95;
+	float POS_INTERVAL_OR = 80.0f / 1.75f;
+}
 
 CScore::CScore() : m_Score(0)
 {
@@ -27,22 +31,22 @@ CScore::~CScore()
 void CScore::Init()
 {
 	D3DXVECTOR3 pos = DEFAULT_POSITION;
-	for (int i = 0; i < MAX_DIGIT; i++)
+	for (int i = 0; i < MAX_DIGIT; ++i)
 	{
 		m_number[i] = CNumber::Create(pos, MAX_HEIGHT, MAX_WIDTH);
-		pos.x -= MAX_WIDTH / 1.95f;
+		pos.x -= POS_INTERVAL;
 	}
 }
 
 //==========================================================================================
-//初期化処理
+//初期化処理(オーバーロード)
 //==========================================================================================
 void CScore::Init(D3DXVECTOR3 pos)
 {
-	for (int i = 0; i < MAX_DIGIT; i++)
+	for (int i = 0; i < MAX_DIGIT; ++i)
 	{
 		m_number[i] = CNumber::Create(pos, MAX_HEIGHT, MAX_WIDTH);
-		pos.x -= MAX_WIDTH / 1.75f;
+		pos.x -= POS_INTERVAL_OR;
 	}
 }
 
@@ -51,7 +55,7 @@ void CScore::Init(D3DXVECTOR3 pos)
 //==========================================================================================
 void CScore::Uninit()
 {
-	for (int i = 0; i < MAX_DIGIT; i++)
+	for (int i = 0; i < MAX_DIGIT; ++i)
 	{
 		m_number[i]->Uninit();
 	}
@@ -62,7 +66,7 @@ void CScore::Uninit()
 //==========================================================================================
 void CScore::Update()
 {
-	for (int i = 0; i < MAX_DIGIT; i++)
+	for (int i = 0; i < MAX_DIGIT; ++i)
 	{
 		m_number[i]->Update();
 	}
@@ -73,7 +77,7 @@ void CScore::Update()
 //==========================================================================================
 void CScore::Draw()
 {
-	for (int i = 0; i < MAX_DIGIT; i++)
+	for (int i = 0; i < MAX_DIGIT; ++i)
 	{
 		m_number[i]->Draw();
 	}
@@ -90,7 +94,7 @@ CScore* CScore::Create()
 }
 
 //==========================================================================================
-//生成処理
+//生成処理(オーバーロード)
 //==========================================================================================
 CScore* CScore::Create(D3DXVECTOR3 pos)
 {
@@ -105,12 +109,12 @@ CScore* CScore::Create(D3DXVECTOR3 pos)
 void CScore::GetLastNum()
 {
 	int nType = 1;
-	int nValue = m_Score;
+	int nValue = m_Score;		//スコアをローカルにコピー
 	int Num = 0;
 	for (int i = 0; i < MAX_DIGIT; ++i)
 	{
-		nType *= 10;
-		Num = (nValue % nType * 10) / nType;
-		m_number[i]->SetNum(Num);
+		nType *= 10;			//桁数計算用の数値を設定
+		Num = (nValue % nType * 10) / nType;	//指定桁数の数字を抜き出す
+		m_number[i]->SetNum(Num);				//抜き出した数字をポリゴン表示用クラスに渡す
 	}
 }

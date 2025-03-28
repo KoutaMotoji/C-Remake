@@ -243,8 +243,8 @@ D3DXVECTOR2 CJoypad::GetJoyStickVecL()
 		(m_joyKeyState.Gamepad.sThumbLY >  LEFT_JOYSTICK_DEADZONE ||
 			m_joyKeyState.Gamepad.sThumbLY < -LEFT_JOYSTICK_DEADZONE))
 	{//左スティック
-		float VecX = sinf(atan2f((float)m_joyKeyState.Gamepad.sThumbLX * 0.01f, (float)m_joyKeyState.Gamepad.sThumbLY * 0.01f));
-		float VecY = cosf(atan2f((float)m_joyKeyState.Gamepad.sThumbLX * 0.01f, (float)m_joyKeyState.Gamepad.sThumbLY * 0.01f));
+		float VecX = m_joyKeyState.Gamepad.sThumbLX / 32767.0f;
+		float VecY = m_joyKeyState.Gamepad.sThumbLY / 32767.0f;
 		return { VecX ,VecY };
 	}
 	else
@@ -264,8 +264,8 @@ D3DXVECTOR2 CJoypad::GetJoyStickVecR()
 		(m_joyKeyState.Gamepad.sThumbRY > RIGHT_JOYSTICK_DEADZONE ||
 			m_joyKeyState.Gamepad.sThumbRY < -RIGHT_JOYSTICK_DEADZONE))
 	{//左スティック
-		float VecX = sinf(atan2f((float)m_joyKeyState.Gamepad.sThumbRX * 0.01f, (float)m_joyKeyState.Gamepad.sThumbRY * 0.01f));
-		float VecY = cosf(atan2f((float)m_joyKeyState.Gamepad.sThumbRX * 0.01f, (float)m_joyKeyState.Gamepad.sThumbRY * 0.01f));
+		float VecX = m_joyKeyState.Gamepad.sThumbRX / 32767.0f;
+		float VecY = m_joyKeyState.Gamepad.sThumbRY / 32767.0f;
 		return { VecX ,VecY };
 	}
 	else

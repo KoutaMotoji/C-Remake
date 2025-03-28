@@ -37,7 +37,8 @@ namespace
 		"描画する",
 	};
 
-	int SizeDownScale = 150.0f;
+	float SizeDownScale = 150.0f;
+	float CamDistance = 50.0f;
 }
 
 
@@ -137,12 +138,12 @@ void CMapEdit::Update()
 	}
 	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_UPARROW) == true)
 	{
-		m_CamDis -= 50.0f;
+		m_CamDis -= CamDistance;
 		m_SaveDis = m_CamDis;
 	}
 	if (CManager::GetInstance()->GetKeyboard()->GetPress(DIK_DOWNARROW) == true)
 	{
-		m_CamDis += 50.0f;
+		m_CamDis += CamDistance;
 		m_SaveDis = m_CamDis;
 	}
 	CameraPos = m_thisPos;
@@ -235,47 +236,45 @@ void CMapEdit::LoadFile()
 {
 	FILE* pFile;
 	pFile = fopen(LoadFilename.c_str(), "r");
-	// ガード節 早期リターン（アーリーリターン）
-	// Tidy First? に書かれてます
+	//ファイルが開けなかったら早期リターン
 	if (pFile == nullptr)
 	{
-
+		return;
 	}
-		int nGetCnt = 0;
-		fscanf(pFile, "%d\n", &nGetCnt);
-		m_MaxObj = nGetCnt;
-		D3DXVECTOR3 GetPos;
-		D3DXVECTOR3 GetRot;
-		D3DXVECTOR3 GetScale;
+	int nGetCnt = 0;
+	fscanf(pFile, "%d\n", &nGetCnt);
+	m_MaxObj = nGetCnt;
+	D3DXVECTOR3 GetPos;
+	D3DXVECTOR3 GetRot;
+	D3DXVECTOR3 GetScale;
 
-		int nGetType;
-		for (int i = 0; i < nGetCnt; ++i)
-		{
-			fscanf(pFile, "%d\n", &nGetType);
-			fscanf(pFile, "%f,", &GetPos.x);
-			fscanf(pFile, "%f,", &GetPos.y);
-			fscanf(pFile, "%f\n", &GetPos.z);
+	int nGetType;
+	for (int i = 0; i < nGetCnt; ++i)
+	{
+		fscanf(pFile, "%d\n", &nGetType);
+		fscanf(pFile, "%f,", &GetPos.x);
+		fscanf(pFile, "%f,", &GetPos.y);
+		fscanf(pFile, "%f\n", &GetPos.z);
 
-			fscanf(pFile, "%f,", &GetRot.x);
-			fscanf(pFile, "%f,", &GetRot.y);
-			fscanf(pFile, "%f\n", &GetRot.z);
+		fscanf(pFile, "%f,", &GetRot.x);
+		fscanf(pFile, "%f,", &GetRot.y);
+		fscanf(pFile, "%f\n", &GetRot.z);
 
-			fscanf(pFile, "%f,", &GetScale.x);
-			fscanf(pFile, "%f,", &GetScale.y);
-			fscanf(pFile, "%f\n", &GetScale.z);
+		fscanf(pFile, "%f,", &GetScale.x);
+		fscanf(pFile, "%f,", &GetScale.y);
+		fscanf(pFile, "%f\n", &GetScale.z);
 
-			ObjInfo[i].pos = GetPos;
-			ObjInfo[i].rot = GetRot;
-			ObjInfo[i].scale = GetScale;
+		ObjInfo[i].pos = GetPos;
+		ObjInfo[i].rot = GetRot;
+		ObjInfo[i].scale = GetScale;
 
-			ObjInfo[i].SelType = nGetType;
-		}
-		for (int j = 0; j < m_MaxObj; ++j)
-		{
-			CMeshObstacle::Create(ObjInfo[j].pos, ObjInfo[j].rot, ObjInfo[j].scale,ObjInfo[j].SelType);
-		}
-		fclose(pFile);
-	
+		ObjInfo[i].SelType = nGetType;
+	}
+	for (int j = 0; j < m_MaxObj; ++j)
+	{
+		CMeshObstacle::Create(ObjInfo[j].pos, ObjInfo[j].rot, ObjInfo[j].scale,ObjInfo[j].SelType);
+	}
+	fclose(pFile);
 }
 //==========================================================================================
 //オブジェクトの種類を選択する処理

@@ -497,9 +497,6 @@
     <ClInclude Include="inicpp.h">
       <Filter>ヘッダー ファイル\Library</Filter>
     </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>ヘッダー ファイル\Library</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\TEXT\Config.ini">

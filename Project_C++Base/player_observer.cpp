@@ -8,7 +8,9 @@
 #include "manager.h"
 
 std::shared_ptr<CPlayerObserver> CPlayerObserver::_instance = nullptr;
-
+//======================================================================
+//プレイヤー検索
+//======================================================================
 void CPlayerObserver::PlayerSearch()
 {
 	if (pPlayer == nullptr)
@@ -31,6 +33,9 @@ void CPlayerObserver::PlayerSearch()
 	}
 }
 
+//======================================================================
+//確保したプレイヤーを破棄
+//======================================================================
 void CPlayerObserver::PlayerObsDestroy()
 {
 	if (pPlayer != nullptr)
@@ -39,6 +44,9 @@ void CPlayerObserver::PlayerObsDestroy()
 	}
 }
 
+//======================================================================
+//プレイヤーの座標を取得
+//======================================================================
 D3DXVECTOR3 CPlayerObserver::GetPlayerPos()
 {
 	if (pPlayer != nullptr)
@@ -48,6 +56,9 @@ D3DXVECTOR3 CPlayerObserver::GetPlayerPos()
 	return { 0.0f,0.0f,0.0f };
 }
 
+//======================================================================
+// プレイヤーの移動量を取得
+//======================================================================
 D3DXVECTOR3 CPlayerObserver::GetPlayerMove()
 {
 	if (pPlayer != nullptr)
@@ -57,6 +68,9 @@ D3DXVECTOR3 CPlayerObserver::GetPlayerMove()
 	return { 0.0f,0.0f,0.0f };
 }
 
+//======================================================================
+// プレイヤーの体力を取得
+//======================================================================
 int CPlayerObserver::GetPlayerLife()
 {
 	if (pPlayer != nullptr)
@@ -66,7 +80,9 @@ int CPlayerObserver::GetPlayerLife()
 	return 0;
 }
 
-
+//======================================================================
+// プレイヤーのポインタを取得
+//======================================================================
 CPlayerX* CPlayerObserver::GetPlayer()
 {
 	if (pPlayer != nullptr)

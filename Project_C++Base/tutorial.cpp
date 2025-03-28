@@ -40,8 +40,8 @@ namespace TutorialSceneInfo		//チュートリアルシーン用定数まとめ
 	};
 	float MESH_Y_POS = 1000.0f;
 	float GROUND_Z_SIZE = 5940.0f;
-	float GROUND_Z_SIZE_D = GROUND_Z_SIZE * 2;
-	float GROUND_Z_SIZE_Q = GROUND_Z_SIZE_D * 4;
+	float GROUND_Z_SIZE_D = 5940.0f * 2;
+	float GROUND_Z_SIZE_Q = 5940.0f * 4;
 	D3DXCOLOR SET_COLOR = { 1.0f,1.0f,1.0f,0.7f };
 };
 

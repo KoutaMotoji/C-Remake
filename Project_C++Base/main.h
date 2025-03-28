@@ -53,8 +53,6 @@ typedef struct
 }VERTEX_3D;
 
 //プロトタイプ宣言
-//void SetMode(MODE mode);
-//MODE GetMode(void);
 void SetExitGame(void);
 
 #endif 

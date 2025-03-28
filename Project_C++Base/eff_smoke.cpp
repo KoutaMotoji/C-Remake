@@ -9,8 +9,21 @@
 
 namespace
 {
+	//乱数生成の上限・下限の設定
 
+	int XZ_RAND_MIN = -8;
+	int XZ_RAND_MAX = 8;
 
+	int Y_RAND_MIN = 10;
+	int Y_RAND_MAX = 30;
+
+	int ROTV_RAND_MIN = 800;
+	int ROTV_RAND_MAX = 1500;
+
+	int ADDSIZE_RAND_MIN = 80;
+	int ADDSIZE_RAND_MAX = 150;
+
+	float F_CLAC_NUM = 0.15f;
 
 };
 
@@ -118,16 +131,16 @@ D3DXVECTOR3 CEffSmoke::SetRandValue()
 
 	std::random_device rnd;			// 非決定的な乱数生成器でシード生成機を生成
 	std::mt19937 mt(rnd());			//  メルセンヌツイスターの32ビット版、引数は初期シード
-	std::uniform_int_distribution<> rand_x(-8, 8);		// [-8, 8] 範囲の一様乱数
-	std::uniform_int_distribution<> rand_y(10, 30);		// [10, 30] 範囲の一様乱数
-	std::uniform_int_distribution<> rand_z(-8, 8);		// [-8, 8] 範囲の一様乱数
-	std::uniform_int_distribution<> rotV(800, 1500);	// [800, 1500] 範囲の一様乱数
-	std::uniform_int_distribution<> addSize(80, 150);	// [80, 150] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_x(XZ_RAND_MIN, XZ_RAND_MAX);		// [-8, 8] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_y(Y_RAND_MIN, Y_RAND_MAX);		// [10, 30] 範囲の一様乱数
+	std::uniform_int_distribution<> rand_z(XZ_RAND_MIN, XZ_RAND_MAX);		// [-8, 8] 範囲の一様乱数
+	std::uniform_int_distribution<> rotV(ROTV_RAND_MIN, ROTV_RAND_MAX);	// [800, 1500] 範囲の一様乱数
+	std::uniform_int_distribution<> addSize(ADDSIZE_RAND_MIN, ADDSIZE_RAND_MAX);	// [80, 150] 範囲の一様乱数
 
 	vec = {
-		(float)(rand_x(mt))* 0.15f,
-		(float)(rand_y(mt))* 0.15f,
-		(float)(rand_z(mt))* 0.15f
+		(float)(rand_x(mt))* F_CLAC_NUM,
+		(float)(rand_y(mt))* F_CLAC_NUM,
+		(float)(rand_z(mt))* F_CLAC_NUM
 	};
 
 	m_fRotValue = ((float)rotV(mt) * 0.0001);
